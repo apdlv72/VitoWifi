@@ -1,0 +1,12 @@
+02   2  HB: Master configuration 
+
+46  70  
+47  71
+4A  74
+4D  77
+50  80
+52  82
+59  89
+
+7E 126	Master-version
+7F 127	Slave-version 

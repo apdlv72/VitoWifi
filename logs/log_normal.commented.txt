@@ -1,0 +1,1482 @@
+7:34:17.478964	B404D0037	Read-Ack  	Relative ventilation: 55
+07:34:17.595836	Command: PR=A
+07:34:18.772167	OpenTherm Gateway 4.2a5
+07:34:19.222088	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:34:19.335867	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:34:20.219787	T107E1202	Write-Data	Master product version: 18 2
+07:34:20.334688	B707E1202	Unk-DataId	Master product version: 18 2
+07:34:21.218245	T807F0000	Read-Data 	Slave product version: 0 0
+07:34:21.336907	B707F0000	Unk-DataId	Slave product version: 0 0
+07:34:22.217365	T00590600	Read-Data 	TSP setting V/H: 6 0
+07:34:22.335245	BC0590614	Read-Ack  	TSP setting V/H: 6 20
+07:34:23.217560	T10020012	Write-Data	Master configuration: 00000000 18
+07:34:23.334426	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:34:24.219318	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:34:24.335420	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+
+07:34:25.223750	T10470002	Write-Data	Control setpoint V/H: 2
+0:AUS, 1:REDUZIERT, 2:NORMAL, 3:PARTY
+
+07:34:25.333546	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:34:26.218503	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:34:26.337205	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:34:27.218366	T004D0000	Read-Data 	Relative ventilation: 0
+07:34:27.334510	B404D0037	Read-Ack  	Relative ventilation: 55
+0:AUS; 27:REDIZIERT, 55:NORMAL, 100:PARTY
+
+07:34:28.218960	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:34:28.339516	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:34:29.317018	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:34:29.344692	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:34:30.218908	T107E1202	Write-Data	Master product version: 18 2
+07:34:30.335141	B707E1202	Unk-DataId	Master product version: 18 2
+07:34:31.219531	T807F0000	Read-Data 	Slave product version: 0 0
+07:34:31.335098	B707F0000	Unk-DataId	Slave product version: 0 0
+07:34:32.218692	T80590700	Read-Data 	TSP setting V/H: 7 0
+07:34:32.335777	BC059072C	Read-Ack  	TSP setting V/H: 7 44
+07:34:33.220590	T10020012	Write-Data	Master configuration: 00000000 18
+07:34:33.334844	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:34:34.219381	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:34:34.336778	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:34:35.219616	T10470002	Write-Data	Control setpoint V/H: 2
+07:34:35.335870	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:34:36.218887	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:34:36.336006	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:34:37.218303	T004D0000	Read-Data 	Relative ventilation: 0
+07:34:37.336182	B404D0037	Read-Ack  	Relative ventilation: 55
+07:34:38.218667	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:34:38.335692	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:34:39.219359	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:34:39.337282	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:34:40.218912	T107E1202	Write-Data	Master product version: 18 2
+07:34:40.337266	B707E1202	Unk-DataId	Master product version: 18 2
+07:34:41.219645	T807F0000	Read-Data 	Slave product version: 0 0
+07:34:41.335463	B707F0000	Unk-DataId	Slave product version: 0 0
+07:34:42.219645	T80590B00	Read-Data 	TSP setting V/H: 11 0
+07:34:42.335461	BC0590B64	Read-Ack  	TSP setting V/H: 11 100
+07:34:43.219180	T10020012	Write-Data	Master configuration: 00000000 18
+07:34:43.333941	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:34:44.219754	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:34:44.333995	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:34:45.220580	T10470002	Write-Data	Control setpoint V/H: 2
+07:34:45.336371	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:34:46.219581	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:34:46.336050	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:34:47.220621	Error 03
+07:34:47.247795	Error 03
+07:34:48.219409	T004D0000	Read-Data 	Relative ventilation: 0
+07:34:48.335850	B404D0037	Read-Ack  	Relative ventilation: 55
+07:34:49.219434	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:34:49.334786	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:34:50.221769	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:34:50.335431	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:34:51.219855	T107E1202	Write-Data	Master product version: 18 2
+07:34:51.262854	R00060000	Read-Data 	Remote parameter flags: 00000000 00000000
+07:34:51.334798	BF0060000	Unk-DataId	Remote parameter flags: 00000000 00000000
+07:34:51.378788	A707E1202	Unk-DataId	Master product version: 18 2
+07:34:52.220599	T807F0000	Read-Data 	Slave product version: 0 0
+07:34:52.336719	B707F0000	Unk-DataId	Slave product version: 0 0
+07:34:53.222476	T00591100	Read-Data 	TSP setting V/H: 17 0
+07:34:53.336001	B40591101	Read-Ack  	TSP setting V/H: 17 1
+07:34:54.218935	T10020012	Write-Data	Master configuration: 00000000 18
+07:34:54.333907	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:34:55.219324	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:34:55.334655	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:34:56.219406	T90470003	Write-Data	Control setpoint V/H: 3
+07:34:56.336143	B50470003	Write-Ack 	Control setpoint V/H: 3
+07:34:57.219813	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:34:57.333650	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:34:58.220955	T004D0000	Read-Data 	Relative ventilation: 0
+07:34:58.335942	B404D0064	Read-Ack  	Relative ventilation: 100
+07:34:59.219786	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:34:59.333623	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:35:00.220387	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:35:00.336576	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:35:01.216590	T107E1202	Write-Data	Master product version: 18 2
+07:35:01.333053	B707E1202	Unk-DataId	Master product version: 18 2
+07:35:02.217390	T807F0000	Read-Data 	Slave product version: 0 0
+07:35:02.332938	B707F0000	Unk-DataId	Slave product version: 0 0
+07:35:03.219138	T00591200	Read-Data 	TSP setting V/H: 18 0
+07:35:03.334746	BC0591200	Read-Ack  	TSP setting V/H: 18 0
+07:35:04.220009	T10020012	Write-Data	Master configuration: 00000000 18
+07:35:04.333853	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:35:05.220351	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:35:05.333676	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:35:06.219190	T90470003	Write-Data	Control setpoint V/H: 3
+07:35:06.332391	B50470003	Write-Ack 	Control setpoint V/H: 3
+07:35:07.220644	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:35:07.337221	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:35:08.220983	T004D0000	Read-Data 	Relative ventilation: 0
+07:35:08.334114	B404D0064	Read-Ack  	Relative ventilation: 100
+07:35:09.221173	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:35:09.334423	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:35:10.222271	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:35:10.333316	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:35:11.220316	T107E1202	Write-Data	Master product version: 18 2
+07:35:11.333228	B707E1202	Unk-DataId	Master product version: 18 2
+07:35:12.220339	T807F0000	Read-Data 	Slave product version: 0 0
+07:35:12.333911	B707F0000	Unk-DataId	Slave product version: 0 0
+07:35:13.217020	T80591300	Read-Data 	TSP setting V/H: 19 0
+07:35:13.334583	BC0591302	Read-Ack  	TSP setting V/H: 19 2
+07:35:14.217772	T10020012	Write-Data	Master configuration: 00000000 18
+07:35:14.331082	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:35:15.216430	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:35:15.333079	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:35:16.220816	T90470003	Write-Data	Control setpoint V/H: 3
+07:35:16.331851	B50470003	Write-Ack 	Control setpoint V/H: 3
+07:35:17.220753	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:35:17.333776	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:35:18.221004	T004D0000	Read-Data 	Relative ventilation: 0
+07:35:18.332282	B404D0064	Read-Ack  	Relative ventilation: 100
+07:35:19.221019	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:35:19.331955	BC0500780	Read-Ack  	Supply inlet temperature: 7.50
+07:35:20.221052	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:35:20.331613	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:35:21.220872	T107E1202	Write-Data	Master product version: 18 2
+07:35:21.330288	B707E1202	Unk-DataId	Master product version: 18 2
+07:35:22.221784	T807F0000	Read-Data 	Slave product version: 0 0
+07:35:22.331455	B707F0000	Unk-DataId	Slave product version: 0 0
+07:35:23.221116	T00591400	Read-Data 	TSP setting V/H: 20 0
+07:35:23.329995	BC0591400	Read-Ack  	TSP setting V/H: 20 0
+07:35:24.220975	T10020012	Write-Data	Master configuration: 00000000 18
+07:35:24.329697	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:35:25.219964	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:35:25.331536	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:35:26.218510	T10470002	Write-Data	Control setpoint V/H: 2
+07:35:26.329988	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:35:27.219968	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:35:27.331731	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:35:28.221460	T004D0000	Read-Data 	Relative ventilation: 0
+07:35:28.329425	B404D0037	Read-Ack  	Relative ventilation: 55
+07:35:29.221339	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:35:29.329050	B40500766	Read-Ack  	Supply inlet temperature: 7.40
+07:35:30.221907	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:35:30.332504	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:35:31.222045	T107E1202	Write-Data	Master product version: 18 2
+07:35:31.329776	B707E1202	Unk-DataId	Master product version: 18 2
+07:35:32.220345	T807F0000	Read-Data 	Slave product version: 0 0
+07:35:32.332870	B707F0000	Unk-DataId	Slave product version: 0 0
+07:35:33.221774	T00591700	Read-Data 	TSP setting V/H: 23 0
+07:35:33.331648	B40591701	Read-Ack  	TSP setting V/H: 23 1
+07:35:34.221207	T10020012	Write-Data	Master configuration: 00000000 18
+07:35:34.328634	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:35:35.220875	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:35:35.330479	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:35:36.221445	T10470002	Write-Data	Control setpoint V/H: 2
+07:35:36.329332	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:35:37.221769	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:35:37.331356	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:35:38.221389	T004D0000	Read-Data 	Relative ventilation: 0
+07:35:38.331786	B404D0037	Read-Ack  	Relative ventilation: 55
+07:35:39.219184	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:35:39.331291	B40500766	Read-Ack  	Supply inlet temperature: 7.40
+07:35:40.221876	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:35:40.330944	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:35:41.221318	T107E1202	Write-Data	Master product version: 18 2
+07:35:41.328841	B707E1202	Unk-DataId	Master product version: 18 2
+07:35:42.220947	T807F0000	Read-Data 	Slave product version: 0 0
+07:35:42.330543	B707F0000	Unk-DataId	Slave product version: 0 0
+07:35:43.219080	T00591800	Read-Data 	TSP setting V/H: 24 0
+07:35:43.332179	BC0591800	Read-Ack  	TSP setting V/H: 24 0
+07:35:44.221838	T10020012	Write-Data	Master configuration: 00000000 18
+07:35:44.330822	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:35:45.222411	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:35:45.329122	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:35:46.223709	T10470001	Write-Data	Control setpoint V/H: 1
+07:35:46.328066	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:35:47.219522	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:35:47.329471	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:35:48.221671	T004D0000	Read-Data 	Relative ventilation: 0
+07:35:48.329678	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:35:49.219659	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:35:49.332582	B40500766	Read-Ack  	Supply inlet temperature: 7.40
+07:35:50.222511	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:35:50.329718	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:35:51.221495	T107E1202	Write-Data	Master product version: 18 2
+07:35:51.332067	B707E1202	Unk-DataId	Master product version: 18 2
+07:35:52.221197	T807F0000	Read-Data 	Slave product version: 0 0
+07:35:52.329777	B707F0000	Unk-DataId	Slave product version: 0 0
+07:35:53.221679	T00593000	Read-Data 	TSP setting V/H: 48 0
+07:35:53.329616	BC05930B4	Read-Ack  	TSP setting V/H: 48 180
+07:35:54.219619	T10020012	Write-Data	Master configuration: 00000000 18
+07:35:54.329896	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:35:55.222068	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:35:55.332045	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:35:56.221776	T10470001	Write-Data	Control setpoint V/H: 1
+07:35:56.329923	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:35:57.222352	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:35:57.332143	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:35:58.222296	T004D0000	Read-Data 	Relative ventilation: 0
+07:35:58.330088	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:35:59.220970	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:35:59.334369	B40500766	Read-Ack  	Supply inlet temperature: 7.40
+07:36:00.217768	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:36:00.329741	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:36:01.221586	T107E1202	Write-Data	Master product version: 18 2
+07:36:01.329561	B707E1202	Unk-DataId	Master product version: 18 2
+07:36:02.222612	T807F0000	Read-Data 	Slave product version: 0 0
+07:36:02.334653	B707F0000	Unk-DataId	Slave product version: 0 0
+07:36:03.220543	T80593100	Read-Data 	TSP setting V/H: 49 0
+07:36:03.330404	B40593100	Read-Ack  	TSP setting V/H: 49 0
+07:36:04.222158	T10020012	Write-Data	Master configuration: 00000000 18
+07:36:04.329938	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:36:05.223359	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:36:05.331787	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:36:06.219388	T10470001	Write-Data	Control setpoint V/H: 1
+07:36:06.330593	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:36:07.219972	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:36:07.333958	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:36:08.220441	T004D0000	Read-Data 	Relative ventilation: 0
+07:36:08.330029	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:36:09.219024	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:36:09.334794	B40500766	Read-Ack  	Supply inlet temperature: 7.40
+07:36:10.217484	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:36:10.331742	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:36:11.222674	T107E1202	Write-Data	Master product version: 18 2
+07:36:11.332509	B707E1202	Unk-DataId	Master product version: 18 2
+07:36:12.222024	T807F0000	Read-Data 	Slave product version: 0 0
+07:36:12.332207	B707F0000	Unk-DataId	Slave product version: 0 0
+07:36:13.220934	T80593400	Read-Data 	TSP setting V/H: 52 0
+07:36:13.331798	BC0593432	Read-Ack  	TSP setting V/H: 52 50
+07:36:14.221035	T10020012	Write-Data	Master configuration: 00000000 18
+07:36:14.331233	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:36:15.221378	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:36:15.332352	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:36:16.222029	T10470001	Write-Data	Control setpoint V/H: 1
+07:36:16.332055	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:36:17.231327	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:36:17.333194	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:36:18.230244	T004D0000	Read-Data 	Relative ventilation: 0
+07:36:18.334186	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:36:19.221096	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:36:19.334126	B40500766	Read-Ack  	Supply inlet temperature: 7.40
+07:36:20.220994	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:36:20.333593	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:36:21.220723	T107E1202	Write-Data	Master product version: 18 2
+07:36:21.332973	B707E1202	Unk-DataId	Master product version: 18 2
+07:36:22.224427	T807F0000	Read-Data 	Slave product version: 0 0
+07:36:22.332692	B707F0000	Unk-DataId	Slave product version: 0 0
+07:36:23.220071	T00593500	Read-Data 	TSP setting V/H: 53 0
+07:36:23.333726	BC0593500	Read-Ack  	TSP setting V/H: 53 0
+07:36:24.217893	T10020012	Write-Data	Master configuration: 00000000 18
+07:36:24.333024	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:36:25.231500	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:36:25.333119	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:36:26.231372	T10470001	Write-Data	Control setpoint V/H: 1
+07:36:26.333036	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:36:27.231833	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:36:27.334749	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:36:28.234310	T004D0000	Read-Data 	Relative ventilation: 0
+07:36:28.335846	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:36:29.233840	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:36:29.335673	B40500766	Read-Ack  	Supply inlet temperature: 7.40
+07:36:30.234233	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:36:30.336288	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:36:31.230946	T107E1202	Write-Data	Master product version: 18 2
+07:36:31.334172	B707E1202	Unk-DataId	Master product version: 18 2
+07:36:32.233955	T807F0000	Read-Data 	Slave product version: 0 0
+07:36:32.334807	B707F0000	Unk-DataId	Slave product version: 0 0
+07:36:33.233457	T00593600	Read-Data 	TSP setting V/H: 54 0
+07:36:33.334026	BC0593600	Read-Ack  	TSP setting V/H: 54 0
+07:36:34.229766	T10020012	Write-Data	Master configuration: 00000000 18
+07:36:34.332786	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:36:35.231928	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:36:35.334863	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:36:36.234243	T10470001	Write-Data	Control setpoint V/H: 1
+07:36:36.334167	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:36:37.235828	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:36:37.335887	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:36:38.235180	T004D0000	Read-Data 	Relative ventilation: 0
+07:36:38.336699	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:36:39.232382	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:36:39.335395	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:36:40.234862	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:36:40.333512	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:36:41.233405	T107E1202	Write-Data	Master product version: 18 2
+07:36:41.332415	B707E1202	Unk-DataId	Master product version: 18 2
+07:36:42.235576	T807F0000	Read-Data 	Slave product version: 0 0
+07:36:42.332416	B707F0000	Unk-DataId	Slave product version: 0 0
+07:36:43.232483	T80593700	Read-Data 	TSP setting V/H: 55 0
+07:36:43.334007	BC059376B	Read-Ack  	TSP setting V/H: 55 107
+07:36:44.233521	T10020012	Write-Data	Master configuration: 00000000 18
+07:36:44.332410	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:36:45.234431	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:36:45.332718	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:36:46.232599	T10470001	Write-Data	Control setpoint V/H: 1
+07:36:46.331819	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:36:47.232489	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:36:47.331598	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:36:48.233463	T004D0000	Read-Data 	Relative ventilation: 0
+07:36:48.332901	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:36:49.233479	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:36:49.334438	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:36:50.234361	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:36:50.334992	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:36:51.234464	T107E1202	Write-Data	Master product version: 18 2
+07:36:51.328757	B707E1202	Unk-DataId	Master product version: 18 2
+07:36:52.232755	T807F0000	Read-Data 	Slave product version: 0 0
+07:36:52.332042	B707F0000	Unk-DataId	Slave product version: 0 0
+07:36:53.236111	T80593800	Read-Data 	TSP setting V/H: 56 0
+07:36:53.330383	BC0593879	Read-Ack  	TSP setting V/H: 56 121
+07:36:54.232641	T10020012	Write-Data	Master configuration: 00000000 18
+07:36:54.328309	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:36:55.232763	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:36:55.331998	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:36:56.231565	T10470001	Write-Data	Control setpoint V/H: 1
+07:36:56.328992	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:36:57.233199	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:36:57.329345	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:36:58.230501	T004D0000	Read-Data 	Relative ventilation: 0
+07:36:58.328881	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:36:59.233123	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:36:59.328260	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:37:00.233046	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:37:00.331571	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:37:01.233052	T107E1202	Write-Data	Master product version: 18 2
+07:37:01.329308	B707E1202	Unk-DataId	Master product version: 18 2
+07:37:02.233539	T807F0000	Read-Data 	Slave product version: 0 0
+07:37:02.329412	B707F0000	Unk-DataId	Slave product version: 0 0
+07:37:03.234115	T00593C00	Read-Data 	TSP setting V/H: 60 0
+07:37:03.329459	B40593C45	Read-Ack  	TSP setting V/H: 60 69
+07:37:04.230836	T10020012	Write-Data	Master configuration: 00000000 18
+07:37:04.326395	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:37:05.229763	T80460000	Read-Data 	Status V/H: 00000000 00000000
+07:37:05.325945	BC0460002	Read-Ack  	Status V/H: 00000000 00000010
+07:37:06.233397	T90470000	Write-Data	Control setpoint V/H: 0
+07:37:06.325924	B50470000	Write-Ack 	Control setpoint V/H: 0
+07:37:07.233876	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:37:07.329177	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:37:08.235866	T004D0000	Read-Data 	Relative ventilation: 0
+07:37:08.330824	BC04D0000	Read-Ack  	Relative ventilation: 0
+07:37:09.232875	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:37:09.328343	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:37:10.233142	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:37:10.326195	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:37:11.233201	T107E1202	Write-Data	Master product version: 18 2
+07:37:11.325943	B707E1202	Unk-DataId	Master product version: 18 2
+07:37:12.236133	T807F0000	Read-Data 	Slave product version: 0 0
+07:37:12.327578	B707F0000	Unk-DataId	Slave product version: 0 0
+07:37:13.234132	T80593D00	Read-Data 	TSP setting V/H: 61 0
+07:37:13.327725	B40593D00	Read-Ack  	TSP setting V/H: 61 0
+07:37:14.233861	T10020012	Write-Data	Master configuration: 00000000 18
+07:37:14.327440	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:37:15.233151	T80460000	Read-Data 	Status V/H: 00000000 00000000
+07:37:15.328890	B40460000	Read-Ack  	Status V/H: 00000000 00000000
+07:37:16.248045	T90470000	Write-Data	Control setpoint V/H: 0
+07:37:16.339371	B50470000	Write-Ack 	Control setpoint V/H: 0
+07:37:17.234329	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:37:17.328356	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:37:18.232783	T004D0000	Read-Data 	Relative ventilation: 0
+07:37:18.328928	BC04D0000	Read-Ack  	Relative ventilation: 0
+07:37:19.232456	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:37:19.327083	BC05007B3	Read-Ack  	Supply inlet temperature: 7.70
+07:37:20.234240	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:37:20.327814	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:37:21.236034	T107E1202	Write-Data	Master product version: 18 2
+07:37:21.325998	B707E1202	Unk-DataId	Master product version: 18 2
+07:37:22.230945	T807F0000	Read-Data 	Slave product version: 0 0
+07:37:22.327826	B707F0000	Unk-DataId	Slave product version: 0 0
+07:37:23.234522	T80593E00	Read-Data 	TSP setting V/H: 62 0
+07:37:23.326920	B40593E00	Read-Ack  	TSP setting V/H: 62 0
+07:37:24.230484	T10020012	Write-Data	Master configuration: 00000000 18
+07:37:24.324536	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:37:25.230690	T80460000	Read-Data 	Status V/H: 00000000 00000000
+07:37:25.328715	B40460000	Read-Ack  	Status V/H: 00000000 00000000
+07:37:26.233635	T90470000	Write-Data	Control setpoint V/H: 0
+07:37:26.326190	B50470000	Write-Ack 	Control setpoint V/H: 0
+07:37:27.231675	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:37:27.330971	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:37:28.233477	T004D0000	Read-Data 	Relative ventilation: 0
+07:37:28.328196	BC04D0000	Read-Ack  	Relative ventilation: 0
+07:37:29.237382	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:37:29.328471	B40500800	Read-Ack  	Supply inlet temperature: 8.00
+07:37:30.228723	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:37:30.329693	BC05214E6	Read-Ack  	Exhaust inlet temperature: 20.90
+07:37:31.230536	T107E1202	Write-Data	Master product version: 18 2
+07:37:31.323265	B707E1202	Unk-DataId	Master product version: 18 2
+07:37:32.234011	T807F0000	Read-Data 	Slave product version: 0 0
+07:37:32.328154	B707F0000	Unk-DataId	Slave product version: 0 0
+07:37:33.230933	T00593F00	Read-Data 	TSP setting V/H: 63 0
+07:37:33.326649	BC0593F00	Read-Ack  	TSP setting V/H: 63 0
+07:37:34.234347	T10020012	Write-Data	Master configuration: 00000000 18
+07:37:34.324943	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:37:35.231645	T80460000	Read-Data 	Status V/H: 00000000 00000000
+07:37:35.323427	B40460000	Read-Ack  	Status V/H: 00000000 00000000
+07:37:36.231325	T90470000	Write-Data	Control setpoint V/H: 0
+07:37:36.322502	B50470000	Write-Ack 	Control setpoint V/H: 0
+07:37:37.233891	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:37:37.328767	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:37:38.230360	T004D0000	Read-Data 	Relative ventilation: 0
+07:37:38.328837	BC04D0000	Read-Ack  	Relative ventilation: 0
+07:37:39.231968	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:37:39.329096	B40500833	Read-Ack  	Supply inlet temperature: 8.20
+07:37:40.231755	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:37:40.328597	BC05214E6	Read-Ack  	Exhaust inlet temperature: 20.90
+07:37:41.233724	T107E1202	Write-Data	Master product version: 18 2
+07:37:41.326792	B707E1202	Unk-DataId	Master product version: 18 2
+07:37:42.232442	T807F0000	Read-Data 	Slave product version: 0 0
+07:37:42.324769	B707F0000	Unk-DataId	Slave product version: 0 0
+07:37:43.234329	T80594000	Read-Data 	TSP setting V/H: 64 0
+07:37:43.328154	B40594000	Read-Ack  	TSP setting V/H: 64 0
+07:37:44.232959	T10020012	Write-Data	Master configuration: 00000000 18
+07:37:44.325586	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:37:45.231750	T80460000	Read-Data 	Status V/H: 00000000 00000000
+07:37:45.328927	B40460000	Read-Ack  	Status V/H: 00000000 00000000
+07:37:46.234583	T90470000	Write-Data	Control setpoint V/H: 0
+07:37:46.327627	B50470000	Write-Ack 	Control setpoint V/H: 0
+07:37:47.230425	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:37:47.328917	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:37:48.230879	T004D0000	Read-Data 	Relative ventilation: 0
+07:37:48.328679	BC04D0000	Read-Ack  	Relative ventilation: 0
+07:37:49.232263	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:37:49.331877	B40500833	Read-Ack  	Supply inlet temperature: 8.20
+07:37:50.232524	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:37:50.332074	B405214CC	Read-Ack  	Exhaust inlet temperature: 20.80
+07:37:51.231844	T107E1202	Write-Data	Master product version: 18 2
+07:37:51.328862	B707E1202	Unk-DataId	Master product version: 18 2
+07:37:52.235693	T807F0000	Read-Data 	Slave product version: 0 0
+07:37:52.330819	B707F0000	Unk-DataId	Slave product version: 0 0
+07:37:53.230670	T00594100	Read-Data 	TSP setting V/H: 65 0
+07:37:53.329716	BC0594100	Read-Ack  	TSP setting V/H: 65 0
+07:37:54.232237	T10020012	Write-Data	Master configuration: 00000000 18
+07:37:54.327816	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:37:55.232541	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:37:55.334383	BC0460100	Read-Ack  	Status V/H: 00000001 00000000
+07:37:56.232329	T10470001	Write-Data	Control setpoint V/H: 1
+07:37:56.329810	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:37:57.229868	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:37:57.328205	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:37:58.229550	T004D0000	Read-Data 	Relative ventilation: 0
+07:37:58.328447	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:37:59.231379	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:37:59.328711	B40500866	Read-Ack  	Supply inlet temperature: 8.40
+07:38:00.230691	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:38:00.329305	B405214CC	Read-Ack  	Exhaust inlet temperature: 20.80
+07:38:01.230684	T107E1202	Write-Data	Master product version: 18 2
+07:38:01.328987	B707E1202	Unk-DataId	Master product version: 18 2
+07:38:02.231460	T807F0000	Read-Data 	Slave product version: 0 0
+07:38:02.329995	B707F0000	Unk-DataId	Slave product version: 0 0
+07:38:03.230162	T00594200	Read-Data 	TSP setting V/H: 66 0
+07:38:03.329217	BC0594200	Read-Ack  	TSP setting V/H: 66 0
+07:38:04.231652	T10020012	Write-Data	Master configuration: 00000000 18
+07:38:04.330965	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:38:05.233591	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:38:05.332349	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:38:06.257857	T10470001	Write-Data	Control setpoint V/H: 1
+07:38:06.349947	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:38:07.229334	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:38:07.329462	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:38:08.230548	T004D0000	Read-Data 	Relative ventilation: 0
+07:38:08.333412	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:38:09.230137	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:38:09.331498	BC05008E6	Read-Ack  	Supply inlet temperature: 8.90
+07:38:10.232494	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:38:10.330908	B405214CC	Read-Ack  	Exhaust inlet temperature: 20.80
+07:38:11.232010	T107E1202	Write-Data	Master product version: 18 2
+07:38:11.328657	B707E1202	Unk-DataId	Master product version: 18 2
+07:38:12.230433	T807F0000	Read-Data 	Slave product version: 0 0
+07:38:12.330666	B707F0000	Unk-DataId	Slave product version: 0 0
+07:38:13.232730	T80594300	Read-Data 	TSP setting V/H: 67 0
+07:38:13.329808	B40594300	Read-Ack  	TSP setting V/H: 67 0
+07:38:14.233588	T10020012	Write-Data	Master configuration: 00000000 18
+07:38:14.328626	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:38:15.232669	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:38:15.327737	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:38:16.230167	T10470001	Write-Data	Control setpoint V/H: 1
+07:38:16.327988	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:38:17.229902	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:38:17.329772	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:38:18.230174	T004D0000	Read-Data 	Relative ventilation: 0
+07:38:18.329905	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:38:19.231843	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:38:19.330843	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:38:20.234065	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:38:20.332001	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:38:21.347622	T107E1202	Write-Data	Master product version: 18 2
+07:38:21.349475	B707E1202	Unk-DataId	Master product version: 18 2
+07:38:22.232809	T807F0000	Read-Data 	Slave product version: 0 0
+07:38:22.330452	B707F0000	Unk-DataId	Slave product version: 0 0
+07:38:23.233640	T00594400	Read-Data 	TSP setting V/H: 68 0
+07:38:23.329947	BC0594400	Read-Ack  	TSP setting V/H: 68 0
+07:38:24.230540	T10020012	Write-Data	Master configuration: 00000000 18
+07:38:24.329529	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:38:25.230442	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:38:25.328697	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:38:26.231105	T10470001	Write-Data	Control setpoint V/H: 1
+07:38:26.330582	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:38:27.233330	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:38:27.330691	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:38:28.234698	T004D0000	Read-Data 	Relative ventilation: 0
+07:38:28.330817	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:38:29.231276	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:38:29.330751	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:38:30.230698	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:38:30.329559	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:38:31.231512	T107E1202	Write-Data	Master product version: 18 2
+07:38:31.331564	B707E1202	Unk-DataId	Master product version: 18 2
+07:38:32.232332	T807F0000	Read-Data 	Slave product version: 0 0
+07:38:32.335135	B707F0000	Unk-DataId	Slave product version: 0 0
+07:38:33.231731	T00590000	Read-Data 	TSP setting V/H: 0 0
+07:38:33.332908	B40590032	Read-Ack  	TSP setting V/H: 0 50
+07:38:34.230859	T10020012	Write-Data	Master configuration: 00000000 18
+07:38:34.331269	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:38:35.231217	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:38:35.330778	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:38:36.231344	T10470001	Write-Data	Control setpoint V/H: 1
+07:38:36.331460	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:38:37.228945	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:38:37.335334	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:38:38.231518	T004D0000	Read-Data 	Relative ventilation: 0
+07:38:38.336616	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:38:39.232099	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:38:39.335975	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:38:40.231475	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:38:40.334332	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:38:41.232467	T107E1202	Write-Data	Master product version: 18 2
+07:38:41.333129	B707E1202	Unk-DataId	Master product version: 18 2
+07:38:42.232416	T807F0000	Read-Data 	Slave product version: 0 0
+07:38:42.333246	B707F0000	Unk-DataId	Slave product version: 0 0
+07:38:43.231677	T80590100	Read-Data 	TSP setting V/H: 1 0
+07:38:43.335450	B40590100	Read-Ack  	TSP setting V/H: 1 0
+07:38:44.233087	T10020012	Write-Data	Master configuration: 00000000 18
+07:38:44.334292	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:38:45.233679	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:38:45.334960	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:38:46.231035	T10470001	Write-Data	Control setpoint V/H: 1
+07:38:46.332910	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:38:47.232172	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:38:47.334616	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:38:48.230548	T004D0000	Read-Data 	Relative ventilation: 0
+07:38:48.334520	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:38:49.232258	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:38:49.336587	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:38:50.231269	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:38:50.334212	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:38:51.231299	T107E1202	Write-Data	Master product version: 18 2
+07:38:51.332113	B707E1202	Unk-DataId	Master product version: 18 2
+07:38:52.230885	T807F0000	Read-Data 	Slave product version: 0 0
+07:38:52.334040	B707F0000	Unk-DataId	Slave product version: 0 0
+07:38:53.232207	T80590200	Read-Data 	TSP setting V/H: 2 0
+07:38:53.332948	BC0590264	Read-Ack  	TSP setting V/H: 2 100
+07:38:54.233118	T10020012	Write-Data	Master configuration: 00000000 18
+07:38:54.332851	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:38:55.231839	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:38:55.334878	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:38:56.234860	T10470001	Write-Data	Control setpoint V/H: 1
+07:38:56.333418	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:38:57.232130	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:38:57.335338	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:38:58.232083	T004D0000	Read-Data 	Relative ventilation: 0
+07:38:58.333760	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:38:59.233557	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:38:59.333034	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:39:00.233328	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:39:00.334732	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:39:01.234351	T107E1202	Write-Data	Master product version: 18 2
+07:39:01.331046	B707E1202	Unk-DataId	Master product version: 18 2
+07:39:02.233790	T807F0000	Read-Data 	Slave product version: 0 0
+07:39:02.334364	B707F0000	Unk-DataId	Slave product version: 0 0
+07:39:03.232299	T00590300	Read-Data 	TSP setting V/H: 3 0
+07:39:03.331278	BC0590300	Read-Ack  	TSP setting V/H: 3 0
+07:39:04.232291	T10020012	Write-Data	Master configuration: 00000000 18
+07:39:04.332520	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:39:05.232920	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:39:05.333730	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:39:06.232088	T10470001	Write-Data	Control setpoint V/H: 1
+07:39:06.327239	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:39:07.232813	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:39:07.336003	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:39:08.231963	T004D0000	Read-Data 	Relative ventilation: 0
+07:39:08.331392	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:39:09.232440	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:39:09.332840	BC05008E6	Read-Ack  	Supply inlet temperature: 8.90
+07:39:10.233247	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:39:10.333001	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:39:11.231608	T107E1202	Write-Data	Master product version: 18 2
+07:39:11.331819	B707E1202	Unk-DataId	Master product version: 18 2
+07:39:12.232365	T807F0000	Read-Data 	Slave product version: 0 0
+07:39:12.329995	B707F0000	Unk-DataId	Slave product version: 0 0
+07:39:13.233021	T80590400	Read-Data 	TSP setting V/H: 4 0
+07:39:13.338106	B405904B4	Read-Ack  	TSP setting V/H: 4 180
+07:39:14.232717	T10020012	Write-Data	Master configuration: 00000000 18
+07:39:14.328190	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:39:15.233580	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:39:15.331799	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:39:16.232949	T10470001	Write-Data	Control setpoint V/H: 1
+07:39:16.328694	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:39:17.233809	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:39:17.330947	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:39:18.232096	T004D0000	Read-Data 	Relative ventilation: 0
+07:39:18.329098	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:39:19.232950	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:39:19.332931	BC05008E6	Read-Ack  	Supply inlet temperature: 8.90
+07:39:20.233928	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:39:20.329980	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:39:21.232315	T107E1202	Write-Data	Master product version: 18 2
+07:39:21.328896	B707E1202	Unk-DataId	Master product version: 18 2
+07:39:22.232742	T807F0000	Read-Data 	Slave product version: 0 0
+07:39:22.330398	B707F0000	Unk-DataId	Slave product version: 0 0
+07:39:23.232859	T00590500	Read-Data 	TSP setting V/H: 5 0
+07:39:23.329846	BC0590500	Read-Ack  	TSP setting V/H: 5 0
+07:39:24.233295	T10020012	Write-Data	Master configuration: 00000000 18
+07:39:24.326874	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:39:25.233545	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:39:25.327187	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:39:26.233902	T10470001	Write-Data	Control setpoint V/H: 1
+07:39:26.323832	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:39:27.233111	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:39:27.327959	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:39:28.233674	T004D0000	Read-Data 	Relative ventilation: 0
+07:39:28.327151	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:39:29.245870	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:39:29.337318	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:39:30.244247	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:39:30.340313	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:39:31.246493	T107E1202	Write-Data	Master product version: 18 2
+07:39:31.339061	B707E1202	Unk-DataId	Master product version: 18 2
+07:39:32.233941	T807F0000	Read-Data 	Slave product version: 0 0
+07:39:32.325393	B707F0000	Unk-DataId	Slave product version: 0 0
+07:39:33.233321	T00590600	Read-Data 	TSP setting V/H: 6 0
+07:39:33.326008	BC0590614	Read-Ack  	TSP setting V/H: 6 20
+07:39:34.234181	T10020012	Write-Data	Master configuration: 00000000 18
+07:39:34.325988	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:39:35.233419	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:39:35.329205	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:39:36.283835	T10470001	Write-Data	Control setpoint V/H: 1
+07:39:36.424409	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:39:37.286197	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:39:37.424342	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:39:38.244225	T004D0000	Read-Data 	Relative ventilation: 0
+07:39:38.340261	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:39:39.247922	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:39:39.341922	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:39:40.243470	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:39:40.336969	B40521499	Read-Ack  	Exhaust inlet temperature: 20.60
+07:39:41.246689	T107E1202	Write-Data	Master product version: 18 2
+07:39:41.340534	B707E1202	Unk-DataId	Master product version: 18 2
+07:39:42.246651	T807F0000	Read-Data 	Slave product version: 0 0
+07:39:42.339017	B707F0000	Unk-DataId	Slave product version: 0 0
+07:39:43.244201	T80590700	Read-Data 	TSP setting V/H: 7 0
+07:39:43.341808	BC059072C	Read-Ack  	TSP setting V/H: 7 44
+07:39:44.243179	T10020012	Write-Data	Master configuration: 00000000 18
+07:39:44.336197	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:39:45.245895	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:39:45.341662	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:39:46.244598	T10470001	Write-Data	Control setpoint V/H: 1
+07:39:46.335738	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:39:47.243996	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:39:47.337758	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:39:48.243629	T004D0000	Read-Data 	Relative ventilation: 0
+07:39:48.337377	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:39:49.247547	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:39:49.341595	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:39:50.244957	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:39:50.340690	BC052144C	Read-Ack  	Exhaust inlet temperature: 20.30
+07:39:51.246309	T107E1202	Write-Data	Master product version: 18 2
+07:39:51.337778	B707E1202	Unk-DataId	Master product version: 18 2
+07:39:52.246050	T807F0000	Read-Data 	Slave product version: 0 0
+07:39:52.339384	B707F0000	Unk-DataId	Slave product version: 0 0
+07:39:53.244663	T80590B00	Read-Data 	TSP setting V/H: 11 0
+07:39:53.338988	BC0590B64	Read-Ack  	TSP setting V/H: 11 100
+07:39:54.243655	T10020012	Write-Data	Master configuration: 00000000 18
+07:39:54.335513	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:39:55.246275	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:39:55.341074	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:39:56.246147	T10470001	Write-Data	Control setpoint V/H: 1
+07:39:56.335919	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:39:57.248006	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:39:57.341296	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:39:58.245108	T004D0000	Read-Data 	Relative ventilation: 0
+07:39:58.337656	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:39:59.246463	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:39:59.338160	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:40:00.245172	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:40:00.342265	BC052144C	Read-Ack  	Exhaust inlet temperature: 20.30
+07:40:01.242834	T107E1202	Write-Data	Master product version: 18 2
+07:40:01.335792	B707E1202	Unk-DataId	Master product version: 18 2
+07:40:02.247002	T807F0000	Read-Data 	Slave product version: 0 0
+07:40:02.341767	B707F0000	Unk-DataId	Slave product version: 0 0
+07:40:03.245398	T00591100	Read-Data 	TSP setting V/H: 17 0
+07:40:03.340560	B40591101	Read-Ack  	TSP setting V/H: 17 1
+07:40:04.244406	T10020012	Write-Data	Master configuration: 00000000 18
+07:40:04.336262	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:40:05.245818	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:40:05.415787	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:40:06.245739	T10470001	Write-Data	Control setpoint V/H: 1
+07:40:06.338070	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:40:07.244748	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:40:07.341585	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:40:08.245154	T004D0000	Read-Data 	Relative ventilation: 0
+07:40:08.416019	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:40:09.245636	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:40:09.339324	BC0500933	Read-Ack  	Supply inlet temperature: 9.20
+07:40:10.245828	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:40:10.414973	B40521433	Read-Ack  	Exhaust inlet temperature: 20.20
+07:40:11.244294	T107E1202	Write-Data	Master product version: 18 2
+07:40:11.335648	B707E1202	Unk-DataId	Master product version: 18 2
+07:40:12.245891	T807F0000	Read-Data 	Slave product version: 0 0
+07:40:12.412357	B707F0000	Unk-DataId	Slave product version: 0 0
+07:40:13.246359	T00591200	Read-Data 	TSP setting V/H: 18 0
+07:40:13.412298	BC0591200	Read-Ack  	TSP setting V/H: 18 0
+07:40:14.245967	T10020012	Write-Data	Master configuration: 00000000 18
+07:40:14.410469	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:40:15.245553	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:40:15.410343	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:40:16.245721	T10470001	Write-Data	Control setpoint V/H: 1
+07:40:16.407594	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:40:17.245897	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:40:17.406376	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:40:18.244860	T004D0000	Read-Data 	Relative ventilation: 0
+07:40:18.406462	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:40:19.245788	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:40:19.405752	B4050094C	Read-Ack  	Supply inlet temperature: 9.30
+07:40:20.245466	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:40:20.407871	BC052144C	Read-Ack  	Exhaust inlet temperature: 20.30
+07:40:21.243317	T107E1202	Write-Data	Master product version: 18 2
+07:40:21.406320	B707E1202	Unk-DataId	Master product version: 18 2
+07:40:22.246726	T807F0000	Read-Data 	Slave product version: 0 0
+07:40:22.405933	B707F0000	Unk-DataId	Slave product version: 0 0
+07:40:23.245862	T80591300	Read-Data 	TSP setting V/H: 19 0
+07:40:23.406347	BC0591302	Read-Ack  	TSP setting V/H: 19 2
+07:40:24.246038	T10020012	Write-Data	Master configuration: 00000000 18
+07:40:24.408060	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:40:25.245300	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:40:25.406805	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:40:26.245427	T10470001	Write-Data	Control setpoint V/H: 1
+07:40:26.406919	BD0470001	Write-Ack 	Control setpoint V/H: 1
+07:40:27.246978	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:40:27.405926	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:40:28.245386	T004D0000	Read-Data 	Relative ventilation: 0
+07:40:28.405350	BC04D001B	Read-Ack  	Relative ventilation: 27
+07:40:29.246890	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:40:29.406453	B4050094C	Read-Ack  	Supply inlet temperature: 9.30
+07:40:30.245598	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:40:30.407830	B40521466	Read-Ack  	Exhaust inlet temperature: 20.40
+07:40:31.247487	T107E1202	Write-Data	Master product version: 18 2
+07:40:31.408054	B707E1202	Unk-DataId	Master product version: 18 2
+07:40:32.246436	T807F0000	Read-Data 	Slave product version: 0 0
+07:40:32.405755	B707F0000	Unk-DataId	Slave product version: 0 0
+07:40:33.245783	T807F0000	Read-Data 	Slave product version: 0 0
+07:40:33.405762	B707F0000	Unk-DataId	Slave product version: 0 0
+07:40:34.246260	T00591400	Read-Data 	TSP setting V/H: 20 0
+07:40:34.405774	BC0591400	Read-Ack  	TSP setting V/H: 20 0
+07:40:35.241281	Error 03
+07:40:35.273269	Error 03
+07:40:36.246031	T10020012	Write-Data	Master configuration: 00000000 18
+07:40:36.403780	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:40:37.245688	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:40:37.403871	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:40:38.245504	T10470002	Write-Data	Control setpoint V/H: 2
+07:40:38.402966	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:40:39.246150	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:40:39.403989	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:40:40.245745	T004D0000	Read-Data 	Relative ventilation: 0
+07:40:40.401461	B404D0037	Read-Ack  	Relative ventilation: 55
+07:40:41.246850	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:40:41.401967	B4050094C	Read-Ack  	Supply inlet temperature: 9.30
+07:40:42.246284	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:40:42.401860	BC0521480	Read-Ack  	Exhaust inlet temperature: 20.50
+07:40:43.247792	T107E1202	Write-Data	Master product version: 18 2
+07:40:43.402747	B707E1202	Unk-DataId	Master product version: 18 2
+07:40:44.247515	T807F0000	Read-Data 	Slave product version: 0 0
+07:40:44.398917	B707F0000	Unk-DataId	Slave product version: 0 0
+07:40:45.246748	T00591700	Read-Data 	TSP setting V/H: 23 0
+07:40:45.400513	B40591701	Read-Ack  	TSP setting V/H: 23 1
+07:40:46.244496	T10020012	Write-Data	Master configuration: 00000000 18
+07:40:46.400789	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:40:47.245945	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:40:47.401623	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:40:48.246676	T10470002	Write-Data	Control setpoint V/H: 2
+07:40:48.398607	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:40:49.247470	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:40:49.398621	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:40:50.247189	T004D0000	Read-Data 	Relative ventilation: 0
+07:40:50.400144	B404D0037	Read-Ack  	Relative ventilation: 55
+07:40:51.246560	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:40:51.396928	B4050094C	Read-Ack  	Supply inlet temperature: 9.30
+07:40:52.247448	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:40:52.398927	B40521499	Read-Ack  	Exhaust inlet temperature: 20.60
+07:40:53.247835	T107E1202	Write-Data	Master product version: 18 2
+07:40:53.397282	B707E1202	Unk-DataId	Master product version: 18 2
+07:40:54.246591	T807F0000	Read-Data 	Slave product version: 0 0
+07:40:54.398675	B707F0000	Unk-DataId	Slave product version: 0 0
+07:40:55.246675	T00591800	Read-Data 	TSP setting V/H: 24 0
+07:40:55.397086	BC0591800	Read-Ack  	TSP setting V/H: 24 0
+07:40:56.244985	T10020012	Write-Data	Master configuration: 00000000 18
+07:40:56.398209	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:40:57.246851	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:40:57.398333	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:40:58.245917	T10470002	Write-Data	Control setpoint V/H: 2
+07:40:58.399386	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:40:59.248228	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:40:59.397656	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:41:00.245012	T004D0000	Read-Data 	Relative ventilation: 0
+07:41:00.398352	B404D0037	Read-Ack  	Relative ventilation: 55
+07:41:01.245865	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:41:01.401197	B4050094C	Read-Ack  	Supply inlet temperature: 9.30
+07:41:02.244996	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:41:02.395618	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:41:03.247083	T107E1202	Write-Data	Master product version: 18 2
+07:41:03.397923	B707E1202	Unk-DataId	Master product version: 18 2
+07:41:04.246306	T807F0000	Read-Data 	Slave product version: 0 0
+07:41:04.396976	B707F0000	Unk-DataId	Slave product version: 0 0
+07:41:05.245301	T00593000	Read-Data 	TSP setting V/H: 48 0
+07:41:05.396521	BC05930B4	Read-Ack  	TSP setting V/H: 48 180
+07:41:06.246355	T10020012	Write-Data	Master configuration: 00000000 18
+07:41:06.398721	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:41:07.245632	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:41:07.395033	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:41:08.245219	T10470002	Write-Data	Control setpoint V/H: 2
+07:41:08.395499	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:41:09.244632	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:41:09.393829	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:41:10.248238	T004D0000	Read-Data 	Relative ventilation: 0
+07:41:10.395812	B404D0037	Read-Ack  	Relative ventilation: 55
+07:41:11.245823	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:41:11.395980	BC0500966	Read-Ack  	Supply inlet temperature: 9.40
+07:41:12.246591	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:41:12.395191	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:41:13.245838	T107E1202	Write-Data	Master product version: 18 2
+07:41:13.395767	B707E1202	Unk-DataId	Master product version: 18 2
+07:41:14.248178	T807F0000	Read-Data 	Slave product version: 0 0
+07:41:14.392729	B707F0000	Unk-DataId	Slave product version: 0 0
+07:41:15.246738	T80593100	Read-Data 	TSP setting V/H: 49 0
+07:41:15.393033	B40593100	Read-Ack  	TSP setting V/H: 49 0
+07:41:16.245500	T10020012	Write-Data	Master configuration: 00000000 18
+07:41:16.394027	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:41:17.245572	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:41:17.394090	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:41:18.245658	T10470002	Write-Data	Control setpoint V/H: 2
+07:41:18.390474	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:41:19.246656	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:41:19.391339	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:41:20.243246	T004D0000	Read-Data 	Relative ventilation: 0
+07:41:20.388923	B404D0037	Read-Ack  	Relative ventilation: 55
+07:41:21.249406	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:41:21.391966	BC0500966	Read-Ack  	Supply inlet temperature: 9.40
+07:41:22.245263	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:41:22.389964	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:41:23.246179	T107E1202	Write-Data	Master product version: 18 2
+07:41:23.390535	B707E1202	Unk-DataId	Master product version: 18 2
+07:41:24.244891	T807F0000	Read-Data 	Slave product version: 0 0
+07:41:24.390183	B707F0000	Unk-DataId	Slave product version: 0 0
+07:41:25.243729	T80593400	Read-Data 	TSP setting V/H: 52 0
+07:41:25.387041	BC0593464	Read-Ack  	TSP setting V/H: 52 100
+07:41:26.249133	T10020012	Write-Data	Master configuration: 00000000 18
+07:41:26.389776	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:41:27.248157	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:41:27.389723	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:41:28.247286	T10470002	Write-Data	Control setpoint V/H: 2
+07:41:28.389853	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:41:29.246576	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:41:29.389903	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:41:30.246371	T004D0000	Read-Data 	Relative ventilation: 0
+07:41:30.389979	B404D0037	Read-Ack  	Relative ventilation: 55
+07:41:31.245003	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:41:31.388550	BC0500966	Read-Ack  	Supply inlet temperature: 9.40
+07:41:32.246964	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:41:32.389066	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:41:33.243936	T107E1202	Write-Data	Master product version: 18 2
+07:41:33.389585	B707E1202	Unk-DataId	Master product version: 18 2
+07:41:34.247340	T807F0000	Read-Data 	Slave product version: 0 0
+07:41:34.389692	B707F0000	Unk-DataId	Slave product version: 0 0
+07:41:35.245826	T00593500	Read-Data 	TSP setting V/H: 53 0
+07:41:35.387816	BC0593500	Read-Ack  	TSP setting V/H: 53 0
+07:41:36.243964	T10020012	Write-Data	Master configuration: 00000000 18
+07:41:36.390129	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:41:37.247008	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:41:37.389673	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:41:38.246644	T10470002	Write-Data	Control setpoint V/H: 2
+07:41:38.390892	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:41:39.246990	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:41:39.389742	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:41:40.245998	T004D0000	Read-Data 	Relative ventilation: 0
+07:41:40.390050	B404D0037	Read-Ack  	Relative ventilation: 55
+07:41:41.248417	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:41:41.391858	BC0500966	Read-Ack  	Supply inlet temperature: 9.40
+07:41:42.246721	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:41:42.389917	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:41:43.246849	T107E1202	Write-Data	Master product version: 18 2
+07:41:43.391259	B707E1202	Unk-DataId	Master product version: 18 2
+07:41:44.247792	T807F0000	Read-Data 	Slave product version: 0 0
+07:41:44.389576	B707F0000	Unk-DataId	Slave product version: 0 0
+07:41:45.246797	T00593600	Read-Data 	TSP setting V/H: 54 0
+07:41:45.390133	BC0593600	Read-Ack  	TSP setting V/H: 54 0
+07:41:46.248455	T10020012	Write-Data	Master configuration: 00000000 18
+07:41:46.389990	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:41:47.246250	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:41:47.391362	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:41:48.245959	T10470002	Write-Data	Control setpoint V/H: 2
+07:41:48.390841	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:41:49.244430	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:41:49.390899	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:41:50.246573	T004D0000	Read-Data 	Relative ventilation: 0
+07:41:50.390980	B404D0037	Read-Ack  	Relative ventilation: 55
+07:41:51.244432	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:41:51.386999	BC0500966	Read-Ack  	Supply inlet temperature: 9.40
+07:41:52.246915	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:41:52.391365	BC05214B3	Read-Ack  	Exhaust inlet temperature: 20.70
+07:41:53.244433	T107E1202	Write-Data	Master product version: 18 2
+07:41:53.387774	B707E1202	Unk-DataId	Master product version: 18 2
+07:41:54.247831	T807F0000	Read-Data 	Slave product version: 0 0
+07:41:54.384267	B707F0000	Unk-DataId	Slave product version: 0 0
+07:41:55.245737	T80593700	Read-Data 	TSP setting V/H: 55 0
+07:41:55.389431	BC059376D	Read-Ack  	TSP setting V/H: 55 109
+07:41:56.243500	T10020012	Write-Data	Master configuration: 00000000 18
+07:41:56.388011	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:41:57.246600	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:41:57.388510	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:41:58.248022	T10470002	Write-Data	Control setpoint V/H: 2
+07:41:58.388345	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:41:59.246553	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:41:59.384761	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:42:00.243023	T004D0000	Read-Data 	Relative ventilation: 0
+07:42:00.385400	B404D0037	Read-Ack  	Relative ventilation: 55
+07:42:01.248051	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:42:01.387933	BC0500999	Read-Ack  	Supply inlet temperature: 9.60
+07:42:02.248065	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:42:02.387661	B405214CC	Read-Ack  	Exhaust inlet temperature: 20.80
+07:42:03.246038	T107E1202	Write-Data	Master product version: 18 2
+07:42:03.387502	B707E1202	Unk-DataId	Master product version: 18 2
+07:42:04.248512	T807F0000	Read-Data 	Slave product version: 0 0
+07:42:04.385663	B707F0000	Unk-DataId	Slave product version: 0 0
+07:42:05.248052	T80593800	Read-Data 	TSP setting V/H: 56 0
+07:42:05.383377	B40593878	Read-Ack  	TSP setting V/H: 56 120
+07:42:06.246307	T10020012	Write-Data	Master configuration: 00000000 18
+07:42:06.382933	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:42:07.243314	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:42:07.382988	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:42:08.246732	T10470002	Write-Data	Control setpoint V/H: 2
+07:42:08.383035	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:42:09.248172	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:42:09.383232	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:42:10.248040	T004D0000	Read-Data 	Relative ventilation: 0
+07:42:10.384447	B404D0037	Read-Ack  	Relative ventilation: 55
+07:42:11.247086	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:42:11.381035	BC0500999	Read-Ack  	Supply inlet temperature: 9.60
+07:42:12.248374	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:42:12.381587	B405214CC	Read-Ack  	Exhaust inlet temperature: 20.80
+07:42:13.245952	T107E1202	Write-Data	Master product version: 18 2
+07:42:13.380510	B707E1202	Unk-DataId	Master product version: 18 2
+07:42:14.244256	T807F0000	Read-Data 	Slave product version: 0 0
+07:42:14.379667	B707F0000	Unk-DataId	Slave product version: 0 0
+07:42:15.248222	T00593C00	Read-Data 	TSP setting V/H: 60 0
+07:42:15.383582	B40593C64	Read-Ack  	TSP setting V/H: 60 100
+07:42:16.246067	T10020012	Write-Data	Master configuration: 00000000 18
+07:42:16.381204	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:42:17.246934	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:42:17.379829	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:42:18.244916	T10470002	Write-Data	Control setpoint V/H: 2
+07:42:18.381485	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:42:19.243701	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:42:19.380409	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:42:20.245667	T004D0000	Read-Data 	Relative ventilation: 0
+07:42:20.379208	B404D0037	Read-Ack  	Relative ventilation: 55
+07:42:21.247965	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:42:21.383359	BC0500999	Read-Ack  	Supply inlet temperature: 9.60
+07:42:22.245140	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:42:22.379912	BC05214E6	Read-Ack  	Exhaust inlet temperature: 20.90
+07:42:23.248924	T107E1202	Write-Data	Master product version: 18 2
+07:42:23.378235	B707E1202	Unk-DataId	Master product version: 18 2
+07:42:24.246535	T807F0000	Read-Data 	Slave product version: 0 0
+07:42:24.378927	B707F0000	Unk-DataId	Slave product version: 0 0
+07:42:25.245443	T80593D00	Read-Data 	TSP setting V/H: 61 0
+07:42:25.377925	B40593D00	Read-Ack  	TSP setting V/H: 61 0
+07:42:26.248227	T10020012	Write-Data	Master configuration: 00000000 18
+07:42:26.377937	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:42:27.246827	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:42:27.377349	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:42:28.244507	T10470002	Write-Data	Control setpoint V/H: 2
+07:42:28.374923	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:42:29.245447	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:42:29.377841	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:42:30.243320	T004D0000	Read-Data 	Relative ventilation: 0
+07:42:30.377156	B404D0037	Read-Ack  	Relative ventilation: 55
+07:42:31.246479	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:42:31.376583	BC0500999	Read-Ack  	Supply inlet temperature: 9.60
+07:42:32.248189	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:42:32.376538	BC05214E6	Read-Ack  	Exhaust inlet temperature: 20.90
+07:42:33.247655	T107E1202	Write-Data	Master product version: 18 2
+07:42:33.375312	B707E1202	Unk-DataId	Master product version: 18 2
+07:42:34.245604	T807F0000	Read-Data 	Slave product version: 0 0
+07:42:34.377706	B707F0000	Unk-DataId	Slave product version: 0 0
+07:42:35.249729	T80593E00	Read-Data 	TSP setting V/H: 62 0
+07:42:35.376863	BC0593E64	Read-Ack  	TSP setting V/H: 62 100
+07:42:36.244979	T10020012	Write-Data	Master configuration: 00000000 18
+07:42:36.375851	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:42:37.248446	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:42:37.374395	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:42:38.246248	T10470002	Write-Data	Control setpoint V/H: 2
+07:42:38.374297	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:42:39.242821	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:42:39.374381	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:42:40.244970	T004D0000	Read-Data 	Relative ventilation: 0
+07:42:40.375850	B404D0037	Read-Ack  	Relative ventilation: 55
+07:42:41.244343	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:42:41.376308	BC0500999	Read-Ack  	Supply inlet temperature: 9.60
+07:42:42.256858	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:42:42.373085	BC05214E6	Read-Ack  	Exhaust inlet temperature: 20.90
+07:42:43.244933	T107E1202	Write-Data	Master product version: 18 2
+07:42:43.372490	B707E1202	Unk-DataId	Master product version: 18 2
+07:42:44.246998	T807F0000	Read-Data 	Slave product version: 0 0
+07:42:44.372447	B707F0000	Unk-DataId	Slave product version: 0 0
+07:42:45.246463	T00593F00	Read-Data 	TSP setting V/H: 63 0
+07:42:45.372042	BC0593F00	Read-Ack  	TSP setting V/H: 63 0
+07:42:46.245277	T10020012	Write-Data	Master configuration: 00000000 18
+07:42:46.373121	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:42:47.246072	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:42:47.372679	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:42:48.249255	T10470002	Write-Data	Control setpoint V/H: 2
+07:42:48.372349	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:42:49.245350	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:42:49.370993	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:42:50.260697	T004D0000	Read-Data 	Relative ventilation: 0
+07:42:50.371079	B404D0037	Read-Ack  	Relative ventilation: 55
+07:42:51.258746	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:42:51.371015	B405009E6	Read-Ack  	Supply inlet temperature: 9.90
+07:42:52.260964	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:42:52.370576	B405214CC	Read-Ack  	Exhaust inlet temperature: 20.80
+07:42:53.258219	T107E1202	Write-Data	Master product version: 18 2
+07:42:53.371183	B707E1202	Unk-DataId	Master product version: 18 2
+07:42:54.260908	T807F0000	Read-Data 	Slave product version: 0 0
+07:42:54.370923	B707F0000	Unk-DataId	Slave product version: 0 0
+07:42:55.257376	T80594000	Read-Data 	TSP setting V/H: 64 0
+07:42:55.369021	B405940BB	Read-Ack  	TSP setting V/H: 64 187
+07:42:56.256920	T10020012	Write-Data	Master configuration: 00000000 18
+07:42:56.367535	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:42:57.257513	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:42:57.367803	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:42:58.256000	T10470002	Write-Data	Control setpoint V/H: 2
+07:42:58.366459	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:42:59.257683	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:42:59.366261	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:43:00.256743	T004D0000	Read-Data 	Relative ventilation: 0
+07:43:00.366991	B404D0037	Read-Ack  	Relative ventilation: 55
+07:43:01.258507	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:43:01.367022	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:43:02.255950	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:43:02.366590	B405214CC	Read-Ack  	Exhaust inlet temperature: 20.80
+07:43:03.257748	T107E1202	Write-Data	Master product version: 18 2
+07:43:03.366127	B707E1202	Unk-DataId	Master product version: 18 2
+07:43:04.258352	T807F0000	Read-Data 	Slave product version: 0 0
+07:43:04.368878	B707F0000	Unk-DataId	Slave product version: 0 0
+07:43:05.261663	T00594100	Read-Data 	TSP setting V/H: 65 0
+07:43:05.368341	B40594101	Read-Ack  	TSP setting V/H: 65 1
+07:43:06.258515	T10020012	Write-Data	Master configuration: 00000000 18
+07:43:06.366997	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:43:07.256814	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:43:07.367196	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:43:08.261133	T10470002	Write-Data	Control setpoint V/H: 2
+07:43:08.365736	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:43:09.260785	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:43:09.364804	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:43:10.259683	T004D0000	Read-Data 	Relative ventilation: 0
+07:43:10.366110	B404D0037	Read-Ack  	Relative ventilation: 55
+07:43:11.257292	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:43:11.366448	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:43:12.261872	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:43:12.365530	BC05214E6	Read-Ack  	Exhaust inlet temperature: 20.90
+07:43:13.259509	T107E1202	Write-Data	Master product version: 18 2
+07:43:13.364135	B707E1202	Unk-DataId	Master product version: 18 2
+07:43:14.262126	T807F0000	Read-Data 	Slave product version: 0 0
+07:43:14.364303	B707F0000	Unk-DataId	Slave product version: 0 0
+07:43:15.259263	T00594200	Read-Data 	TSP setting V/H: 66 0
+07:43:15.364132	B40594267	Read-Ack  	TSP setting V/H: 66 103
+07:43:16.258494	T10020012	Write-Data	Master configuration: 00000000 18
+07:43:16.362552	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:43:17.258554	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:43:17.363000	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:43:18.257070	T10470002	Write-Data	Control setpoint V/H: 2
+07:43:18.362042	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:43:19.258071	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:43:19.362122	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:43:20.256859	T004D0000	Read-Data 	Relative ventilation: 0
+07:43:20.362258	B404D0037	Read-Ack  	Relative ventilation: 55
+07:43:21.257875	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:43:21.360428	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:43:22.256244	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:43:22.361065	BC05214E6	Read-Ack  	Exhaust inlet temperature: 20.90
+07:43:23.316610	T107E1202	Write-Data	Master product version: 18 2
+07:43:23.546287	B707E1202	Unk-DataId	Master product version: 18 2
+07:43:24.257327	T807F0000	Read-Data 	Slave product version: 0 0
+07:43:24.366182	B707F0000	Unk-DataId	Slave product version: 0 0
+07:43:25.257417	T80594300	Read-Data 	TSP setting V/H: 67 0
+07:43:25.362149	B40594300	Read-Ack  	TSP setting V/H: 67 0
+07:43:26.259103	T10020012	Write-Data	Master configuration: 00000000 18
+07:43:26.362671	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:43:27.257186	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:43:27.362034	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:43:28.258311	T10470002	Write-Data	Control setpoint V/H: 2
+07:43:28.362623	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:43:29.256547	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:43:29.360034	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:43:30.257352	T004D0000	Read-Data 	Relative ventilation: 0
+07:43:30.359653	B404D0037	Read-Ack  	Relative ventilation: 55
+07:43:31.256170	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:43:31.357705	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:43:32.260502	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:43:32.358197	B405214CC	Read-Ack  	Exhaust inlet temperature: 20.80
+07:43:33.257070	T107E1202	Write-Data	Master product version: 18 2
+07:43:33.361669	B707E1202	Unk-DataId	Master product version: 18 2
+07:43:34.258980	T807F0000	Read-Data 	Slave product version: 0 0
+07:43:34.359287	B707F0000	Unk-DataId	Slave product version: 0 0
+07:43:35.259098	T00594400	Read-Data 	TSP setting V/H: 68 0
+07:43:35.360829	BC0594400	Read-Ack  	TSP setting V/H: 68 0
+07:43:36.257378	T10020012	Write-Data	Master configuration: 00000000 18
+07:43:36.357025	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:43:37.259343	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:43:37.357142	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:43:38.260268	T10470002	Write-Data	Control setpoint V/H: 2
+07:43:38.358463	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:43:39.260109	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:43:39.357206	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:43:40.262781	T004D0000	Read-Data 	Relative ventilation: 0
+07:43:40.357358	B404D0037	Read-Ack  	Relative ventilation: 55
+07:43:41.258799	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:43:41.360791	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:43:42.261132	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:43:42.358241	BC05214E6	Read-Ack  	Exhaust inlet temperature: 20.90
+07:43:43.257261	T107E1202	Write-Data	Master product version: 18 2
+07:43:43.357250	B707E1202	Unk-DataId	Master product version: 18 2
+07:43:44.257722	T807F0000	Read-Data 	Slave product version: 0 0
+07:43:44.356024	B707F0000	Unk-DataId	Slave product version: 0 0
+07:43:45.258918	T00590000	Read-Data 	TSP setting V/H: 0 0
+07:43:45.356310	B40590032	Read-Ack  	TSP setting V/H: 0 50
+07:43:46.257735	T10020012	Write-Data	Master configuration: 00000000 18
+07:43:46.359249	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:43:47.258295	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:43:47.357702	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:43:48.260630	T10470002	Write-Data	Control setpoint V/H: 2
+07:43:48.356648	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:43:49.261270	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:43:49.355511	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:43:50.260096	T004D0000	Read-Data 	Relative ventilation: 0
+07:43:50.362486	B404D0037	Read-Ack  	Relative ventilation: 55
+07:43:51.257256	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:43:51.358355	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:43:52.260623	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:43:52.358834	BC0521500	Read-Ack  	Exhaust inlet temperature: 21.00
+07:43:53.257243	T107E1202	Write-Data	Master product version: 18 2
+07:43:53.357329	B707E1202	Unk-DataId	Master product version: 18 2
+07:43:54.258974	T807F0000	Read-Data 	Slave product version: 0 0
+07:43:54.355864	B707F0000	Unk-DataId	Slave product version: 0 0
+07:43:55.260090	T80590100	Read-Data 	TSP setting V/H: 1 0
+07:43:55.356433	B40590100	Read-Ack  	TSP setting V/H: 1 0
+07:43:56.258178	T10020012	Write-Data	Master configuration: 00000000 18
+07:43:56.355218	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:43:57.258840	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:43:57.355031	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:43:58.257887	T10470002	Write-Data	Control setpoint V/H: 2
+07:43:58.354941	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:43:59.300984	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:43:59.454850	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:44:00.300764	T004D0000	Read-Data 	Relative ventilation: 0
+07:44:00.456666	B404D0037	Read-Ack  	Relative ventilation: 55
+07:44:01.299257	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:44:01.454053	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:44:02.259063	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:44:02.357839	BC0521500	Read-Ack  	Exhaust inlet temperature: 21.00
+07:44:03.258980	T107E1202	Write-Data	Master product version: 18 2
+07:44:03.355027	B707E1202	Unk-DataId	Master product version: 18 2
+07:44:04.260097	T807F0000	Read-Data 	Slave product version: 0 0
+07:44:04.354432	B707F0000	Unk-DataId	Slave product version: 0 0
+07:44:05.259295	T80590200	Read-Data 	TSP setting V/H: 2 0
+07:44:05.352584	BC0590264	Read-Ack  	TSP setting V/H: 2 100
+07:44:06.257723	T10020012	Write-Data	Master configuration: 00000000 18
+07:44:06.353506	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:44:07.258025	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:44:07.354075	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:44:08.257997	T10470002	Write-Data	Control setpoint V/H: 2
+07:44:08.352041	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:44:09.259959	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:44:09.350729	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:44:10.257394	T004D0000	Read-Data 	Relative ventilation: 0
+07:44:10.351279	B404D0037	Read-Ack  	Relative ventilation: 55
+07:44:11.258685	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:44:11.350393	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:44:12.257450	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:44:12.354184	BC0521500	Read-Ack  	Exhaust inlet temperature: 21.00
+07:44:13.258888	T107E1202	Write-Data	Master product version: 18 2
+07:44:13.353711	B707E1202	Unk-DataId	Master product version: 18 2
+07:44:14.258563	T807F0000	Read-Data 	Slave product version: 0 0
+07:44:14.350539	B707F0000	Unk-DataId	Slave product version: 0 0
+07:44:15.257387	T00590300	Read-Data 	TSP setting V/H: 3 0
+07:44:15.349566	BC0590300	Read-Ack  	TSP setting V/H: 3 0
+07:44:16.262373	T10020012	Write-Data	Master configuration: 00000000 18
+07:44:16.351620	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:44:17.258452	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:44:17.349209	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:44:18.260010	T10470002	Write-Data	Control setpoint V/H: 2
+07:44:18.350809	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:44:19.257036	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:44:19.350047	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:44:20.260471	T004D0000	Read-Data 	Relative ventilation: 0
+07:44:20.355499	B404D0037	Read-Ack  	Relative ventilation: 55
+07:44:21.258786	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:44:21.351103	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:44:22.261001	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:44:22.352865	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:44:23.258984	T107E1202	Write-Data	Master product version: 18 2
+07:44:23.350572	B707E1202	Unk-DataId	Master product version: 18 2
+07:44:24.257829	T807F0000	Read-Data 	Slave product version: 0 0
+07:44:24.349253	B707F0000	Unk-DataId	Slave product version: 0 0
+07:44:25.259665	T80590400	Read-Data 	TSP setting V/H: 4 0
+07:44:25.351896	B405904B4	Read-Ack  	TSP setting V/H: 4 180
+07:44:26.257904	T10020012	Write-Data	Master configuration: 00000000 18
+07:44:26.349583	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:44:27.259032	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:44:27.350355	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:44:28.258277	T10470002	Write-Data	Control setpoint V/H: 2
+07:44:28.349693	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:44:29.259836	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:44:29.350374	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:44:30.258411	T004D0000	Read-Data 	Relative ventilation: 0
+07:44:30.350298	B404D0037	Read-Ack  	Relative ventilation: 55
+07:44:31.259706	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:44:31.354600	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:44:32.256945	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:44:32.352081	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:44:33.259753	T107E1202	Write-Data	Master product version: 18 2
+07:44:33.351706	B707E1202	Unk-DataId	Master product version: 18 2
+07:44:34.259851	T807F0000	Read-Data 	Slave product version: 0 0
+07:44:34.351732	B707F0000	Unk-DataId	Slave product version: 0 0
+07:44:35.260492	T00590500	Read-Data 	TSP setting V/H: 5 0
+07:44:35.350481	BC0590500	Read-Ack  	TSP setting V/H: 5 0
+07:44:36.258724	T10020012	Write-Data	Master configuration: 00000000 18
+07:44:36.351971	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:44:37.257687	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:44:37.349130	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:44:38.259063	T10470002	Write-Data	Control setpoint V/H: 2
+07:44:38.353862	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:44:39.258510	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:44:39.349137	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:44:40.258699	T004D0000	Read-Data 	Relative ventilation: 0
+07:44:40.350751	B404D0037	Read-Ack  	Relative ventilation: 55
+07:44:41.257484	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:44:41.349808	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:44:42.259246	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:44:42.351597	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:44:43.257964	T107E1202	Write-Data	Master product version: 18 2
+07:44:43.349005	B707E1202	Unk-DataId	Master product version: 18 2
+07:44:44.260861	T807F0000	Read-Data 	Slave product version: 0 0
+07:44:44.354436	B707F0000	Unk-DataId	Slave product version: 0 0
+07:44:45.258382	T00590600	Read-Data 	TSP setting V/H: 6 0
+07:44:45.353740	BC0590614	Read-Ack  	TSP setting V/H: 6 20
+07:44:46.259575	T10020012	Write-Data	Master configuration: 00000000 18
+07:44:46.349690	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:44:47.260517	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:44:47.351440	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:44:48.259923	T10470002	Write-Data	Control setpoint V/H: 2
+07:44:48.351310	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:44:49.259714	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:44:49.352727	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:44:50.260412	T004D0000	Read-Data 	Relative ventilation: 0
+07:44:50.351664	B404D0037	Read-Ack  	Relative ventilation: 55
+07:44:51.257517	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:44:51.350359	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:44:52.257100	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:44:52.348609	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:44:53.260119	T107E1202	Write-Data	Master product version: 18 2
+07:44:53.349662	B707E1202	Unk-DataId	Master product version: 18 2
+07:44:54.258634	T807F0000	Read-Data 	Slave product version: 0 0
+07:44:54.349269	B707F0000	Unk-DataId	Slave product version: 0 0
+07:44:55.258384	T80590700	Read-Data 	TSP setting V/H: 7 0
+07:44:55.351942	BC059072C	Read-Ack  	TSP setting V/H: 7 44
+07:44:56.259465	T10020012	Write-Data	Master configuration: 00000000 18
+07:44:56.351296	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:44:57.257927	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:44:57.349838	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:44:58.259077	T10470002	Write-Data	Control setpoint V/H: 2
+07:44:58.351051	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:44:59.258253	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:44:59.349632	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:45:00.259318	T004D0000	Read-Data 	Relative ventilation: 0
+07:45:00.352693	B404D0037	Read-Ack  	Relative ventilation: 55
+07:45:01.257546	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:45:01.349421	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:45:02.259817	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:45:02.351473	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:45:03.260008	T107E1202	Write-Data	Master product version: 18 2
+07:45:03.352790	B707E1202	Unk-DataId	Master product version: 18 2
+07:45:04.259912	T807F0000	Read-Data 	Slave product version: 0 0
+07:45:04.351495	B707F0000	Unk-DataId	Slave product version: 0 0
+07:45:05.257164	T80590B00	Read-Data 	TSP setting V/H: 11 0
+07:45:05.350445	BC0590B64	Read-Ack  	TSP setting V/H: 11 100
+07:45:06.257068	T10020012	Write-Data	Master configuration: 00000000 18
+07:45:06.350180	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:45:07.257475	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:45:07.351097	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:45:08.259918	T10470002	Write-Data	Control setpoint V/H: 2
+07:45:08.350352	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:45:09.258838	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:45:09.350322	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:45:10.258724	T004D0000	Read-Data 	Relative ventilation: 0
+07:45:10.349741	B404D0037	Read-Ack  	Relative ventilation: 55
+07:45:11.260913	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:45:11.350034	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:45:12.260059	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:45:12.348647	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:45:13.260523	T107E1202	Write-Data	Master product version: 18 2
+07:45:13.350989	B707E1202	Unk-DataId	Master product version: 18 2
+07:45:14.261056	T807F0000	Read-Data 	Slave product version: 0 0
+07:45:14.349726	B707F0000	Unk-DataId	Slave product version: 0 0
+07:45:15.257342	T00591100	Read-Data 	TSP setting V/H: 17 0
+07:45:15.350783	B40591101	Read-Ack  	TSP setting V/H: 17 1
+07:45:16.312408	T10020012	Write-Data	Master configuration: 00000000 18
+07:45:16.444549	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:45:17.311336	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:45:17.443811	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:45:18.259294	T10470002	Write-Data	Control setpoint V/H: 2
+07:45:18.349737	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:45:19.259905	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:45:19.352260	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:45:20.258228	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:45:20.349701	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:45:21.260124	T004D0000	Read-Data 	Relative ventilation: 0
+07:45:21.350035	B404D0037	Read-Ack  	Relative ventilation: 55
+07:45:22.261816	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:45:22.351545	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:45:23.258580	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:45:23.349981	B40521519	Read-Ack  	Exhaust inlet temperature: 21.10
+07:45:24.260765	T107E1202	Write-Data	Master product version: 18 2
+07:45:24.351812	B707E1202	Unk-DataId	Master product version: 18 2
+07:45:25.258105	T807F0000	Read-Data 	Slave product version: 0 0
+07:45:25.350236	B707F0000	Unk-DataId	Slave product version: 0 0
+07:45:26.258626	T00591200	Read-Data 	TSP setting V/H: 18 0
+07:45:26.349625	BC0591200	Read-Ack  	TSP setting V/H: 18 0
+07:45:27.260676	T10020012	Write-Data	Master configuration: 00000000 18
+07:45:27.352260	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:45:28.261567	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:45:28.351403	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:45:29.258759	T10470002	Write-Data	Control setpoint V/H: 2
+07:45:29.351158	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:45:30.260360	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:45:30.352374	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:45:31.258325	T004D0000	Read-Data 	Relative ventilation: 0
+07:45:31.349824	B404D0037	Read-Ack  	Relative ventilation: 55
+07:45:32.260772	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:45:32.352054	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:45:33.258331	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:45:33.350273	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:45:34.262626	T107E1202	Write-Data	Master product version: 18 2
+07:45:34.351914	B707E1202	Unk-DataId	Master product version: 18 2
+07:45:35.258786	T807F0000	Read-Data 	Slave product version: 0 0
+07:45:35.351497	B707F0000	Unk-DataId	Slave product version: 0 0
+07:45:36.258487	T80591300	Read-Data 	TSP setting V/H: 19 0
+07:45:36.350162	BC0591302	Read-Ack  	TSP setting V/H: 19 2
+07:45:37.312276	T10020012	Write-Data	Master configuration: 00000000 18
+07:45:37.441535	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:45:38.313462	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:45:38.443665	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:45:39.314845	T10470002	Write-Data	Control setpoint V/H: 2
+07:45:39.441792	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:45:40.259824	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:45:40.351257	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:45:41.258947	T004D0000	Read-Data 	Relative ventilation: 0
+07:45:41.349392	B404D0037	Read-Ack  	Relative ventilation: 55
+07:45:42.260266	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:45:42.351066	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:45:43.257987	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:45:43.349419	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:45:44.258882	T107E1202	Write-Data	Master product version: 18 2
+07:45:44.351316	B707E1202	Unk-DataId	Master product version: 18 2
+07:45:45.257957	T807F0000	Read-Data 	Slave product version: 0 0
+07:45:45.350677	B707F0000	Unk-DataId	Slave product version: 0 0
+07:45:46.259075	T00591400	Read-Data 	TSP setting V/H: 20 0
+07:45:46.349544	BC0591400	Read-Ack  	TSP setting V/H: 20 0
+07:45:47.259750	T10020012	Write-Data	Master configuration: 00000000 18
+07:45:47.352768	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:45:48.261968	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:45:48.351013	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:45:49.257997	T10470002	Write-Data	Control setpoint V/H: 2
+07:45:49.350014	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:45:50.261338	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:45:50.350886	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:45:51.259962	T004D0000	Read-Data 	Relative ventilation: 0
+07:45:51.349946	B404D0037	Read-Ack  	Relative ventilation: 55
+07:45:52.272536	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:45:52.366055	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:45:53.257576	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:45:53.349478	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:45:54.261065	T107E1202	Write-Data	Master product version: 18 2
+07:45:54.351066	B707E1202	Unk-DataId	Master product version: 18 2
+07:45:55.260912	T807F0000	Read-Data 	Slave product version: 0 0
+07:45:55.350144	B707F0000	Unk-DataId	Slave product version: 0 0
+07:45:56.260098	T00591700	Read-Data 	TSP setting V/H: 23 0
+07:45:56.349560	B40591701	Read-Ack  	TSP setting V/H: 23 1
+07:45:57.259840	T10020012	Write-Data	Master configuration: 00000000 18
+07:45:57.351135	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:45:58.259136	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:45:58.349703	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:45:59.259613	T10470002	Write-Data	Control setpoint V/H: 2
+07:45:59.351844	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:46:00.256603	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:46:00.350279	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:46:01.272497	T004D0000	Read-Data 	Relative ventilation: 0
+07:46:01.365876	B404D0037	Read-Ack  	Relative ventilation: 55
+07:46:02.270365	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:46:02.361805	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:46:03.273110	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:46:03.440638	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:46:04.273919	T107E1202	Write-Data	Master product version: 18 2
+07:46:04.440492	B707E1202	Unk-DataId	Master product version: 18 2
+07:46:05.275042	T807F0000	Read-Data 	Slave product version: 0 0
+07:46:05.440012	B707F0000	Unk-DataId	Slave product version: 0 0
+07:46:06.272651	T00591800	Read-Data 	TSP setting V/H: 24 0
+07:46:06.440772	BC0591800	Read-Ack  	TSP setting V/H: 24 0
+07:46:07.271627	T10020012	Write-Data	Master configuration: 00000000 18
+07:46:07.363206	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:46:08.274247	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:46:08.440842	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:46:09.269691	T10470002	Write-Data	Control setpoint V/H: 2
+07:46:09.436008	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:46:10.275588	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:46:10.436769	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:46:11.270831	T004D0000	Read-Data 	Relative ventilation: 0
+07:46:11.437278	B404D0037	Read-Ack  	Relative ventilation: 55
+07:46:12.273589	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:46:12.438929	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:46:13.269361	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:46:13.434201	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:46:14.273621	T107E1202	Write-Data	Master product version: 18 2
+07:46:14.436407	B707E1202	Unk-DataId	Master product version: 18 2
+07:46:15.272222	T807F0000	Read-Data 	Slave product version: 0 0
+07:46:15.436696	B707F0000	Unk-DataId	Slave product version: 0 0
+07:46:16.273993	T00593000	Read-Data 	TSP setting V/H: 48 0
+07:46:16.435676	BC05930B4	Read-Ack  	TSP setting V/H: 48 180
+07:46:17.301800	T10020012	Write-Data	Master configuration: 00000000 18
+07:46:17.487351	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:46:18.270645	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:46:18.437147	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:46:19.272674	T10470002	Write-Data	Control setpoint V/H: 2
+07:46:19.433606	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:46:20.270952	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:46:20.433866	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:46:21.274820	T004D0000	Read-Data 	Relative ventilation: 0
+07:46:21.432808	B404D0037	Read-Ack  	Relative ventilation: 55
+07:46:22.271411	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:46:22.437369	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:46:23.275604	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:46:23.434345	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:46:24.270926	T107E1202	Write-Data	Master product version: 18 2
+07:46:24.431520	B707E1202	Unk-DataId	Master product version: 18 2
+07:46:25.272441	T807F0000	Read-Data 	Slave product version: 0 0
+07:46:25.430082	B707F0000	Unk-DataId	Slave product version: 0 0
+07:46:26.278546	T80593100	Read-Data 	TSP setting V/H: 49 0
+07:46:26.436107	B40593100	Read-Ack  	TSP setting V/H: 49 0
+07:46:27.274367	T10020012	Write-Data	Master configuration: 00000000 18
+07:46:27.432559	BD0020012	Write-Ack 	Master configuration: 00000000 18
+07:46:28.272152	T00460100	Read-Data 	Status V/H: 00000001 00000000
+07:46:28.437329	B40460102	Read-Ack  	Status V/H: 00000001 00000010
+07:46:29.281403	T10470002	Write-Data	Control setpoint V/H: 2
+07:46:29.427155	BD0470002	Write-Ack 	Control setpoint V/H: 2
+07:46:30.279845	T804A0000	Read-Data 	Configuration/memberid V/H: 00000000 0
+07:46:30.425885	B404A0500	Read-Ack  	Configuration/memberid V/H: 00000101 0
+07:46:31.294999	T004D0000	Read-Data 	Relative ventilation: 0
+07:46:31.426147	B404D0037	Read-Ack  	Relative ventilation: 55
+07:46:32.282543	T00500000	Read-Data 	Supply inlet temperature: 0.00
+07:46:32.425234	BC0500A33	Read-Ack  	Supply inlet temperature: 10.20
+07:46:33.272019	T80520000	Read-Data 	Exhaust inlet temperature: 0.00
+07:46:33.425271	BC0521533	Read-Ack  	Exhaust inlet temperature: 21.20
+07:46:34.278777	T107E1202	Write-Data	Master product version: 18 2
+07:46:34.438005	B707E1202	Unk-DataId	Master product version: 18 2

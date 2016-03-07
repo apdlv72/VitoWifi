@@ -1,0 +1,11 @@
+02   2		OK
+46  70		OK	
+47  71		OK
+    72			(otgw, not seen on own)
+4A  74		OK
+4D  77		OK
+50  80		OK
+52  82		OK
+59  89		OK
+7E 126		OK(x)
+7F 127		OK(x)
