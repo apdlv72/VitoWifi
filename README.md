@@ -3,6 +3,9 @@ home ventilation unit via a OpenTherm Gateway and a WiFi connection.
 
 Vitovent is a registered trademark held by the German manufacturer Viessman.
 It is a device used for automatic home ventilation with heat recovery.
+For more detail please check the manufacturer's page:
+http://www.viessmann.de/de/wohngebaeude/wohnungslueftung/zentrale_wohnungslueftung/vitovent-300-w.html
+
 The actual ventilation unit is communicating with the remote controller via a 
 2-wire cable connection using the OpenTherm protocol. 
 Since the controller has only very limited capabilities, I wanted more control 
@@ -65,6 +68,7 @@ show the current fan speed by flashing at different speeds.
 GPIO2 can be used to attach one ore more temperature sensors. A 4k7 pullup must be
 used between this pin and Vcc in this case:
 
+TODO: Add fritzing wiring diagram here instead of ascii art.
 <pre>
                                    -----*-----------------------*-----> +3.3v
                                    |    |                       |
@@ -74,7 +78,7 @@ used between this pin and Vcc in this case:
  |        Tx|--->|      3V3|-------|----|-------->|Rx |Vcc|-----*
  |          |    | AN10441 |       |    |  LED    |---+---|     |
  |          |    |   or    |       |    ---|>|--->|IO0|Rst|     |
- |   OTGW   |    | PCA9306 |              |---+---|     |
+ |   OTGW   |    | PCA9306 |       |              |---+---|     |
  |          |    |         |       *--------------|IO2|Enb|-----*
  |        Rx|<---|5V       |<--    |              |---+---|     |
  |__________|    |_________|   |   | sensors      |GND| Tx|     |
