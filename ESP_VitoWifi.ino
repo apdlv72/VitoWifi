@@ -312,12 +312,15 @@ struct {
 	  } wifi;
       #endif
   }        lastMsg;         // time (millis()) when last message was received
-  int16_t  ventSetpoint; 	// as set by controller
-  int16_t  ventOverride; 	// as overridden by OTGW
-  int16_t  ventRelative; 	// as reported by ventilation
-  int16_t  tempSupply;  	// milli Celsius (inlet)
-  int16_t  tempExhaust;  	// milli Celsius (inlet)
-  int16_t  tsps[64];  	 	// transparent slave parameters
+  
+  int16_t  ventSetpoint; 	 // as set by controller
+  int16_t  ventOverride; 	 // as overridden by OTGW (sent to slave instead of ventSetpoint)
+  int16_t  ventAcknowledged; // by the slave, sent to OTGW 
+  int16_t  ventReported;     // from OTGW to controller, pretending level is as requested (ventSetpoint)
+  int16_t  ventRelative; 	 // as reported by ventilation
+  int16_t  tempSupply;  	 // milli Celsius (inlet)
+  int16_t  tempExhaust;  	 // milli Celsius (inlet)
+  int16_t  tsps[64];  	 	 // transparent slave parameters
   
   struct { 
 	  Value master; 
@@ -355,7 +358,7 @@ struct {
 	  
 	  // unexpected messages of various types
 	  struct { 
-		  long T; long B; long R; long A; 
+		  long T; long B; long R; long A; long zero; 
 	  } unexpected;
 	  
   } messages; // number of messages received
@@ -515,6 +518,13 @@ int onMasterMessage(OTMessage& m) {
 		switch (m.type) {
 		case OTMessage::MT_READ_DATA:
 		case OTMessage::MT_WRITE_DATA:
+			
+			switch (m.dataid) {
+			case OTMessage::DI_CONTROL_SETPOINT:   
+				state.ventSetpoint = m.lo;
+				break;
+			}
+			
 			state.messages.expected.T++;
 			return RC_OK; // ACKs from slave will be more usefull than these
 		}
@@ -549,7 +559,7 @@ int onSlaveMessage(OTMessage& m) {
 		switch (m.dataid) {
 	
 		case OTMessage::DI_CONTROL_SETPOINT:   
-			state.ventSetpoint = m.lo;
+			state.ventAcknowledged = m.lo;
 			return RC_OK;
 		case OTMessage::DI_REL_VENTILATION:    
 			state.ventRelative = m.lo;
@@ -602,10 +612,12 @@ int onRequestMessage(OTMessage& m) {
 	
 	state.messages.expected.R++; {
 		switch (m.dataid) {
-		// OTGW pretending towards slave that controller wants to set this ventilation level,
+		// OTGW pretending towards the slave that controller wants to set this ventilation level,
 		// e.g. R90470003	WRITE-DATA	CONTROL SETPOINT V/H: 3
-		case OTMessage::DI_CONTROL_SETPOINT:   
-			state.ventOverride = m.lo;
+		case OTMessage::DI_CONTROL_SETPOINT:
+			// Hmm.. sometimes it does, sometime is does not.
+			// Therefore saving this vakue now in overrideVentSetPoint() 
+			//state.ventOverride = m.lo;
 			return RC_OK;
 		}
 	} state.messages.expected.R--; // revoke former increment
@@ -616,8 +628,13 @@ int onRequestMessage(OTMessage& m) {
 int onAnswerMessage(OTMessage& m) {
 	
 	state.messages.expected.A++; {
-	//switch (m.dataid) {
-	//}
+		switch (m.dataid) {
+			case OTMessage::DI_CONTROL_SETPOINT:
+				state.ventReported=m.lo;
+				// OTGW answering to controller, pretending the current ventilation
+				// level is the one that was requested by the controller before.
+				return 0;
+		}
 	} state.messages.expected.A--; // revoke former increment
 	
 	return onUnexpectedMessage('A', m);
@@ -654,6 +671,13 @@ String onOTGWMessage(String line, boolean feed) {
 		  state.messages.expected.otgw++;
 	  }
 	  return String("ACK:'")+line + "'\n"; // adding white space causes flush??
+  }
+  
+  // This message sent by OTGW if there is no controller connected, probably
+  // to fulfill OpneTherm specs (at least 1 msg/sec sent)
+  if (line.startsWith("R00000000")) {
+	  state.messages.unexpected.zero++;
+	  return String("NOCONN:'")+line+"\n";
   }
   
   String rc;
@@ -731,11 +755,13 @@ String onOTGWMessage(String line, boolean feed) {
 
 int overrideVentSetPoint(int level) {
   level = level<LEVEL_OFF ? LEVEL_OFF : level>LEVEL_HIGH ? LEVEL_HIGH : level;
-  Serial.print("GW=1\r\n"); 
-  Serial.print("GW=1\n"); 
-  Serial.print("GW=1\r"); 
-  Serial.print("VS="); Serial.print(level); Serial.print("\r\n");
-  Serial.print("VS="); Serial.print(level); Serial.print("\n");
+  for (int i=0; i<3; i++) {
+	  Serial.print("GW=1\r\n");
+	  delay(10);
+	  Serial.print("VS="); Serial.print(level); Serial.print("\r\n");
+	  delay(20);
+  }
+  state.ventOverride = level;
 }
 
 
@@ -1216,7 +1242,7 @@ String upTime() {
 	long mins = secs / 60; secs %= 60;
 	long hrs  = mins / 60; mins %= 60;
 	long days = hrs  / 24; hrs  %= 24; 	
-	String t = String(days) + "d, " + hrs + "h, " + mins + "m, " + secs + "s";
+	String t = String(days) + "d," + hrs + "h," + mins + "m," + secs + "s";
 	return t;
 }
 
@@ -1235,7 +1261,7 @@ void handleStatus() {
 				#endif
 		   "},\n"	
 	    "  \"dbg\":{\"level\":" + DEBUG_LEVEL + "},\n"
-		"  \"vent\":{\"setpoint\":" + state.ventSetpoint + ",\"override\":" + state.ventOverride + ",\"relative\":" + state.ventRelative + "},\n"
+		"  \"vent\":{\"set\":" + state.ventSetpoint + ",\"override\":" + state.ventOverride + ",\"ackn\":" + state.ventAcknowledged + ",\"reported\":" + state.ventReported + ",\"relative\":" + state.ventRelative + "},\n"
 		"  \"temp\":{\"supply\":"   + state.tempSupply   + ",\"exhaust\":" + state.tempExhaust + "},\n"
 		"  \"status\":["            + state.status.hi           + "," + state.status.lo           + "],\n"
 		"  \"faultFlagsCode\":["    + state.faultFlagsCode.hi   + "," + state.faultFlagsCode.lo   + "],\n"
@@ -1259,6 +1285,7 @@ void handleStatus() {
 				"\"T\":" + state.messages.unexpected.T + ","
 				"\"B\":" + state.messages.unexpected.B + ","
 				"\"R\":" + state.messages.unexpected.R + ","
+				"\"zero\":" + state.messages.unexpected.zero + ","
 				"\"A\":" + state.messages.unexpected.A + "}\n"
 		"  },\n";
 
@@ -1552,6 +1579,7 @@ void setup() {
   // init global state
   state.ventSetpoint = -1;
   state.ventOverride = -1;
+  state.ventReported = -1;
   state.ventRelative = -1;
   state.tempSupply   = -30000; // -300C 
   state.tempExhaust  = -30000;
