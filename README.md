@@ -63,6 +63,7 @@ show the current fan speed by flashing at different speeds.
 GPIO2 can be used to attach one ore more temperature sensors. A 4k7 pullup must be
 used between this pin and Vcc in this case:
 
+<pre>
                                    -----*-----------------------*-----> +3.3v
                                    |    |                       |
                               4k7 | |  | | 220     ESP8266      |
@@ -81,4 +82,4 @@ used between this pin and Vcc in this case:
       |                        |--------------------|---'       -----> GND
      ---                                            |           |
                                                    ---         ---
- 
+ </pre>
