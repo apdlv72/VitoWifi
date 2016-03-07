@@ -21,11 +21,13 @@ called OTGW (OpenTherm Gateway).
 
 The general setup looks as follows:
 
+<pre>
 [Controller] <-----OT-----> [OTGW] <------OT------> [VitoVent]
                                ^
                                | RS232 (* see WARNING2 below)      
                                |     
 [WebBrowser] <----WiFi----> [ESP8666]  
+</pre>
 
 Using this sketch will allow you to collect the information that was intercepted by 
 OTGW and to display it on any (mobile oder desktop) browser.
