@@ -52,13 +52,14 @@ before proxying the request to the ESP running this sketch.
 
 <b>WARNING 2:</b> The ESP is powered by 3.3V while the OTGW needs 5V. Also the logic levels
 on the I/O pins are 0/3.3V and 0/5V. While some people say that the ESP is not 5V
-tolerant, some say that this is a myth. It's up to you to find out who is right and
-to risk to brick a ESP. For safe operation it is recommended to use a logic level
-shifter such as he AN10441 or PCA9306.
+tolerant, some say that this is a myth since the datasheets states that there is some
+electronics to protect agains over voltage.
+It's up to you to find out who is right and to risk to brick a ESP. 
+For safe operation it is recommended to use a logic level shifter such as he AN10441 or 
+PCA9306 or at least to use a voltage divider on the EPS's RX pin.
 
-The Rx/Tx pins of the ESP8266 need to be connected via the level shifter to the
-Tx/Rx pins of the OTGW. Note that the cables need to be crossed thus connecting Rx
-on the one side to Tx on the other side and vice versa.
+Note that the cables need to be crossed thus connecting Rx on the ESP side to Tx on the
+gateway and vice versa.
 
 GPIO0 - which is used during flashing the ESP (must be pulled to ground) - can be
 connected to a LED and a resistor (approx. 200-30Ohms) towards Vcc (3.3V). 
@@ -68,24 +69,4 @@ show the current fan speed by flashing at different speeds.
 GPIO2 can be used to attach one ore more temperature sensors. A 4k7 pullup must be
 used between this pin and Vcc in this case:
 
-TODO: Add fritzing wiring diagram here instead of ascii art.
-<pre>
-                                   -----*-----------------------*-----> +3.3v
-                                   |    |                       |
-                              4k7 | |  | | 220     ESP8266      |
-                                  |_|  |_|         ESP-01       |
-  __________      _________        |    |          -------      |
- |        Tx|--->|      3V3|-------|----|-------->|Rx |Vcc|-----*
- |          |    | AN10441 |       |    |  LED    |---+---|     |
- |          |    |   or    |       |    ---|>|--->|IO0|Rst|     |
- |   OTGW   |    | PCA9306 |       |              |---+---|     |
- |          |    |         |       *--------------|IO2|Enb|-----*
- |        Rx|<---|5V       |<--    |              |---+---|     |
- |__________|    |_________|   |   | sensors      |GND| Tx|     |
-      |            level       |   |               -------      |      Sensors:
-      |            shifter     |   |                |   |       -----> Vcc
-      |                        |   |----------------|---|------------> Data
-      |                        |--------------------|---'       -----> GND
-     ---                                            |           |
-                                                   ---         ---
- </pre>
+<img src="VitoWifi.png">
