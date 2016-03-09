@@ -58,13 +58,13 @@
 
 const String buildNo   = __DATE__ " " __TIME__;
 
-#define LED_HEART 0 // heartbeat 
-#define LED_PIN   2 // blue onboard LED / temp. sensors
+#define LED_HEART 	0 // heartbeat 
+#define LED_ONBOARD 2 // blue onboard LED / temp. sensors
 
-#define LEVEL_OFF  0 // standby, ventilation off
-#define LEVEL_LOW  1 // "reduced" mode (27% for mine ... may vary)
-#define LEVEL_NORM 2 // "normal"  mode (55% for mine) 
-#define LEVEL_HIGH 3 // "party"   mode (100%)
+#define LEVEL_OFF   0 // standby, ventilation off
+#define LEVEL_LOW   1 // "reduced" mode (27% for mine ... may vary)
+#define LEVEL_NORM  2 // "normal"  mode (55% for mine) 
+#define LEVEL_HIGH  3 // "party"   mode (100%)
 
 // result codes of onOTMessage
 #define RC_OK         0	// message handled
@@ -88,8 +88,12 @@ const char HTML_INDEX[] PROGMEM =
 #include "index.html.h"
 		 "<script>var buildNo = '" __DATE__ " " __TIME__ "';</script>";
 ;
+const char HTML_SETUP_AJAX[] PROGMEM =
+#include "setup_ajax.html.h"
+;
 
 // the following pages must not be in PGMEM since we need to do some replacements.
+/*
 const char HTML_SETUP[] =
 #include "setup.html.h"
 ;
@@ -111,6 +115,7 @@ const char HTML_CONFIRMED[] =
 const char HTML_REBOOTING[] =
 #include "rebooting.html.h"
 ;
+*/
 const char favicon_ico[]  =
 #include "favicon.ico.h"
 ;
@@ -379,7 +384,7 @@ typedef struct {
 
 
 // I'm from cologne ;)
-#define MAGIC 4711
+#define MAGIC 4713
 
 // Everything that goes to EEPROM
 struct {	
@@ -405,6 +410,25 @@ String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
 ESP8266WebServer server(HTTP_LISTEN_PORT);
+
+/***************************************************************
+ * 
+ * Heart beat LED 
+ * 
+ */
+
+boolean led_lit=false;
+
+void ledToggle() {
+	led_lit = !led_lit;
+	digitalWrite(LED_HEART, led_lit ? LOW : HIGH);
+}
+
+void ledFlash(int ms) {
+	ledToggle();
+	delay(ms);
+	ledToggle();
+}
 
 /***************************************************************
  * 
@@ -662,6 +686,9 @@ String onOTGWMessage(String line, boolean feed) {
   const char * cstr   = line.c_str();
   char         sender = cstr[0];
   const char * hexstr = cstr+1;
+
+  // Indicate there is some activity:
+  ledFlash(5);
   
   // ACK of OTGW to command 'VS=x' or 'GW=1' messages sent by us.
   // TODO: Might need to try to catch this ack immediately after sending and resend if nowt seen.
@@ -772,16 +799,17 @@ int overrideVentSetPoint(int level) {
  */
 
 boolean readConfiguration() {
-    //dbgln("readConfiguration");
+    dbgln("ZZ=readConfiguration");
 	boolean success = false;
 	uint16_t magic;
 	EEPROM.begin(sizeof(*EE));
 	eEE_READ(EE->magic, magic);
 	
-	//dbg("readConfiguration: magic="); dbgln(magic); 
+	dbg("ZZ=magic="); dbgln(magic); 
 	if (MAGIC==magic) {
 		
 		eEE_READ(EE->configured, configured);
+		dbg("ZZ=configured="); dbgln(configured); 
 		
 		eEE_READ(EE->accessPoint.used, accessPoint.used);
 		if (accessPoint.used) {
@@ -800,7 +828,7 @@ boolean readConfiguration() {
 }
 
 void firstTimeSetup() {
-    //dbgln("ZZ=firstTimeSetup");
+    dbgln("ZZ=firstTimeSetup");
 	
 	EEPROM.begin(sizeof(*EE));
 	
@@ -818,7 +846,24 @@ void firstTimeSetup() {
 
 	EEPROM.commit();
 	EEPROM.end();
-    //dbgln("ZZ=firstTimeSetup done");
+    dbgln("ZZ=firstTimeSetup done");
+}
+
+uint32_t reboots;
+
+void updateReboots() {
+    dbgln("ZZ=updateReboots");
+
+	EEPROM.begin(sizeof(*EE));
+
+	eEE_READ(EE->reboots, reboots);
+	reboots++;
+	dbg("ZZ=reboots="); dbgln(reboots); 
+	eEE_WRITE(reboots, EE->reboots);
+	
+	EEPROM.commit();
+	EEPROM.end();
+    dbgln("ZZ=updateReboots done");
 }
 
 String toStr(IPAddress a) {
@@ -831,24 +876,24 @@ String getAPIP() {
   
 void setupNetwork() {
 	
-	//dbgln("setupNetwork");
+	dbgln("ZZ=setupNetwork");
 	// if configured, try to connect to network first
 	if (homeNetwork.used) {
 		
 	    int retries = 40; //*250ms=10s
 	    
-	    //dbg("Connecting to "); dbgln(homeNetwork.ssid);
+	    dbg("ZZ=connecting to "); dbgln(homeNetwork.ssid);
 	    WiFi.mode(accessPoint.used ? WIFI_AP_STA : WIFI_STA);
 		WiFi.begin(homeNetwork.ssid,  homeNetwork.psk);
 
 	    while (WiFi.status() != WL_CONNECTED && 0<retries--) {
-	      digitalWrite(LED_PIN, retries % 2);
+	      digitalWrite(LED_ONBOARD, retries % 2);
 	      delay(250);
 	      //dbgln("ZZ=.");
 	    }
 	}
 	else {
-		//dbgln("no network set up");
+		dbgln("ZZ=no network set up");
 	}
 	
 	boolean connected = WiFi.status()==WL_CONNECTED;	
@@ -951,9 +996,13 @@ void avoidCaching() {
 
 // Send 320 redirect HTTP response
 void sendRedirect(String path) {
-	String body = String("<htm><body>Please got to <a href=\"") + path + "\">/</a></body></html>";
+	String body = String("<htm><body>Please go to <a href=\"")+path+"\">"+path+"</a></body></html>";
 	server.sendHeader("Location", path);		
 	server.send(302, CT_TEXT_HTML, body);	
+}
+
+void handleIndex() {
+	server.send_P(200, PGM_CT_TEXT_HTML, HTML_INDEX);	
 }
 
 // handle requests to /: if not yet configured, redirect to /setup, otherwise show default page 
@@ -962,7 +1011,7 @@ void handleRoot() {
 		sendRedirect("/setup");
 		return;
 	}
-	server.send_P(200, PGM_CT_TEXT_HTML, HTML_INDEX);	
+	handleIndex();
 }
 
 void handleNotFound() {
@@ -979,6 +1028,7 @@ void handleNotFound() {
 // because this will abort the connection. Instead of this, finish sending the reponse to the
 // client and schedule a reboot after millis() will exceed this value.
 long reboot_scheduled_after = -1;
+
 
 String getLocalAddr() {
 	IPAddress local = WiFi.localIP();
@@ -998,220 +1048,86 @@ void replaceVars(String& body) {
 	body.replace("$ERR$",    "");
 }
 
-void handleSetup() {
+void handleSetupAjax() {
+	server.send_P(200, PGM_CT_TEXT_HTML, HTML_SETUP_AJAX);		
+}
 
-	if (configured) {
-		sendRedirect("/");
-		return;
-	}
+void handleAjax() {
+	String action = server.arg("a");
 	
-	long now = millis();
-	
-	String stage = server.arg("stage");
-	String body;
-
-	dbg("handleSetup: stage="); dbgln(stage);	
-	if (stage=="" || stage=="start") {
-		// show form asking user to enter network credentials
-		dbgln("handleSetup: show form");
-		body = HTML_SETUP;
-	}
-	else if (stage=="save") {
-
-		// validate user form input
+	if (action=="set") { // set network name and password, start to connect
 		String ssid = server.arg("ssid");
 		String psk  = server.arg("psk");
-		
-		if (ssid=="" || ssid=="$SSID$" || psk.length()<8) {
-			// input wrong ... show form again
-			dbgln("handleSetup: input wrong");
-			body = HTML_SETUP;
-			body.replace("$ERR$", "Invalid SSID or password");
+		if (ssid.length()<1 || psk.length()<8) {
+			server.send(200, CT_APPL_JSON, "{\"ok\":false,\"msg\":\"Name or password to short\"}\n");			
 		}
-		else {
-			// input correct ... start polling until connected
-			dbgln("handleSetup: input ok, start polling");
+		else {		
+			strncpy(homeNetwork.ssid, ssid.c_str(), sizeof(homeNetwork.ssid)); TZERO(homeNetwork.ssid); 
+			strncpy(homeNetwork.psk,  psk.c_str(),  sizeof(homeNetwork.psk )); TZERO(homeNetwork.psk ); 
+			homeNetwork.used = true;
 			
-			homeNetwork.used = 1;
-			strncpy(homeNetwork.ssid, ssid.c_str(), sizeof(homeNetwork.ssid));
-			strncpy(homeNetwork.psk,  psk.c_str(),  sizeof(homeNetwork.psk));
-			
+			WiFi.mode(WIFI_AP_STA);
 			WiFi.begin(homeNetwork.ssid, homeNetwork.psk);
-			dbg("WiFi.begin('"); dbg(homeNetwork.ssid); dbg("','"); dbg(homeNetwork.psk); dbgln("')");
-			
-			connectAttemptExpires = now+20*1000L;			
-
-			sendRedirect("/setup?stage=connect");
-			return;		
+			connectAttemptExpires = millis()+20*1000L;
+			server.send(200, CT_APPL_JSON, "{\"ok\":true,\"msg\":\"ok\"}\n");
 		}
 	}
-	else if (stage=="connect") {
-		
-		int status = WiFi.status();
-		boolean connected = (status == WL_CONNECTED);
-		dbg("*** status:   "); dbgln(status);
-		dbg("*** connected:"); dbgln(connected);
-		
-		if (connected) {
-			// successfully connected to network
-			dbgln("handleSetup: connected");
-			body = HTML_CONNECTED;
-			connectAttemptExpires = -1;
-		}
-		else if (millis()<connectAttemptExpires) {		
-			// continue polling
-			dbgln("handleSetup: connecting....");
-			server.sendHeader("Refresh",  "3");		
-			body = HTML_CONNECTING;		
-		}
-		else { 
-			// failed to connect to network
-			dbgln("handleSetup: expired");
-			body = HTML_FAILED;
-			connectAttemptExpires = -1;
-		}			
-	}
-	else if (stage=="retry") {
-		// re-start polling loop
-		dbgln("handleSetup: retry polling");
-		connectAttemptExpires = now+20*1000L;		
-		sendRedirect("/setup?stage=connect");
-		return;
-	}
-	else {
-		dbgln("handleSetup: unknown stage");
-		body = HTML_SETUP;
-		body.replace("$ERR$", String("Unknown stage '") + stage + "'");		
-	}
-			
-	replaceVars(body);
-	dbg(body);
-	
-	avoidCaching();
-	server.send(200, CT_TEXT_HTML, body); 			
-}
-
-void handleConfirm() {
-	
-	if (configured) {
-		sendRedirect("/");
-		return;
-	}
-	
-	String body = HTML_CONFIRM;
-	
-	// TODO: check client's (remote) IP address
-	// to see if connected on network or AP and warn/refuse
-	String stage = server.arg("stage");
-	dbg("handleConfirm: stage="); dbgln(stage);	
-	dbg("handleConfirm: ap: "); dbg(accessPoint.ssid); dbg(" "); dbgln(accessPoint.psk);	
-
-	WiFiClient cl = server.client();
-	
-	IPAddress clientIP = cl.remoteIP();
-	IPAddress serverIP = WiFi.localIP();
-	IPAddress nwMask   = WiFi.subnetMask();	
-	IPAddress clientNw = clientIP & nwMask; 
-	IPAddress serverNw = serverIP & nwMask;
-	
-	String yourIp = toStr(clientIP);
-	String yourNw = toStr(clientNw);
-	String myIp   = toStr(serverIP);
-	String myNw   = toStr(serverNw);
-
-	// TODO: It would be cleaner to check if client still connects on AP interface.
-	// However, the WiFi libs do not provide any method to learn this interfaces netmask.
-	// So instead of this, we check if client connects on network interface. 
-	boolean sameNetwork = clientNw==serverNw;
-	String warning;
-	if (!sameNetwork) {
-		warning = 
-			"WARNING:<br/>"
-			"You appear to be on a different network.<br/>"
-			"Before you disable the access point, make sure that"
-			"you can reach me using the network you configured.";
-	}
-	
-	dbg("clientIP: "); dbgln(toStr(clientIP));
-	dbg("serverIP: "); dbgln(toStr(serverIP));
-	dbg("nwMask:   "); dbgln(toStr(nwMask));
-	dbg("clientNw: "); dbgln(toStr(clientNw));
-	dbg("serverNw: "); dbgln(toStr(serverNw));
-	dbg("sameNetwork: "); dbgln(sameNetwork);
-	
-	if (stage=="") {
-		body = HTML_CONFIRM;		
-	}
-	else if (stage=="save") {
-		
-		String apenable = server.arg("apenable");
-		if (apenable=="on") {
-			
-			String ssid = server.arg("apssid");
-			String psk  = server.arg("appsk");
-			
-			if (psk.length()<8 || ssid.length()<1) {
-				body.replace("$ERR$", "SSID or password invalid");
-				replaceVars(body);
-				avoidCaching();
-				server.send(200, CT_TEXT_HTML, body);
-				return;
+	else if (action=="wait") { // setup.html is checking if device connected
+		long now = millis();
+		if (WiFi.status() == WL_CONNECTED) {
+			String addr = getLocalAddr();
+			if (80!=HTTP_LISTEN_PORT) { 
+				addr+=":"; 
+				addr+=HTTP_LISTEN_PORT; 
 			}
-			
-			dbg("Enabling AP with "); dbg(accessPoint.ssid); dbg(" "); dbgln(accessPoint.psk);
-			accessPoint.used = 1;
-			strcpy(accessPoint.ssid, ssid.c_str());
-			strcpy(accessPoint.psk,  psk.c_str());			
+			server.send(200, CT_APPL_JSON, String("{\"status\":0,\"addr\":\"")+addr+"\"}\n");
+		}
+		else if (connectAttemptExpires<0 || now>connectAttemptExpires) {
+			server.send(200, CT_APPL_JSON, "{\"status\":2,\"msg\":\"expired\"}\n");
 		}
 		else {
-			dbgln(String("Disabling AP since apenable=")+apenable);
-			accessPoint.used = 0;			
-			strcpy(accessPoint.ssid, "");
-			strcpy(accessPoint.psk,  "");			
+			int left = (connectAttemptExpires-now)/1000;
+			server.send(200, CT_APPL_JSON, String("{\"status\":1,\"msg\":\"connecting\",\"left\":")+left+"}\n");
+		}
+	}
+	else if (action=="save") { // setup.html connected via network (not AP), ready to commit settings 
+		
+		if (server.arg("ap")=="1") { // keep ap?
+			String apssid = server.arg("apssid");
+			String appsk  = server.arg("appsk");
+			strncpy(accessPoint.ssid, apssid.c_str(), sizeof(accessPoint.ssid)); TZERO(accessPoint.ssid); 
+			strncpy(accessPoint.psk,  appsk.c_str(),  sizeof(accessPoint.psk )); TZERO(accessPoint.psk ); 
+			accessPoint.used = true;
+		}
+		else {
+			accessPoint.used = false;			
 		}
 		
-		dbgln("saving to EEPROM");
+		homeNetwork.used = true;
 		EEPROM.begin(sizeof(*EE));
-		// do NOT assign to global 'configured' now but read from EEPROM after reboot
-		boolean tmp = true;
-		eEE_WRITE(tmp,  EE->configured)
+		dbg("ZZ=saving accessPoint: "); dbg(accessPoint.used); dbg(" "); dbg(accessPoint.ssid); dbg(" "); dbgln(accessPoint.psk);
 		eEE_WRITE(accessPoint, EE->accessPoint);
+		dbg("ZZ=saving homeNetwork: "); dbg(homeNetwork.used); dbg(" "); dbg(homeNetwork.ssid); dbg(" "); dbgln(homeNetwork.psk);
 		eEE_WRITE(homeNetwork, EE->homeNetwork);
+		boolean configured = true;
+		eEE_WRITE(configured, EE->configured);
 		EEPROM.commit();
 		EEPROM.end();
-		dbgln("saved to EEPROM");
 		
-		body = HTML_CONFIRMED;
-	}
-	else if (stage=="reboot") {
+		server.send(200, CT_APPL_JSON, "{\"ok\":true}\n");
+		delay(10);		
+		server.client().stop();
+		dbgln("ZZ=reboot scheduled");
 		reboot_scheduled_after = millis()+3*1000;
-		dbgln("Send page HTML_REBOOTING");
-		body = HTML_REBOOTING;		
 	}
-	else if (stage=="rebooted") {
-		if (server.arg("ajax")=="1") {
-			avoidCaching();
-			server.send(200, CT_APPL_JSON, "{\"up\":1}");
-		}
-		else {
-			sendRedirect("/");
-		}
-		return;
+	else if (action=="status") { // setup.html polling if device has rebooted
+		String saddr = getLocalAddr();
+		String caddr = toStr(server.client().remoteIP());
+		server.send(200, CT_APPL_JSON, String("{\"ok\":true,\"nwssid\":\"")+homeNetwork.ssid+
+				"\",\"saddr\":\""+saddr+"\",\"caddr\":\""+caddr+"\"}\n");
 	}
-	else {
-		body = String("Unknown stage '") + stage + "'"; 
-	}
-
-	body.replace("$YOURIP$", yourIp);
-	body.replace("$YOURNW$", yourNw);
-	body.replace("$MYIP$",   myIp);
-	body.replace("$MYNW$",   myNw);
-	body.replace("$ERR$", warning);
-	replaceVars(body);
-	
-	avoidCaching();
-	server.send(200, CT_TEXT_HTML, body);
 }
+
 
 /***************************************************************
  * 
@@ -1252,6 +1168,7 @@ void handleStatus() {
 	  String json = String() +
 		"{\n"
 		"  \"build\":\"" + buildNo + "\",\n"
+		"  \"reboots\":\"" + reboots + "\",\n"
 	    "  \"now\":" + millis() + ",\n"
 		"  \"uptime\":\"" + upTime()+ "\",\n"
 	    "  \"lastMsg\":{" + 
@@ -1364,7 +1281,6 @@ void handleFeedMsg() {
 }
 
 void handleTailF() {
-	//dbgln("ZZ=handleTailF");
 	
 	String cmd = server.arg("cmd");
 	
@@ -1420,6 +1336,8 @@ void handleTailF() {
 			
 			stringComplete = false;
 			inputString = "";
+			
+			ledToggle();
 		}
 		
 	} while (client.connected());
@@ -1508,6 +1426,7 @@ void handleHelp() {
 		"/index.html\n"
 		"/status?refresh=<int>\n"
 		"/setup\n"
+		"/setup_ajax\n"
 		"/set?level=[0-3]\n"
 		"/level\n"
 			
@@ -1575,6 +1494,11 @@ void setup() {
 	  // read again, this time it should succeed:
 	  readConfiguration(); 
   }
+  else {
+	  // increment reboot counter in EEPROM
+	  updateReboots();
+  }
+	  
 
   // init global state
   state.ventSetpoint = -1;
@@ -1599,22 +1523,29 @@ void setup() {
   setupNetwork();
 
   server.on("/",              handleRoot);
-  server.on("/index.html",    handleRoot);
+  server.on("/index.html",    handleIndex);
   server.on("/favicon.ico",   handleFavicon);
   server.on("/status.json",   handleStatus);
   server.on("/status",        handleStatus);
   server.on("/info.json",     handleStatus);
   server.on("/info",          handleStatus);
-  server.on("/setup",         handleSetup);
-  server.on("/confirm",       handleConfirm);
+  server.on("/setup",    	  handleSetupAjax);
+  server.on("/ajax",          handleAjax);
+  //server.on("/setup",       handleSetup);	  // replaced by ajax version now
+  //server.on("/confirm",     handleConfirm); // replaced by ajax version now
   server.on("/set",           handleSet);
   server.on("/level",         handleLevel);
+
+  #ifdef WTH_DEBUG
   server.on("/tailf",         handleTailF);
   server.on("/setdbg",        handleSetDbg);
   server.on("/feedmsg",       handleFeedMsg);
+  #endif
+
   #ifdef WITH_PIN_TEST
   server.on("/pintest",       handlePinTest);
   #endif
+
   server.on("/help",          handleHelp);
   //server.on("/homeicon.png",  handleHomeIcon); // add to android home screen
   //server.on("/manifest.json", handleManifest); // add to android home screen
@@ -1623,6 +1554,29 @@ void setup() {
   server.begin();
 }
 
+
+void handleHeartbeat() {
+	
+	int now = millis();
+	// Start blinking after things stable.
+	// Seems like fiddeling with GPIO0 too early resets the device sporadically.
+	if (now<3000) return;
+	
+	boolean light = false;
+	int level     = state.ventOverride; // 0=off,...,3=high
+	int sequence  = now%1000;           // 0,...,999
+	int prefix    = 100*(level+1);      // 100, 200, 300, 400
+	if (sequence < prefix) {
+		sequence %= 100; 				// runs 1x,2x,3x or 4x through 0,..,99
+		light = sequence<50;
+	}
+	
+	if (light != led_lit) {
+		pinMode(LED_HEART, OUTPUT);
+		digitalWrite(LED_HEART, light ? LOW : HIGH);
+		led_lit = light;
+	}
+}
 
 long loopIterations = 0;
 
@@ -1646,6 +1600,8 @@ void loop() {
 		stringComplete = false;
 	}
 	
+	handleHeartbeat();
+	
 	if (reboot_scheduled_after>-1 && reboot_scheduled_after>millis()) {
 		reboot_scheduled_after = -1;
 		dbgln("*********** REBOOT **********");
@@ -1654,21 +1610,9 @@ void loop() {
 		delay(10000);
 	}
 	
-	
-	int rel = state.ventRelative; // -1, 0, 27, 55, 100
-	rel = 100-rel; // 101, 101, 73, 45, 0
-	rel = rel*rel; // 10201, 10000, 5329, 2025, 0
-	rel = rel+1000;
-	
-	int divisor = rel;
-	int pwm = (loopIterations/divisor);
-	if (loopIterations>10000) {
-		pinMode(2, OUTPUT);
-		digitalWrite(2, pwm % 2);
-	}
-		
 	loopIterations++;
 }
+
 
 #ifdef WITH_DALLAS_TEMP_SENSORS
 String toString(DeviceAddress& a) {

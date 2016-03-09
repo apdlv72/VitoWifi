@@ -58,7 +58,7 @@ function readStatus() {
     xmlhttp.onreadystatechange = function() {        
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {        	
             if (xmlhttp.status == 200) {
-            	parseJson(xmlhttp.result);
+            	parseJson(xmlhttp.responseText);
             }
 	        else {
             	parseJson(TEST_JSON);
@@ -95,6 +95,7 @@ function s() {
 	<tr><td>tempExhaust:      </td><td><span id="tempExhaust"></span></td></tr>
 	</table>
 </div>	
+<a href="/setup">⚙</a>
 </body>
 </html>
 )====="
