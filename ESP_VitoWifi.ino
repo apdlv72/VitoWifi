@@ -11,14 +11,14 @@
 // and inlet/outlet exhaust. However, defining 8 here lets us add even more e.g. for monitoring the room temperature(s)
 // in your basement and/or living room, monitoring the temperature inside the OTGW device and so forth.
 // Every sensor requires just 2 bytes in RAM, so a large value is not too critical.
-//#define WITH_DALLAS_TEMP_SENSORS
+#define WITH_DALLAS_TEMP_SENSORS
 #define MAX_NUM_SENSORS 6
 
 // Uncomment to support a pin test on http://192.168.4.1/pintest?p=0.
 // When called, the mode of the respective pin "p" will be set to OUTPUT and value toogled between hi/low a couple of times.
 // This is useful to find out which pin number is assigned to what pin. Be careful with pins used by the ESP.
 // Check https://github.com/esp8266/Arduino/issues/1219 for more details.
-//#define WITH_PIN_TEST
+#define WITH_PIN_TEST
 
 // Uncomment to enable ID to text translation of all known OpenTherm data IDs.
 // This cause a considerable overhead in RAM usage and is not enable by default since it is not used for normal operation. 
@@ -31,6 +31,11 @@
 
 // Enable a help page on http://192.168.4.1/help
 #define WITH_USAGE_HELP
+
+//#define WITH_WEB_SETUP
+
+const char DEFAULT_START_SSID[] = "🐂💩";
+//const char DEFAULT_START_SSID[] = "I💜http://venista.com";
 
 // Initial password used to connect to it and set up networking.
 // The device will normally show up as SSID "http://192.168.4.1"
@@ -61,6 +66,7 @@ const String buildNo   = __DATE__ " " __TIME__;
 #define LED_HEART 	0 // heartbeat 
 #define LED_ONBOARD 2 // blue onboard LED / temp. sensors
 
+#define LEVEL_NOOVER -1 // do not overrride (monitor mode)
 #define LEVEL_OFF   0 // standby, ventilation off
 #define LEVEL_LOW   1 // "reduced" mode (27% for mine ... may vary)
 #define LEVEL_NORM  2 // "normal"  mode (55% for mine) 
@@ -77,49 +83,38 @@ const String buildNo   = __DATE__ " " __TIME__;
 #define RC_UNEXP_A    7 // unexpected answer  (sent by OTG in favor of slave)
 #define RC_UNEXP_O    8 // unexpected message from unknown source (should never occur) 
 
+#define CT_TEXT_PLAIN  "text/plain"
+#define CT_TEXT_HTML   "text/html"
+#define CT_APPL_JSON   "application/json"
 
-const char CT_TEXT_PLAIN[] = "text/plain";
-const char CT_TEXT_HTML[]  = "text/html";
-const char CT_APPL_JSON[]  =  "application/json";
-
+// Context type sent along with content stored in PROGMEM: 
 const char PGM_CT_TEXT_HTML[] PROGMEM = "text/html";
+const char PGM_CT_APPL_JSON[] PROGMEM = "application/json";
 
 const char HTML_INDEX[] PROGMEM =
 #include "index.html.h"
+		 // The following line makes buildNo accessible for javascript:
 		 "<script>var buildNo = '" __DATE__ " " __TIME__ "';</script>";
 ;
-const char HTML_SETUP_AJAX[] PROGMEM =
-#include "setup_ajax.html.h"
-;
-
-// the following pages must not be in PGMEM since we need to do some replacements.
-/*
-const char HTML_SETUP[] =
+#ifdef WITH_WEB_SETUP
+const char HTML_SETUP[] PROGMEM =
 #include "setup.html.h"
 ;
-const char HTML_CONNECTING[] =
-#include "connecting.html.h"
+#endif
+
+const char MANIFEST_JSON[] PROGMEM =
+#include "manifest.json.h"
 ;
-const char HTML_CONNECTED[] =
-#include "connected.html.h"
-;
-const char HTML_FAILED[] =
-#include "failed.html.h"
-;
-const char HTML_CONFIRM[] =
-#include "confirm.html.h"
-;
-const char HTML_CONFIRMED[] =
-#include "confirmed.html.h"
-;
-const char HTML_REBOOTING[] =
-#include "rebooting.html.h"
-;
-*/
-const char favicon_ico[]  =
+
+const char FAVICON_ICO[] PROGMEM =
 #include "favicon.ico.h"
 ;
 
+const char FAN_PNG[] PROGMEM =
+#include "fan.png.h"
+;
+
+// Conveniently zero-terminates a C-string.
 #define TZERO(STR) { (STR)[sizeof((STR))-1] = 0; }
 
 class OTMessage {
@@ -177,8 +172,9 @@ class OTMessage {
 		case DI_REL_VENTILATION:	return "Relative ventilation";
 		case DI_SUPPLY_INLET_TEMP:	return "Supply inlet temperature";
 		case DI_EXHAUST_INLET_TEMP:	return "Exhaust inlet temperature";    
-		// TODO: find out meaning of various "transparent slave parameters"
-		// they are queried round robin by master from slave in the range 0-63
+		// TODO: Find out meaning of various "transparent slave parameters"
+		// These are requested by the master in a round robin fashion from slave in the range 0-63,
+		// however not some indexes are skipped. 
 		case DI_TSP_SETTING:		return "TSP setting V/H";
 		case DI_MASTER_PROD_VERS:	return "Master product version";
 		case DI_SLAVE_PROD_VERS:	return "Slave product version";
@@ -305,7 +301,6 @@ typedef struct {
    int16_t lo;
 } Value;
 
-
 // Global status 
 struct {
   struct {
@@ -369,6 +364,8 @@ struct {
   } messages; // number of messages received
   
   #ifdef WITH_DALLAS_TEMP_SENSORS
+  int sensorsFound;
+  long lastMeasure;
   int16_t extraTemps[MAX_NUM_SENSORS];
   #endif
   
@@ -384,7 +381,7 @@ typedef struct {
 
 
 // I'm from cologne ;)
-#define MAGIC 4713
+#define MAGIC 4711+3
 
 // Everything that goes to EEPROM
 struct {	
@@ -395,21 +392,38 @@ struct {
 	Credentials accessPoint;
 	// Network to connect to
 	Credentials homeNetwork;
-	// TODO: Implement; Incremented on every reboot (monitor if device is crashing)
+	// Count incremented on every reboot to enablee monitoring of device crashes.
 	uint32_t reboots;
 } * EE = 0;
 
 
-// user committed first time setup (e.g. AP, network)
+// User committed first time setup (e.g. AP, network) and it was saved permanently.
 boolean configured = false;
+
+// A random token used during setup to authenticate committer.
+char configToken[10+1];
+
+// Time at which an attempt to connect to a network will be considered expired during setup procedure.
+long connectAttemptExpires = -1;
+
+// Remember whether temperatures have been already requested for the first time. 
+boolean temperaturesRequested = false;
 
 Credentials accessPoint;
 Credentials homeNetwork;
 
-String inputString = "";         // a string to hold incoming data
-boolean stringComplete = false;  // whether the string is complete
+// After setup, a reboot is necessary. However, cannot do this while handling client request,
+// because this will abort the connection. Instead of this, finish sending the reponse to the
+// client and schedule a reboot after millis() will exceed this value.
+long rebootScheduledAfter = -1;
+
+// A string to hold incoming serial data from OTGW.
+String inputString = "";         
+// wWhether the string is complete.
+boolean stringComplete = false;  
 
 ESP8266WebServer server(HTTP_LISTEN_PORT);
+
 
 /***************************************************************
  * 
@@ -442,7 +456,6 @@ void ledFlash(int ms) {
 #define ONE_WIRE_BUS 2 // GPIO2
 #define TEMPERATURE_PRECISION 9
 
-int sensorsFound = -1;
 
 // Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
 OneWire oneWire(ONE_WIRE_BUS);
@@ -469,8 +482,8 @@ typedef struct {
 } LogEntry;
 
 
-LogEntry errorLog[MAX_ERR_COUNT];
-uint8_t  errorLogIndex = 0;
+//LogEntry errorLog[MAX_ERR_COUNT];
+//uint8_t  errorLogIndex = 0;
 
 // round robin buffer with last N errors
 void addError(const char * text) {
@@ -529,7 +542,9 @@ int onUnexpectedMessage(char sender, OTMessage& m) {
 }
 
 int toTemp(int8_t hi, int8_t lo) {
-	// TODO: Must prove if temperatue conversion is correct for t<0 (How? Even at winter time its never<0)
+	// TODO: Need proof if temperatue conversion is correct for t<0 
+	// But wow? Even at winter time, temperature will never be <0 ... because of my setup.
+	// Maybe someone else can help here?
 	int sign = hi<0 ?  -1 :  1;
 	int abs  = hi<0 ? -hi : hi; 
     abs = 100*abs + (100*lo/255);
@@ -547,6 +562,14 @@ int onMasterMessage(OTMessage& m) {
 			case OTMessage::DI_CONTROL_SETPOINT:   
 				state.ventSetpoint = m.lo;
 				break;
+			case OTMessage::DI_MASTER_PROD_VERS:
+				state.version.master.hi = m.hi;
+				state.version.master.lo = m.lo;
+				return RC_OK; 
+			case OTMessage::DI_SLAVE_PROD_VERS:
+				state.version.slave.hi = m.hi;
+				state.version.slave.lo = m.lo;
+				return RC_OK;
 			}
 			
 			state.messages.expected.T++;
@@ -690,9 +713,7 @@ String onOTGWMessage(String line, boolean feed) {
   // Indicate there is some activity:
   ledFlash(5);
   
-  // ACK of OTGW to command 'VS=x' or 'GW=1' messages sent by us.
-  // TODO: Might need to try to catch this ack immediately after sending and resend if nowt seen.
-  // For now, we will only 'log' this by incrementing the associates counter in the global state struct.
+  // ACK of OTGW to command 'VS=x' or 'GW=1' messages sent by us to control fan speed level.
   if (line.startsWith("VS: ") || line.startsWith("GW: ")) {
 	  if (feed) {
 		  state.messages.expected.otgw++;
@@ -781,13 +802,23 @@ String onOTGWMessage(String line, boolean feed) {
 
 
 int overrideVentSetPoint(int level) {
-  level = level<LEVEL_OFF ? LEVEL_OFF : level>LEVEL_HIGH ? LEVEL_HIGH : level;
-  for (int i=0; i<3; i++) {
-	  Serial.print("GW=1\r\n");
-	  delay(10);
-	  Serial.print("VS="); Serial.print(level); Serial.print("\r\n");
-	  delay(20);
+  level = level<-1 ? -1 : level>LEVEL_HIGH ? LEVEL_HIGH : level;
+  if (level<0) {
+	  for (int i=0; i<3; i++) {
+		  // stop overriding, just monitor
+		  Serial.print("GW=0\r\n"); 
+		  delay(100);
+	  } 
   }
+  else {
+	  for (int i=0; i<3; i++) {
+		  Serial.print("GW=1\r\n");
+		  delay(10);
+		  Serial.print("VS="); Serial.print(level); Serial.print("\r\n");
+		  delay(20);
+	  }
+  }
+  dbg("ZZ=overrideVentSetPoint, old:"); dbg(state.ventOverride); dbg(" new:"); dbgln(level);
   state.ventOverride = level;
 }
 
@@ -799,17 +830,19 @@ int overrideVentSetPoint(int level) {
  */
 
 boolean readConfiguration() {
-    dbgln("ZZ=readConfiguration");
+    //dbgln("ZZ=readConfiguration");
 	boolean success = false;
 	uint16_t magic;
+
+	ESP.wdtDisable() ;
 	EEPROM.begin(sizeof(*EE));
 	eEE_READ(EE->magic, magic);
 	
-	dbg("ZZ=magic="); dbgln(magic); 
+	//dbg("ZZ=magic="); dbgln(magic); 
 	if (MAGIC==magic) {
 		
 		eEE_READ(EE->configured, configured);
-		dbg("ZZ=configured="); dbgln(configured); 
+		//dbg("ZZ=configured="); dbgln(configured); 
 		
 		eEE_READ(EE->accessPoint.used, accessPoint.used);
 		if (accessPoint.used) {
@@ -824,46 +857,56 @@ boolean readConfiguration() {
 		success = true;
 	}
 	EEPROM.end();
+	ESP.wdtEnable(5000);
+	
 	return success;
 }
 
 void firstTimeSetup() {
     dbgln("ZZ=firstTimeSetup");
 	
+	ESP.wdtDisable() ;
 	EEPROM.begin(sizeof(*EE));
 	
-	eEE_WRITE(configured, EE->configured);
-	
+    dbgln("ZZ=writing credentials");
 	Credentials creds = { 0, "", "" }; 
 	memset(&creds, 0, sizeof(creds));
 	
 	eEE_WRITE(creds, EE->accessPoint.used);	
 	eEE_WRITE(creds, EE->homeNetwork);
+    dbgln("ZZ=credentials written");
 
+    dbgln("ZZ=writing config flag");
+	eEE_WRITE(configured, EE->configured);
+    dbgln("ZZ=config flag written");
+	
 	// write magic to state that eeprom content is valid now
 	uint16_t magic = MAGIC;
 	eEE_WRITE(magic, EE->magic);
 
 	EEPROM.commit();
 	EEPROM.end();
+	ESP.wdtEnable(5000); 
     dbgln("ZZ=firstTimeSetup done");
 }
 
 uint32_t reboots;
 
 void updateReboots() {
-    dbgln("ZZ=updateReboots");
+    //dbgln("ZZ=updateReboots");
 
+	ESP.wdtDisable() ;
 	EEPROM.begin(sizeof(*EE));
 
 	eEE_READ(EE->reboots, reboots);
 	reboots++;
-	dbg("ZZ=reboots="); dbgln(reboots); 
+	//dbg("ZZ=reboots="); dbgln(reboots); 
 	eEE_WRITE(reboots, EE->reboots);
 	
 	EEPROM.commit();
 	EEPROM.end();
-    dbgln("ZZ=updateReboots done");
+	ESP.wdtEnable(5000) ;
+    //dbgln("ZZ=updateReboots done");
 }
 
 String toStr(IPAddress a) {
@@ -876,7 +919,7 @@ String getAPIP() {
   
 void setupNetwork() {
 	
-	dbgln("ZZ=setupNetwork");
+	//dbgln("ZZ=setupNetwork");
 	// if configured, try to connect to network first
 	if (homeNetwork.used) {
 		
@@ -893,7 +936,7 @@ void setupNetwork() {
 	    }
 	}
 	else {
-		dbgln("ZZ=no network set up");
+		//dbgln("ZZ=no network set up");
 	}
 	
 	boolean connected = WiFi.status()==WL_CONNECTED;	
@@ -920,8 +963,14 @@ void setupNetwork() {
 	    
 	    String sid = accessPoint.ssid;
 	    String psk = accessPoint.psk;
+	    //dbg("ZZ=accessPoint.ssid: "); dbgln(sid);
+	    //dbg("ZZ=accessPoint.psk:  "); dbgln(psk);
 	    if (!accessPoint.used) {
+			#ifdef DEFAULT_START_SSID
+	    	sid = DEFAULT_START_SSID;
+			#else
 	    	sid = String("http://") + getAPIP();
+			#endif	    	
 	    	psk = DEFAULT_PSK;
 	    }
 	    
@@ -938,54 +987,6 @@ void setupNetwork() {
  * Web server support  
  * 
  */
-long connectAttemptExpires = -1;
-
-/*
-void ESP8266WebServer::sendContent_P(PGM_P content, size_t size) {
-    char contentUnit[HTTP_DOWNLOAD_UNIT_SIZE + 1];
-    contentUnit[HTTP_DOWNLOAD_UNIT_SIZE] = '\0';
-    size_t remaining_size = size;   
-
-    while (content != NULL && remaining_size > 0) {
-        size_t contentUnitLen = HTTP_DOWNLOAD_UNIT_SIZE;
-
-        if (remaining_size < HTTP_DOWNLOAD_UNIT_SIZE) contentUnitLen = remaining_size;
-        // due to the memcpy signature, lots of casts are needed
-        memcpy_P((void*)contentUnit, (PGM_VOID_P)content, contentUnitLen);
-
-        content += contentUnitLen;
-        remaining_size -= contentUnitLen;  
-
-        // write is so overloaded, had to use the cast to get it pick the right one
-        _currentClient.write((const char*)contentUnit, contentUnitLen);
-    }
-}
- */
-
-// TODO: See if that works and put stuff to PROGMEM
-String readContent_P(PGM_P content, size_t size) {
-	String rtv;
-	
-	const int CHUNK_SIZE = 1024;
-    char contentUnit[CHUNK_SIZE + 1];
-    contentUnit[CHUNK_SIZE] = '\0';
-    size_t remaining_size = size;   
-
-    while (content != NULL && remaining_size > 0) {
-        size_t contentUnitLen = CHUNK_SIZE;
-
-        if (remaining_size < CHUNK_SIZE) contentUnitLen = remaining_size;
-        // due to the memcpy signature, lots of casts are needed
-        memcpy_P((void*)contentUnit, (PGM_VOID_P)content, contentUnitLen);
-
-        content += contentUnitLen;
-        remaining_size -= contentUnitLen;  
-
-        contentUnit[contentUnitLen]=0;
-        // write is so overloaded, had to use the cast to get it pick the right one
-        rtv += (const char*)contentUnit; //, contentUnitLen);
-    }
-}
 
 // Send headers with HTTP response that disable browser caching
 void avoidCaching() {
@@ -996,7 +997,7 @@ void avoidCaching() {
 
 // Send 320 redirect HTTP response
 void sendRedirect(String path) {
-	String body = String("<htm><body>Please go to <a href=\"")+path+"\">"+path+"</a></body></html>";
+	String body = String("<htm><body>Proceed to <a href=\"")+path+"\">"+path+"</a></body></html>";
 	server.sendHeader("Location", path);		
 	server.send(302, CT_TEXT_HTML, body);	
 }
@@ -1007,15 +1008,18 @@ void handleIndex() {
 
 // handle requests to /: if not yet configured, redirect to /setup, otherwise show default page 
 void handleRoot() {
+	#ifdef WITH_WEB_SETUP
 	if (!configured) {
 		sendRedirect("/setup");
 		return;
 	}
+	#endif
 	handleIndex();
 }
 
 void handleNotFound() {
-	server.send(404, CT_TEXT_HTML, String("Not found: ") + server.uri());			
+	server.send(404, CT_TEXT_HTML, String("Not found: ") + server.uri());
+	//handleIndex();
 }
 
 /***************************************************************
@@ -1024,11 +1028,11 @@ void handleNotFound() {
  * 
  */
 
-// After setup, a reboot is necessary. However, cannot do this while handling client request,
-// because this will abort the connection. Instead of this, finish sending the reponse to the
-// client and schedule a reboot after millis() will exceed this value.
-long reboot_scheduled_after = -1;
-
+#ifdef WITH_WEB_SETUP
+void handleSetup() {
+	server.send_P(200, PGM_CT_TEXT_HTML, HTML_SETUP);		
+}
+#endif
 
 String getLocalAddr() {
 	IPAddress local = WiFi.localIP();
@@ -1036,20 +1040,12 @@ String getLocalAddr() {
 	return addr;
 }
 
-void replaceVars(String& body) {
-	String time = String((connectAttemptExpires-millis())/1000);
-	String addr = getLocalAddr(); // on network, not AP
-	body.replace("$TIME$",   time);
-	body.replace("$NWADDR$", addr);
-	body.replace("$NWSSID$", homeNetwork.ssid);
-	body.replace("$NWPSK$",  homeNetwork.psk);
-	body.replace("$APSSID$", accessPoint.ssid);
-	body.replace("$APPSK$",  accessPoint.psk);
-	body.replace("$ERR$",    "");
-}
-
-void handleSetupAjax() {
-	server.send_P(200, PGM_CT_TEXT_HTML, HTML_SETUP_AJAX);		
+void createConfigToken() {
+	int i;
+	for (i=0; i<sizeof(configToken)-1; i++) {
+		configToken[i]=random('A', 'Z' + 1);
+	}
+	configToken[i]=0;
 }
 
 void handleAjax() {
@@ -1059,7 +1055,8 @@ void handleAjax() {
 		String ssid = server.arg("ssid");
 		String psk  = server.arg("psk");
 		if (ssid.length()<1 || psk.length()<8) {
-			server.send(200, CT_APPL_JSON, "{\"ok\":false,\"msg\":\"Name or password to short\"}\n");			
+			server.send(200, CT_APPL_JSON, "{\"ok\":0,\"msg\":\"Name or password to short\"}\n");
+			return;
 		}
 		else {		
 			strncpy(homeNetwork.ssid, ssid.c_str(), sizeof(homeNetwork.ssid)); TZERO(homeNetwork.ssid); 
@@ -1068,11 +1065,36 @@ void handleAjax() {
 			
 			WiFi.mode(WIFI_AP_STA);
 			WiFi.begin(homeNetwork.ssid, homeNetwork.psk);
-			connectAttemptExpires = millis()+20*1000L;
-			server.send(200, CT_APPL_JSON, "{\"ok\":true,\"msg\":\"ok\"}\n");
+			long timeout=20; // secs
+			connectAttemptExpires = millis()+timeout*1000L;
+			createConfigToken();
+			dbg("ZZ=created configToken "); dbgln(configToken);
+			server.send(200, CT_APPL_JSON, 
+				String("{\"ok\":1,\"msg\":\"Ok\",\"token\":\"")+configToken+"\",\"timeout\":\""+timeout+"\"}\n");
+			return;
 		}
 	}
-	else if (action=="wait") { // setup.html is checking if device connected
+	else if (action=="status") { // sent when setup.html is polling for device coming up after reboot
+		String saddr = getLocalAddr();
+		String caddr = toStr(server.client().remoteIP());
+		server.send(200, CT_APPL_JSON, 
+			String("{\"ok\":1,\"nwssid\":\"")+homeNetwork.ssid+"\",\"saddr\":\""+saddr+"\",\"caddr\":\""+caddr+"\"}\n");
+		return;	
+	}
+	
+	String token = server.arg("t");
+	if (token=="MaGiC") {
+		// okay (for debug purposes only)
+		dbg("ZZ=debug token: "); dbgln(token);
+	}
+	else if (token!=configToken) {
+		dbg("ZZ=token exp: "); dbgln(configToken);
+		dbg("ZZ=token got: "); dbgln(token);
+		server.send(200, CT_APPL_JSON, "{\"ok\":0,\"msg\":\"Token mismatch\"}\n");
+		return;
+	}
+	
+	if (action=="wait") { // setup.html is checking if device connected
 		long now = millis();
 		if (WiFi.status() == WL_CONNECTED) {
 			String addr = getLocalAddr();
@@ -1080,30 +1102,38 @@ void handleAjax() {
 				addr+=":"; 
 				addr+=HTTP_LISTEN_PORT; 
 			}
-			server.send(200, CT_APPL_JSON, String("{\"status\":0,\"addr\":\"")+addr+"\"}\n");
+			server.send(200, CT_APPL_JSON, String("{\"ok\":1,\"status\":0,\"addr\":\"")+addr+"\"}\n");
+			return;
 		}
 		else if (connectAttemptExpires<0 || now>connectAttemptExpires) {
-			server.send(200, CT_APPL_JSON, "{\"status\":2,\"msg\":\"expired\"}\n");
+			server.send(200, CT_APPL_JSON, "{\"ok\":1,\"status\":2,\"msg\":\"Timeout\"}\n");
+			return;
 		}
 		else {
 			int left = (connectAttemptExpires-now)/1000;
-			server.send(200, CT_APPL_JSON, String("{\"status\":1,\"msg\":\"connecting\",\"left\":")+left+"}\n");
+			server.send(200, CT_APPL_JSON, String("{\"ok\":1,\"status\":1,\"msg\":\"Connecting\",\"left\":")+left+"}\n");
+			return;
 		}
 	}
 	else if (action=="save") { // setup.html connected via network (not AP), ready to commit settings 
-		
-		if (server.arg("ap")=="1") { // keep ap?
+		String ap = server.arg("ap");
+		if (ap=="1") { // keep ap?
 			String apssid = server.arg("apssid");
 			String appsk  = server.arg("appsk");
 			strncpy(accessPoint.ssid, apssid.c_str(), sizeof(accessPoint.ssid)); TZERO(accessPoint.ssid); 
 			strncpy(accessPoint.psk,  appsk.c_str(),  sizeof(accessPoint.psk )); TZERO(accessPoint.psk ); 
 			accessPoint.used = true;
 		}
-		else {
+		else if (ap=="0") {
 			accessPoint.used = false;			
+		}
+		else {
+			server.send(200, CT_APPL_JSON, String("{\"ok\":0,\"msg\":\"parameter 'ap' missing\"}"));
+			return;
 		}
 		
 		homeNetwork.used = true;
+		ESP.wdtDisable() ;
 		EEPROM.begin(sizeof(*EE));
 		dbg("ZZ=saving accessPoint: "); dbg(accessPoint.used); dbg(" "); dbg(accessPoint.ssid); dbg(" "); dbgln(accessPoint.psk);
 		eEE_WRITE(accessPoint, EE->accessPoint);
@@ -1113,19 +1143,19 @@ void handleAjax() {
 		eEE_WRITE(configured, EE->configured);
 		EEPROM.commit();
 		EEPROM.end();
+		ESP.wdtEnable(5000) ;
+
 		
-		server.send(200, CT_APPL_JSON, "{\"ok\":true}\n");
-		delay(10);		
+		String body = "{\"ok\":1}\n\n";
+		server.send(200, CT_APPL_JSON, body);
+		delay(200);		
 		server.client().stop();
+		delay(200);		
 		dbgln("ZZ=reboot scheduled");
-		reboot_scheduled_after = millis()+3*1000;
+		rebootScheduledAfter = millis()+1*1000;
+		return;
 	}
-	else if (action=="status") { // setup.html polling if device has rebooted
-		String saddr = getLocalAddr();
-		String caddr = toStr(server.client().remoteIP());
-		server.send(200, CT_APPL_JSON, String("{\"ok\":true,\"nwssid\":\"")+homeNetwork.ssid+
-				"\",\"saddr\":\""+saddr+"\",\"caddr\":\""+caddr+"\"}\n");
-	}
+	server.send(404, CT_APPL_JSON, String("{\"ok\":0,\"msg\":\"unknown resource\"}"));
 }
 
 
@@ -1134,23 +1164,61 @@ void handleAjax() {
  * Web server support (normal operation)  
  * 
  */
+void sendBinary(PGM_P src, size_t contentLength, const char *contentType) {
+	  // For some reason, this blocks for about one second and the client
+	  // receives no content. Not implemented for binary data ?????
+	  WiFiClient client = server.client();
+	  String head
+	    = String("HTTP/1.0 200 OK\r\n") +
+	             "Content-Type: "   + contentType + "\r\n"
+	             "Content-Length: " + contentLength + "\r\n" 
+	             "Connection: close\r\n"
+	             "\r\n";
+	  // TODO: Send in chunks. Avoid to allocate buffer for whole content.
+	  // This is probably the reason why fan.png crashes.
+	  char body[contentLength];
+	  memcpy_P(body, src, contentLength);
+	  
+	  client.write(head.c_str(), head.length());
+	  client.write(body, contentLength);
+	  client.flush();
+	  delay(2);
+	  client.stop();	
+}
 
 void handleFavicon() {
+	sendBinary(FAVICON_ICO, sizeof(FAVICON_ICO), "image/x-icon");
+/*	
   // For some reason, this blocks for about one second and the client
   // receives no content. Not implemented for binary data ?????
   WiFiClient client = server.client();
-  int len = sizeof(favicon_ico);
+  int size = sizeof(FAVICON_ICO);
   String head
-    = String("HTTP/1.0 200 OK\r\n")
-      + "Content-Type: image/x-icon\r\n"
-      + "Content-Length: " + len + "\r\n" +
-      + "Connection: close\r\n"
-      + "\r\n";
+    = String("HTTP/1.0 200 OK\r\n"
+             "Content-Type: image/x-icon\r\n"
+             "Content-Length: ") + size + "\r\n" 
+             "Connection: close\r\n"
+             "\r\n";
+  
+  char buffer[size];
+  memcpy_P(buffer, (char*)FAVICON_ICO, size);
+  
   client.write(head.c_str(), head.length());
-  client.write(favicon_ico,  len);
+  client.write(buffer, size);
   client.flush();
   delay(2);
   client.stop();
+*/  
+}
+
+// TODO: makes ESP crash:
+/*
+void handleHomeIcon() {
+	sendBinary(FAN_PNG, sizeof(FAN_PNG), "image/png");
+}
+*/
+void handleManifest() {
+	server.send_P(200, PGM_CT_APPL_JSON, MANIFEST_JSON);		
 }
 
 String upTime() {
@@ -1162,11 +1230,12 @@ String upTime() {
 	return t;
 }
 
-void handleStatus() {
+void handleApiStatus() {
 	  String refresh = server.arg("refresh");
 	  String filterCheck = String(state.tsps[23], 16);
 	  String json = String() +
 		"{\n"
+		"  \"ok\":1,\n"
 		"  \"build\":\"" + buildNo + "\",\n"
 		"  \"reboots\":\"" + reboots + "\",\n"
 	    "  \"now\":" + millis() + ",\n"
@@ -1174,7 +1243,7 @@ void handleStatus() {
 	    "  \"lastMsg\":{" + 
 				"\"serial\":" + state.lastMsg.serial + ""
 				#ifdef WITH_DEBUG
-				",\"wifi\"{:\"fed\":" + state.lastMsg.wifi.fed  + ",\"debug\":" + state.lastMsg.wifi.debug + "}" 
+				",\"wifi\":{\"fed\":" + state.lastMsg.wifi.fed  + ",\"debug\":" + state.lastMsg.wifi.debug + "}" 
 				#endif
 		   "},\n"	
 	    "  \"dbg\":{\"level\":" + DEBUG_LEVEL + "},\n"
@@ -1202,12 +1271,17 @@ void handleStatus() {
 				"\"T\":" + state.messages.unexpected.T + ","
 				"\"B\":" + state.messages.unexpected.B + ","
 				"\"R\":" + state.messages.unexpected.R + ","
-				"\"zero\":" + state.messages.unexpected.zero + ","
-				"\"A\":" + state.messages.unexpected.A + "}\n"
-		"  },\n";
+				"\"A\":" + state.messages.unexpected.A + ","
+				"\"zero\":" + state.messages.unexpected.zero + "}\n"
+		"  },\n"
+        "  \"freeheap\":"  + ESP.getFreeHeap() + ",\n"				
+        "  \"debug\":"    + DEBUG_LEVEL + ",\n";
 
 	  #ifdef WITH_DALLAS_TEMP_SENSORS
-	  json +=				
+	  json +=					
+		String(
+		"  \"sensorsFound\":")+state.sensorsFound+",\n"
+		"  \"lastMeasure\":"+(millis()-state.lastMeasure)+",\n"
 	    "  \"sensors\":[";
 	  for (int i=0; i<sizeof(state.extraTemps)/sizeof(state.extraTemps[0]); i++) {
 		  if (i>0) json += ",";
@@ -1236,22 +1310,24 @@ void handleStatus() {
 boolean timeWasSet = false;
 
 String getDate() {
+
 	if (timeWasSet) {
-		// TODO: Set time later via API call and use a millis() based RTC or add NTP support (time server)		
+		// TODO: Set time later via API call and use a millis() based RTC or add NTP support (time server)
+		// Use time to fallback to basic level control e.g. if no command received via WiFi for more than 
+		// a couple of hours/minutes.
 	}
 	return String(millis());	
 }
 
-void handleLevel() {
+void handleApiLevel() {
 	int l = state.ventOverride;
-	String json = String("{ \"now\":") + getDate() + ",\"success\":true,\"level\":"+l+"}\n";
+	String json = String("{\"ok\":1,\"now\":") + getDate() + ",\"level\":"+l+"}\n";
 	avoidCaching();
 	server.send(200, CT_APPL_JSON, json); 						
 }
 
-
 #ifdef WITH_DEBUG
-void handleSetDbg() {
+void handleDbgSet() {
 	String level = server.arg("level");
 	int old = DEBUG_LEVEL; 
 	DEBUG_LEVEL = atoi(level.c_str());
@@ -1260,7 +1336,7 @@ void handleSetDbg() {
 	server.send(200, CT_TEXT_PLAIN, body);
 }
 
-void handleFeedMsg() {
+void handleDbgMsg() {
 	String msg  = server.arg("msg");
 	String feed = server.arg("feed");
 	String rc = "no message";
@@ -1280,11 +1356,16 @@ void handleFeedMsg() {
 	server.send(200, CT_TEXT_PLAIN, rc);
 }
 
-void handleTailF() {
+// Use this like: "curl http://192.168.4.1/tailf".
+// It will however not receive a valid HTTP response but dump things to stdout.
+void handleDbgTailF() {
 	
 	String cmd = server.arg("cmd");
 	
 	WiFiClient client = server.client();
+	// Send at least a very basic HTTP header. 
+	client.write("HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n");
+	
 	if (cmd=="") {
 		client.print("No cmd sent\n");
 	}
@@ -1373,30 +1454,20 @@ void handlePinTest() {
 #endif // WITH_PIN_TEST
 
 
-void handleSet() {
+void handleApiSet() {
 	String s = server.arg("level");
 	s.trim();
 	s.toLowerCase();
 
 	int l = -1;
-	if      (s=="party")     l=LEVEL_HIGH;
-	else if (s=="high")      l=LEVEL_HIGH;
-	else if (s=="hoch")      l=LEVEL_HIGH;
+	if      (s=="high")   l=LEVEL_HIGH;
 	// -------
-	else if (s=="norm")      l=LEVEL_NORM;  
-	else if (s=="normal")    l=LEVEL_NORM;  
-	else if (s=="day")       l=LEVEL_NORM;  
-	else if (s=="tag")       l=LEVEL_NORM;  
+	else if (s=="norm")   l=LEVEL_NORM;  
+	else if (s=="normal") l=LEVEL_NORM;  
 	// -------
-	else if (s=="red")       l=LEVEL_LOW;  
-	else if (s=="reduced")   l=LEVEL_LOW;  
-	else if (s=="night")     l=LEVEL_LOW;  
-	else if (s=="nacht")     l=LEVEL_LOW;  
-	else if (s=="reduziert") l=LEVEL_LOW;  
-	else if (s=="low")       l=LEVEL_LOW;  
+	else if (s=="low")    l=LEVEL_LOW;  
 	// -------
-	else if (s=="off")       l=LEVEL_OFF;  
-	else if (s=="aus")       l=LEVEL_OFF;  
+	else if (s=="off")    l=LEVEL_OFF;  
 	else { 
 	  l = atoi(s.c_str());
 	  if (0==l && EINVAL==errno) {
@@ -1409,41 +1480,15 @@ void handleSet() {
 		
 	String json;
 	if (-1==l) {
-		json = String("{ \"now\":") + getDate() + ",\"success\":false,\"reason\":\"invalid value\",\"value\":\""+s+"\"}\n";
+		json = String("{\"ok\":0,\"now\":")+getDate()+",,\"msg\":\"invalid value\",\"value\":\""+s+"\"}\n";
 	}
 	else {
 		overrideVentSetPoint(l);
-		// TODO: read OTW messages and wait until OTGW accepted new setting ????
-		json = String("{ \"now\":") + getDate() + ",\"success\":true,\"level\":"+l+",\"value\":\""+s+"\"}\n";
+		json = String("{\"ok\":1,\"now\":")+getDate()+",\"level\":"+l+",\"value\":\""+s+"\"}\n";
 	}
 	avoidCaching();
 	server.send(200, CT_APPL_JSON, json); 					
 }
-
-#ifdef WITH_USAGE_HELP
-void handleHelp() {
-	String body = 
-		"/index.html\n"
-		"/status?refresh=<int>\n"
-		"/setup\n"
-		"/setup_ajax\n"
-		"/set?level=[0-3]\n"
-		"/level\n"
-			
-		#ifdef WITH_DEBUG
-		"/tailf?cmd=<str>\n"
-		"/setdbg?level=[0-1]\n"
-		"/feedmsg?msg=X00000000&feed=[0-1]\n"
-		#endif // WITH_DEBUG
-			
-		#ifdef WITH_PIN_TEST
-		"/pintest?pin=X\n"
-		#endif // WITH_PIN_TEST
-			
-		"/help\n";			
-	server.send(200, CT_TEXT_PLAIN, body); 						
-}
-#endif
 
 
 /*
@@ -1483,9 +1528,36 @@ void setupSensors();
 void handleSensors();
 #endif
 
+#ifdef WITH_USAGE_HELP
+void handleHelp() {
+	String body = 
+		"/index\n"
+		"/setup\n"
+		"/api/status?refresh=<int>\n"
+		"/api/set?level=[0-3]\n"
+		"/api/level\n"
+			
+		#ifdef WITH_DEBUG
+		"/dbg/tailf?cmd=<str>\n"
+		"/dbg/set?level=[0-1]\n"
+		"/dbg/msg?msg=X00000000&feed=[0-1]\n"
+		#endif // WITH_DEBUG
+			
+		#ifdef WITH_PIN_TEST
+		"/pintest?pin=X\n"
+		#endif // WITH_PIN_TEST
+			
+		"/help\n";			
+	server.send(200, CT_TEXT_PLAIN, body); 						
+}
+#endif
+
+
 void setup() {
 	
   Serial.begin(9600); // as used by OTGW
+  overrideVentSetPoint(LEVEL_NOOVER);  
+  
   inputString.reserve(200);
   
   if (!readConfiguration()) {
@@ -1502,7 +1574,9 @@ void setup() {
 
   // init global state
   state.ventSetpoint = -1;
-  state.ventOverride = -1;
+  // set by overrideVentSetPoint above
+  //state.ventOverride = -1; 
+  state.ventAcknowledged = -1;
   state.ventReported = -1;
   state.ventRelative = -1;
   state.tempSupply   = -30000; // -300C 
@@ -1523,34 +1597,32 @@ void setup() {
   setupNetwork();
 
   server.on("/",              handleRoot);
+  server.on("/index",         handleIndex);
   server.on("/index.html",    handleIndex);
+  server.on("/manifest.json", handleManifest);
   server.on("/favicon.ico",   handleFavicon);
-  server.on("/status.json",   handleStatus);
-  server.on("/status",        handleStatus);
-  server.on("/info.json",     handleStatus);
-  server.on("/info",          handleStatus);
-  server.on("/setup",    	  handleSetupAjax);
-  server.on("/ajax",          handleAjax);
-  //server.on("/setup",       handleSetup);	  // replaced by ajax version now
-  //server.on("/confirm",     handleConfirm); // replaced by ajax version now
-  server.on("/set",           handleSet);
-  server.on("/level",         handleLevel);
-
-  #ifdef WTH_DEBUG
-  server.on("/tailf",         handleTailF);
-  server.on("/setdbg",        handleSetDbg);
-  server.on("/feedmsg",       handleFeedMsg);
+  // TODO: makes ESP crash
+  //server.on("/fan.png",       handleHomeIcon);
+  server.on("/api/status",    handleApiStatus);
+  server.on("/api/set",       handleApiSet);
+  server.on("/api/level",     handleApiLevel);
+  #ifdef WITH_WEB_SETUP
+  server.on("/setup",    	  handleSetup);
   #endif
+  server.on("/ajax",          handleAjax);
 
+  #ifdef WITH_DEBUG
+  server.on("/dbg/tailf",     handleDbgTailF);
+  server.on("/dbg/set",       handleDbgSet);
+  server.on("/dbg/msg",       handleDbgMsg);
+  #endif
+  
   #ifdef WITH_PIN_TEST
-  server.on("/pintest",       handlePinTest);
+  server.on("/dbg/pin",       handlePinTest);
   #endif
 
   server.on("/help",          handleHelp);
-  //server.on("/homeicon.png",  handleHomeIcon); // add to android home screen
-  //server.on("/manifest.json", handleManifest); // add to android home screen
-  server.onNotFound(          handleNotFound);
-  
+  server.onNotFound(          handleNotFound);  
   server.begin();
 }
 
@@ -1560,15 +1632,23 @@ void handleHeartbeat() {
 	int now = millis();
 	// Start blinking after things stable.
 	// Seems like fiddeling with GPIO0 too early resets the device sporadically.
-	if (now<3000) return;
+	if (now<5000) return;
 	
 	boolean light = false;
 	int level     = state.ventOverride; // 0=off,...,3=high
-	int sequence  = now%1000;           // 0,...,999
-	int prefix    = 100*(level+1);      // 100, 200, 300, 400
-	if (sequence < prefix) {
-		sequence %= 100; 				// runs 1x,2x,3x or 4x through 0,..,99
-		light = sequence<50;
+	if (now>30000 && WiFi.status() != WL_CONNECTED) {
+		light = (now/100)%2;
+	}
+	else if (level<0) {
+		light = (now/2000)%2;
+	}
+	else {
+		int sequence  = now%2500;           // 0,...,2500-1
+		int prefix    = 500*(level+1);      // 500, 1000, 1500, 2000
+		if (sequence < prefix) {
+			sequence %= 500; 				// runs 1x,2x,3x or 4x through 0,..,500-1
+			light = sequence<250;
+		}
 	}
 	
 	if (light != led_lit) {
@@ -1581,13 +1661,11 @@ void handleHeartbeat() {
 long loopIterations = 0;
 
 void loop() {
-	
-	serialEvent();
-	
+	serialEvent();	
 	server.handleClient();
 	
 	#ifdef WITH_DALLAS_TEMP_SENSORS
-	if (0==loopIterations%1000000)  {
+	if (!temperaturesRequested || 0==loopIterations%(1000*1000))  {
 		handleSensors();
 	}
 	#endif
@@ -1602,8 +1680,8 @@ void loop() {
 	
 	handleHeartbeat();
 	
-	if (reboot_scheduled_after>-1 && reboot_scheduled_after>millis()) {
-		reboot_scheduled_after = -1;
+	if (rebootScheduledAfter>-1 && rebootScheduledAfter>millis()) {
+		rebootScheduledAfter = -1;
 		dbgln("*********** REBOOT **********");
 		delay(100);
 		ESP.reset();
@@ -1643,20 +1721,29 @@ void printTemperature(DeviceAddress deviceAddress)
   dbg(tempC);
 }
 
-void handleSensors() {
-	//dbgln("handleSensors: request temps...");
-    sensors.requestTemperatures();
-    //dbgln("handleSensors: temps requested");	
 
-    for (int i=0; i<sensorsFound; i++) {
+void handleSensors() {
+	//dbgln("ZZ=handleSensors");
+	if (!temperaturesRequested) {
+		sensors.requestTemperatures();
+		temperaturesRequested=true;
+	}
+	
+	state.lastMeasure = millis();	
+	//dbgln("ZZ=handleSensors: reading ts");
+    for (int i=0; i<state.sensorsFound; i++) {
+    	//dbg("ZZ=sensors.getTempCByIndex("); dbg(i); dbgln(")");
     	float t = sensors.getTempCByIndex(i);
-    	//dbg("ZZ=sensor "); dbg(i); dbg(":"); dbg(t); dbgln("");
+    	//dbg("ZZ=t="); dbgln((int)(100*t));
     	state.extraTemps[i] = 100*t;
 	}
+    sensors.requestTemperatures();
+    temperaturesRequested=true;
+	//dbgln("ZZ=handleSensors done");
 }
 
 void setupSensors() {
-	dbgln("setupSensors");
+	//dbgln("ZZ=setupSensors");
 
 	// Start up the library
 	sensors.begin();
@@ -1664,8 +1751,8 @@ void setupSensors() {
 
 	// locate devices on the bus
 	//dbg("ZZ=locating devices...");
-	sensorsFound = sensors.getDeviceCount();
-	dbg("ZZ=found "); dbg(sensorsFound); dbgln(" sensors.");
+	state.sensorsFound = sensors.getDeviceCount();
+	//dbg("ZZ=found "); dbg(state.sensorsFound); dbgln(" sensors.");
 	
 	// report parasite power requirements
 	//dbg("parasite power: "); 

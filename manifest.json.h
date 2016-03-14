@@ -1,0 +1,11 @@
+R"=====(
+{"name":"VitoWifi",
+ "icons":[{
+  "src":"fan.png",
+  "sizes":"72x72",
+  "type":"image/png",
+  "density":1.0}],
+ "start_url":"index.html",
+ "display":"standalone",
+ "orientation":"portrait"}
+)====="
