@@ -27,7 +27,7 @@
 //#define WITH_ALL_DATAIDS
 
 // Enable debug functions. 
-#define WITH_DEBUG
+//#define WITH_DEBUG
 
 // Enable a help page on http://192.168.4.1/help
 #define WITH_USAGE_HELP
@@ -336,12 +336,10 @@ struct {
   struct {
 	  long serial;	// total number of messages received on serial line
 	  
-	  #ifdef WITH_DEBUG
 	  struct { 
 		  long fed; 	// via /feedmsg?feed=1...
 		  long debug; 	// (parsed only, not fed)
 	  }    wifi;
-	  #endif
 	  
 	  // number of invalid messages received 
 	  struct { 
@@ -521,6 +519,7 @@ void addError(const char * text) {}
 #else
 	int DEBUG_LEVEL = DBG_OFF;
 	#define dbg(WHATEVER) {}
+	#define dbgln(WHATEVER) {}
 #endif
 
 	
@@ -819,7 +818,9 @@ int overrideVentSetPoint(int level) {
 	  }
   }
   dbg("ZZ=overrideVentSetPoint, old:"); dbg(state.ventOverride); dbg(" new:"); dbgln(level);
+  int old = state.ventOverride; 
   state.ventOverride = level;
+  return old;
 }
 
 
@@ -1442,14 +1443,14 @@ void handlePinTest() {
 	server.send(200, CT_TEXT_PLAIN, String("Toggle pin ") + pin + "\n");
 	server.client().stop();
 	
-	dbg("toggle start pin"), dbgln(pin);
+	dbg("toggle start pin"); dbgln(pin);
 	pinMode(pin, OUTPUT);	
 	for (int i=0; i<10; i++) {
 		dbg("digitalWrite("); dbg(pin); dbg(","); dbgln(i%2);   
 		digitalWrite(pin, i%2);
 		delay(200);
 	}
-	dbg("toggle stop pin"), dbgln(pin);
+	dbg("toggle stop pin"); dbgln(pin);
 }
 #endif // WITH_PIN_TEST
 
@@ -1483,8 +1484,8 @@ void handleApiSet() {
 		json = String("{\"ok\":0,\"now\":")+getDate()+",,\"msg\":\"invalid value\",\"value\":\""+s+"\"}\n";
 	}
 	else {
-		overrideVentSetPoint(l);
-		json = String("{\"ok\":1,\"now\":")+getDate()+",\"level\":"+l+",\"value\":\""+s+"\"}\n";
+		int old = overrideVentSetPoint(l);
+		json = String("{\"ok\":1,\"now\":")+getDate()+",\"level\":"+l+",\"value\":\""+s+"\",\"old\":" + old + "}\n";
 	}
 	avoidCaching();
 	server.send(200, CT_APPL_JSON, json); 					
