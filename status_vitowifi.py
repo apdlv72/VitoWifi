@@ -2,28 +2,32 @@
 
 import datetime, httplib, urllib, urllib2, json, os
 
-HOST="localhost"
-PORT=1111
-HOST="thing-vitowifi"
-PORT=80
+# Host name (or IP address) and port of the ESP device with the VitiWifi sketch. 
+VITOWIFI_HOST="thing-vitowifi"
+VITOWIFI_PORT=80
 
+# Write thingspeak API key to a file called 'thingspeak.vitowifi.key'
+# in the same directory. 
 with open('thingspeak.vitowifi.key','r') as fd:
     APIKEY=fd.readline()
     APIKEY=APIKEY.strip()
 
-response = urllib2.urlopen('http://%s:%s/api/status' % (HOST, PORT))
+# Get current status as a json document and extract information we need. 
+response = urllib2.urlopen('http://%s:%s/api/status' % (VITOWIFI_HOST, VITOWIFI_PORT))
 str    = response.read()
 
 status = json.loads(str) 
-uptime   = status.get("now", -1)
-freeheap = status.get('freeheap',-1)
-sensors  = status.get('sensors', [])
-vent     = status.get('vent',{})
-relative = vent.get('relative', -1)
+uptime   = status.get("now",      -1) # uptime in millis
+freeheap = status.get('freeheap', -1) # free heap bytes
+sensors  = status.get('sensors',  []) # sensor temperatures mCelsius
+vent     = status.get('vent',     {}) # ventilation status
+relative = vent.get('relative', -1)   # relative fan speed percentile: 0, 27, 55, 100%
 
+# get number of sensors found and truncate array of measures 
 sensorsFound = int(status.get('sensorsFound',0))
 sensors = sensors[:sensorsFound]
 
+# scale mCelsius to Celsius
 uptime /= 60000 # millis->minutes
 for i in range(len(sensors)): sensors[i]=0.01*sensors[i]
 
