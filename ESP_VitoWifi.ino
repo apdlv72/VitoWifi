@@ -1233,7 +1233,8 @@ String upTime() {
 
 void handleApiStatus() {
 	  String refresh = server.arg("refresh");
-	  String filterCheck = String(state.tsps[23], 16);
+	  //String filterCheck = String(state.tsps[23], 16);
+	  String filterCheck = (state.status.lo & 32) ? "1" : "0";
 	  String json = String() +
 		"{\n"
 		"  \"ok\":1,\n"
