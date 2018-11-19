@@ -62,9 +62,12 @@ def rawValues(hi, lo):
 
 
 def decodeMessage(msg):
+  D = False
+  
   sender = msg[0]
   dword  = int(msg[1:], 16)  
-  #print("%s %08x" % (sender, dword))
+  if D:
+    print("%s %08x" % (sender, dword))
 
   parity = (0x80000000 & dword)>>31
   mtype  = (0x70000000 & dword)>>28
@@ -72,11 +75,12 @@ def decodeMessage(msg):
   dataid = (0x00ff0000 & dword)>>16
   value  = (0x0000ffff & dword)
   name   = dataids.get(dataid)
-  #print("parity: %01x" % parity)
-  #print("mtype:  %01x" % mtype)
-  #print("spare:  %01x" % spare)
-  #print("dataid: %02x" % dataid)
-  #print("value:  %04x" % value)
+  if D:
+    print("parity: %01x" % parity)
+    print("mtype:  %01x" % mtype)
+    print("spare:  %01x" % spare)
+    print("dataid: %02x" % dataid)
+    print("value:  %04x" % value)
   
   hi = (0xff00 & value) >> 8
   lo = (0x00ff & value)

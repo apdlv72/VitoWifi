@@ -142,7 +142,20 @@ function onLevelSet(d,j){assign('vent.override',d['level'])}
 function setLevel(level){ajax('/api/set?level='+level,onLevelSet,onLevelSetFailed,{'level':level});}
 
 function onStatusFailed(d,rc,rsp,j){console.log("Failed to read status: "+rc+" "+rsp+" "+j);}
-function onStatus(d,j){for (k in j) assign(k,j[k]);}
+function onStatus(d,j){
+    for (k in j) assign(k,j[k]);
+    try {
+        // for TSPs below I figured out their values:
+        var ts = j['tsps'];
+        tc('relFanLow',ts[0]);
+        tc('relFanNorm',ts[2]);
+        tc('relFanHigh',ts[4]);
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
 function readStatus(){
 	l("<readStatus>");
 	ajax('/api/status?n='+(new Date()).getTime(),onStatus,onStatusFailed,{});
@@ -261,8 +274,25 @@ function config(){
 	</div>
 
 	<div class="wid">		
-		<table style="width:100%">
-			<tr><td class="t" colspan="8">Transient Slave Parameters</td></tr>
+		<table style="width:100%" border="1">
+			<tr><td class="t" colspan="9">Transparent Slave Parameters</td></tr>
+			<tr>
+				<td colspan="9">Relative fan speed:</td>
+			</tr>
+			<tr>
+				<td colspan="4">&nbsp;&nbsp;reduced:</td><td colspan="5" id="relFanLow"></td>
+			</tr>
+			<tr>
+				<td colspan="4">&nbsp;&nbsp;normal:</td><td colspan="5" id="relFanNorm"></td>
+			</tr>
+			<tr>
+				<td colspan="4">&nbsp;&nbsp;high:</td><td colspan="5" id="relFanHigh"></td>
+			</tr>
+			<tr>
+				<td class="t">0-7</td>
+				<td id="tsps0">.</td><td id="tsps1">.</td><td id="tsps2">.</td><td id="tsps3">.</td>
+				<td id="tsps4">.</td><td id="tsps5">.</td><td id="tsps6">.</td><td id="tsps7">.</td>
+			</tr>
 			<tr>
 				<td class="t">0-7</td>
 				<td id="tsps0">.</td><td id="tsps1">.</td><td id="tsps2">.</td><td id="tsps3">.</td>
