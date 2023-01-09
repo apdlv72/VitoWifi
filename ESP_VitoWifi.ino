@@ -1,3 +1,8 @@
+#include <UrlEncode.h>
+#include <ArduinoOTA.h>
+
+#include "secrets.h"
+
 /**
  * Arduino sketch for a ESP-8266 WiFi micro controller to control a Vitovent 300 
  * home ventilation unit via a OpenTherm Gateway and a WiFi connection.
@@ -18,7 +23,7 @@
 // When called, the mode of the respective pin "p" will be set to OUTPUT and value toogled between hi/low a couple of times.
 // This is useful to find out which pin number is assigned to what pin. Be careful with pins used by the ESP.
 // Check https://github.com/esp8266/Arduino/issues/1219 for more details.
-#define WITH_PIN_TEST
+//#define WITH_PIN_TEST
 
 // Uncomment to enable ID to text translation of all known OpenTherm data IDs.
 // This cause a considerable overhead in RAM usage and is not enable by default since it is not used for normal operation. 
@@ -26,13 +31,25 @@
 // this to learn what your devices are talking to eachother. 
 //#define WITH_ALL_DATAIDS
 
-// Enable debug functions. 
-//#define WITH_DEBUG
+// Enable serial debug functions
+//#define WITH_DEBUG_SERIAL
+
+// Enable sending debug messages on UDP port 
+#define WITH_DEBUG_UDP
+#define UDP_PORT 4220
+
+// Enable sending continuous stream of OT messages received on /dbg/tailf
+// #define WITH_TAILF
 
 // Enable a help page on http://192.168.4.1/help
-#define WITH_USAGE_HELP
+//#define WITH_USAGE_HELP
 
+// Enable html page to setup the device via browser.
 //#define WITH_WEB_SETUP
+
+// Enable upating ventilation level from an external web page on a regular basis.
+// Also requied to send alerts using a web API.
+#define WITH_WEB_CALLS
 
 const char DEFAULT_START_SSID[] = "VitoWifi";
 
@@ -180,7 +197,7 @@ class OTMessage {
 		case DI_REMOTE_PARAM_FLAGS:	 return "Remote parameter flags";
 		case DI_STATUS:				       return "Status V/H";
 		case DI_FAULT_FLAGS_CODE:	   return "Fault flags/code V/H";
-		case DI_CONTROL_SETPOINT:	   return "Control setpoint V/H";
+		case DI_CONTROL_SETPOINT:	   return "Control setpoint";
 		case DI_CONFIG_MEMBERID:	   return "Configuration/memberid V/H";
 		case DI_REL_VENTILATION:	   return "Relative ventilation";
 		case DI_SUPPLY_INLET_TEMP:	 return "Supply inlet temperature";
@@ -310,23 +327,32 @@ typedef struct {
 // Global status 
 struct {
   struct {
-	  long serial; // time of last messe via serial line
-      #ifdef WITH_DEBUG
+	  long serial; // time of last message via serial line
+      #ifdef WITH_DEBUG_SERIAL
 	  struct { 
 		  long fed;		// via URL /feedmsg?msg=...&feed=1 
 		  long debug; 	// via URL /feedmsg?msg=... (parsed only, not fed)
 	  } wifi;
       #endif
-  }        lastMsg;         // time (millis()) when last message was received
+  } lastMsg;         // time (millis()) when last message was received
   
-  int16_t  ventSetpoint; 	 // as set by controller
-  int16_t  ventOverride; 	 // as overridden by OTGW (sent to slave instead of ventSetpoint)
-  int16_t  ventAcknowledged; // by the slave, sent to OTGW 
+  int16_t  ventSetpoint; 	   // as set by controller
+  int16_t  ventOverride; 	   // as overridden by OTGW (sent to slave instead of ventSetpoint)
+  int16_t  ventWeb;          // received from external web resource/page (see web_update.h)
+  int16_t  ventAcknowledged; // by the slave, sent to OTGW   
   int16_t  ventReported;     // from OTGW to controller, pretending level is as requested (ventSetpoint)
-  int16_t  ventRelative; 	 // as reported by ventilation
-  int16_t  tempSupply;  	 // milli Celsius (inlet)
-  int16_t  tempExhaust;  	 // milli Celsius (inlet)
-  int16_t  tsps[64];  	 	 // transparent slave parameters
+  int16_t  ventRelative; 	   // as reported by ventilation
+  int16_t  tempSupply;  	   // milli Celsius (inlet)
+  int16_t  tempExhaust;  	   // milli Celsius (inlet)
+  int16_t  tsps[64];  	 	   // transparent slave parameters
+
+  // time when requested and acknowleged override started to differ
+  unsigned long ventDiffStarted;
+  // time when last report sent that there is a difference
+  unsigned long lastDiffReported;
+  // time of last OTGW reset attempt
+  unsigned long lastGWReset;
+  unsigned long lastGWResetReported;
   
   struct { 
 	  Value master; 
@@ -385,18 +411,18 @@ typedef struct {
 
 
 // I'm from cologne ;)
-#define MAGIC 4711+3
+#define MAGIC 4711+2
 
 // Everything that goes to EEPROM
 struct {	
 	// Detect if first time setup of EEPROM was done. 
-	uint16_t    magic;
+	uint16_t  magic;
 	boolean 	configured;
 	// Start ESP in access point mode?
 	Credentials accessPoint;
 	// Network to connect to
 	Credentials homeNetwork;
-	// Count incremented on every reboot to enablee monitoring of device crashes.
+	// Count incremented on every reboot to enable monitoring of device crashes.
 	uint32_t reboots;
 } * EE = 0;
 
@@ -426,6 +452,9 @@ String inputString = "";
 // wWhether the string is complete.
 boolean stringComplete = false;  
 
+// set in setup()
+unsigned long stopUdpLoggingAfter = 0;
+
 #ifdef ESP8266
   ESP8266WebServer server(HTTP_LISTEN_PORT);
 #elif ESP32
@@ -438,7 +467,17 @@ boolean stringComplete = false;
  * 
  */
 
-boolean led_lit=false;
+boolean led_lit = false;
+volatile boolean led_blink = false;
+int timer_value = 250000;
+
+void ICACHE_RAM_ATTR timerRoutine() {
+  if (led_blink) {
+    led_lit = (millis()/100) % 2;
+    digitalWrite(LED_HEART, led_lit ? LOW : HIGH);
+  } 
+  timer1_write(timer_value);   
+}
 
 void ledToggle() {
 	led_lit = !led_lit;
@@ -516,22 +555,52 @@ void addError(const char * text) {}
 
 #define DBG_OFF 0 
 #define DBG_ON  1
+#define DBG_UDP 2
 		
-#ifdef WITH_DEBUG
-	int DEBUG_LEVEL = DBG_ON;
-	void dbg(String s)         { if (DBG_OFF<DEBUG_LEVEL) Serial.print(s);   } 
-	void dbgln(String s)       { if (DBG_OFF<DEBUG_LEVEL) Serial.println(s); }
-	void dbg(const char * s)   { if (DBG_OFF<DEBUG_LEVEL) Serial.print(s);   } 
-	void dbgln(const char * s) { if (DBG_OFF<DEBUG_LEVEL) Serial.println(s); }
-	void dbg(int i)            { if (DBG_OFF<DEBUG_LEVEL) Serial.print(i);   } 
-	void dbgln(int i)          { if (DBG_OFF<DEBUG_LEVEL) Serial.println(i); }
-#else
-	int DEBUG_LEVEL = DBG_OFF;
-	#define dbg(WHATEVER) {}
-	#define dbgln(WHATEVER) {}
+#if defined(WITH_DEBUG_SERIAL)
+
+int DEBUG_LEVEL = DBG_ON;
+void dbg(String s)         { if (DBG_OFF<DEBUG_LEVEL) Serial.print(s);   } 
+void dbgln(String s)       { if (DBG_OFF<DEBUG_LEVEL) Serial.println(s); }
+void dbg(const char * s)   { if (DBG_OFF<DEBUG_LEVEL) Serial.print(s);   } 
+void dbgln(const char * s) { if (DBG_OFF<DEBUG_LEVEL) Serial.println(s); }
+void dbg(int i)            { if (DBG_OFF<DEBUG_LEVEL) Serial.print(i);   } 
+void dbgln(int i)          { if (DBG_OFF<DEBUG_LEVEL) Serial.println(i); }
+
+#elif defined(WITH_DEBUG_UDP)
+  
+WiFiUDP UDP;
+boolean doLogUDP = false;
+
+void logUDP(String msg) {
+  if (doLogUDP) {
+    UDP.beginPacket("255.255.255.255", UDP_PORT);
+    UDP.print("  ");
+    UDP.print(msg);
+    UDP.endPacket();
+  }
+}
+
+int DEBUG_LEVEL = DBG_OFF;
+void dbg(String s)         { logUDP(s); } 
+void dbgln(String s)       { logUDP(s); }
+void dbg(const char * s)   { logUDP(s);   } 
+void dbgln(const char * s) { logUDP(s); }
+void dbg(int i)            { logUDP(String(i));   } 
+void dbgln(int i)          { logUDP(String(i)); }
+
+#else  
+
+  int DEBUG_LEVEL = DBG_OFF;
+  #define dbg(WHATEVER) {}
+  #define dbgln(WHATEVER) {}
+
 #endif
 
-	
+#ifdef WITH_WEB_CALLS
+#include "web_update.h"
+#endif
+
 /***************************************************************
  * 
  * OpenTherm message parsing
@@ -570,6 +639,9 @@ int onMasterMessage(OTMessage& m) {
 			case OTMessage::DI_CONTROL_SETPOINT:   
 				state.ventSetpoint = m.lo;
 				break;
+      case OTMessage::DI_CONTROL_SETPOINT_VH:   
+        state.ventSetpoint = m.lo;
+        break;
 			case OTMessage::DI_MASTER_PROD_VERS:
 				state.version.master.hi = m.hi;
 				state.version.master.lo = m.lo;
@@ -613,6 +685,9 @@ int onSlaveMessage(OTMessage& m) {
 	
 		switch (m.dataid) {
 	
+    case OTMessage::DI_CONTROL_SETPOINT_VH:   
+      state.ventAcknowledged = m.lo;
+      return RC_OK;
 		case OTMessage::DI_CONTROL_SETPOINT:   
 			state.ventAcknowledged = m.lo;
 			return RC_OK;
@@ -718,6 +793,10 @@ String onOTGWMessage(String line, boolean feed) {
   char         sender = cstr[0];
   const char * hexstr = cstr+1;
 
+  #ifdef WITH_DEBUG_UDP
+  logUDP(line);
+  #endif
+
   // Indicate there is some activity:
   ledFlash(5);
   
@@ -777,6 +856,10 @@ String onOTGWMessage(String line, boolean feed) {
   }
 
   OTMessage msg(number);
+  #ifdef WITH_DEBUG_UDP
+  logUDP(msg.toString());
+  #endif
+
   rc = String(sender)+":";
   rc += msg.toString();
   rc += ':';
@@ -808,25 +891,33 @@ String onOTGWMessage(String line, boolean feed) {
   return rc; 
 }
 
+// TODO: Untested if OTGW firmware accep[ts this already
+void resetOTGW() {
+  dbgln("ZZ=resetOTGW");
+  for (int i=0; i<2; i++) {
+    Serial.print("GW=R\r\n");
+    delay(50);
+  }
+}
 
 int overrideVentSetPoint(int level) {
   level = level<-1 ? -1 : level>LEVEL_HIGH ? LEVEL_HIGH : level;
   if (level<0) {
-	  for (int i=0; i<3; i++) {
+	  for (int i=0; i<2; i++) {
 		  // stop overriding, just monitor
 		  Serial.print("GW=0\r\n"); 
 		  delay(100);
 	  } 
   }
   else {
-	  for (int i=0; i<3; i++) {
+	  for (int i=0; i<2; i++) {
 		  Serial.print("GW=1\r\n");
 		  delay(10);
 		  Serial.print("VS="); Serial.print(level); Serial.print("\r\n");
 		  delay(20);
 	  }
   }
-  dbg("ZZ=overrideVentSetPoint, old:"); dbg(state.ventOverride); dbg(" new:"); dbgln(level);
+  dbg(String("ZZ=overrideVentSetPoint, old:") + state.ventOverride + " new:" + level);
   int old = state.ventOverride; 
   state.ventOverride = level;
   return old;
@@ -840,7 +931,7 @@ int overrideVentSetPoint(int level) {
  */
 
 boolean readConfiguration() {
-    //dbgln("ZZ=readConfiguration");
+    dbgln("ZZ=readConfiguration");
   boolean success = false;
   uint16_t magic;
 
@@ -851,11 +942,11 @@ boolean readConfiguration() {
 	EEPROM.begin(sizeof(*EE));
 	eEE_READ(EE->magic, magic);
 	
-	//dbg("ZZ=magic="); dbgln(magic); 
+	dbg("ZZ=magic="); dbgln(magic); 
 	if (MAGIC==magic) {
 		
 		eEE_READ(EE->configured, configured);
-		//dbg("ZZ=configured="); dbgln(configured); 
+		dbg("ZZ=configured="); dbgln(configured); 
 		
 		eEE_READ(EE->accessPoint.used, accessPoint.used);
 		if (accessPoint.used) {
@@ -866,7 +957,7 @@ boolean readConfiguration() {
 			eEE_READ(EE->homeNetwork, homeNetwork);
 		}
 		
-		//dbgln("readConfiguration: success=true");
+		//dbgln("ZZ=readConfiguration: success=true");
 		success = true;
 	}
 	EEPROM.end();
@@ -879,24 +970,24 @@ boolean readConfiguration() {
 }
 
 void firstTimeSetup() {
-    dbgln("ZZ=firstTimeSetup");
+  dbgln("ZZ=firstTimeSetup");
 
   #ifdef ESP8266
 	ESP.wdtDisable() ;
   #endif
 	EEPROM.begin(sizeof(*EE));
 	
-    dbgln("ZZ=writing credentials");
-	Credentials creds = { 0, "", "" }; 
-	memset(&creds, 0, sizeof(creds));
-	
-	eEE_WRITE(creds, EE->accessPoint.used);	
-	eEE_WRITE(creds, EE->homeNetwork);
-    dbgln("ZZ=credentials written");
+  dbgln("ZZ=writing credentials");
+	Credentials creds = { 1, "AP_VitoWifi", "" }; 	
+	eEE_WRITE(creds, EE->accessPoint);	
 
-    dbgln("ZZ=writing config flag");
+  memset(&creds, 0, sizeof(creds));
+	eEE_WRITE(creds, EE->homeNetwork);
+  dbgln("ZZ=credentials written");
+
+  dbgln("ZZ=writing config flag");
 	eEE_WRITE(configured, EE->configured);
-    dbgln("ZZ=config flag written");
+  dbgln("ZZ=config flag written");
 	
 	// write magic to state that eeprom content is valid now
 	uint16_t magic = MAGIC;
@@ -948,7 +1039,7 @@ String getAPIP() {
   
 void setupNetwork() {
 	
-	//dbgln("ZZ=setupNetwork");
+	dbgln("ZZ=setupNetwork");
 	// if configured, try to connect to network first
 	if (homeNetwork.used) {
 		
@@ -956,7 +1047,7 @@ void setupNetwork() {
 	    
 	    dbg("ZZ=connecting to "); dbgln(homeNetwork.ssid);
 	    WiFi.mode(accessPoint.used ? WIFI_AP_STA : WIFI_STA);
-		WiFi.begin(homeNetwork.ssid,  homeNetwork.psk);
+		  WiFi.begin(homeNetwork.ssid,  homeNetwork.psk);
 
 	    while (WiFi.status() != WL_CONNECTED && 0<retries--) {
 	      digitalWrite(LED_ONBOARD, retries % 2);
@@ -965,11 +1056,11 @@ void setupNetwork() {
 	    }
 	}
 	else {
-		//dbgln("ZZ=no network set up");
+		dbgln("ZZ=no home network set up");
 	}
 	
 	boolean connected = WiFi.status()==WL_CONNECTED;	
-	//dbg("setupNetwork:"); dbg(connected ? " " : " not "); dbgln("connected");
+	dbg("ZZ=setupNetwork:"); dbg(connected ? " " : " not "); dbgln("connected");
 	
 	// if that fails (or requested through configuration), start access point (as well)
 	if (accessPoint.used || !connected) {
@@ -990,23 +1081,22 @@ void setupNetwork() {
 			WiFi.mode(WIFI_AP);
 		}
 	    
-	    String sid = accessPoint.ssid;
-	    String psk = accessPoint.psk;
-	    //dbg("ZZ=accessPoint.ssid: "); dbgln(sid);
-	    //dbg("ZZ=accessPoint.psk:  "); dbgln(psk);
-	    if (!accessPoint.used) {
-			#ifdef DEFAULT_START_SSID
-	    	sid = DEFAULT_START_SSID;
-			#else
-	    	sid = String("http://") + getAPIP();
-			#endif	    	
-	    	psk = DEFAULT_PSK;
-	    }
-	    
-	    // Prefix debug messages with (invalid) command prefix "ZZ=" in case we are really conneted to a OTGW.
-	    // This way it will just print a "invalid command" message and we do not risk to confuse/crash it.
-	    dbg("ZZ=ssid: "); dbgln(sid);
-	    dbg("ZZ=psk:  "); dbgln(psk);
+    String sid = accessPoint.ssid;
+    String psk = accessPoint.psk;
+    dbg("ZZ=accessPoint.ssid: "); dbgln(sid);
+    dbg("ZZ=accessPoint.psk:  "); dbgln(psk);
+    if (!accessPoint.used) {
+		#ifdef DEFAULT_START_SSID
+    	sid = DEFAULT_START_SSID;
+		#else
+    	sid = String("http://") + getAPIP();
+		#endif	    	
+    	psk = DEFAULT_PSK;
+    }
+    
+    dbg("ZZ=ssid: "); dbgln(sid);
+    dbg("ZZ=psk:  "); dbgln(psk);
+    
 		WiFi.softAP(sid.c_str(), psk.c_str());
 	}
 }
@@ -1256,33 +1346,50 @@ void handleManifest() {
 }
 
 String upTime() {
-	long secs = millis()/1000;
+  return toHumanReadableTime(millis()/1000);
+}
+
+String toHumanReadableTime(int secs) {
 	long mins = secs / 60; secs %= 60;
 	long hrs  = mins / 60; mins %= 60;
 	long days = hrs  / 24; hrs  %= 24; 	
-	String t = String(days) + "d," + hrs + "h," + mins + "m," + secs + "s";
+	String t = String(days) + "d, " + hrs + "h, " + mins + "m, " + secs + "s";
 	return t;
 }
 
 void handleApiStatus() {
+    
+    //dbg("handleApiStatus");
+    unsigned long now = millis();
+    unsigned long delta = state.ventDiffStarted>0 ? now-state.ventDiffStarted : 0;
 	  String refresh = server.arg("refresh");
 	  //String filterCheck = String(state.tsps[23], 16);
-	  String filterCheck = (state.status.lo & 32) ? "1" : "0";
+	  String filterCheck =  state.status.lo<0 ? "-1" : (state.status.lo & 32) ? "1" : "0";   
 	  String json = String() +
 		"{\n"
 		"  \"ok\":1,\n"
 		"  \"build\":\"" + buildNo + "\",\n"
 		"  \"reboots\":\"" + reboots + "\",\n"
-	    "  \"now\":" + millis() + ",\n"
+	    "  \"now\":" + now + ",\n"
 		"  \"uptime\":\"" + upTime()+ "\",\n"
 	    "  \"lastMsg\":{" + 
-				"\"serial\":" + state.lastMsg.serial + ""
-				#ifdef WITH_DEBUG
-				",\"wifi\":{\"fed\":" + state.lastMsg.wifi.fed  + ",\"debug\":" + state.lastMsg.wifi.debug + "}" 
+				"\"serial\":" + (now-state.lastMsg.serial) + ""
+				#ifdef WITH_DEBUG_SERIAL
+				",\"wifi\":{\"fed\":" + (now-state.lastMsg.wifi.fed)  + ",\"debug\":" + (now-state.lastMsg.wifi.debug) + "}" 
 				#endif
 		   "},\n"	
 	    "  \"dbg\":{\"level\":" + DEBUG_LEVEL + "},\n"
-		"  \"vent\":{\"set\":" + state.ventSetpoint + ",\"override\":" + state.ventOverride + ",\"ackn\":" + state.ventAcknowledged + ",\"reported\":" + state.ventReported + ",\"relative\":" + state.ventRelative + "},\n"
+		"  \"vent\":{\"set\":" + state.ventSetpoint + 
+		   ",\"override\":" + state.ventOverride + 
+       ",\"web\":" + state.ventWeb + 
+		   ",\"ackn\":" + state.ventAcknowledged + 
+		   ",\"reported\":" + state.ventReported + 
+		   ",\"relative\":" + state.ventRelative + "},\n"
+    "  \"unresponsiveness\":{"
+        "\"start\":" + state.ventDiffStarted + 
+        ",\"delta\":" + delta + 
+        ",\"reported\":" + state.lastDiffReported + 
+      "},\n"    
 		"  \"temp\":{\"supply\":"   + state.tempSupply   + ",\"exhaust\":" + state.tempExhaust + "},\n"
 		"  \"status\":["            + state.status.hi           + "," + state.status.lo           + "],\n"
 		"  \"faultFlagsCode\":["    + state.faultFlagsCode.hi   + "," + state.faultFlagsCode.lo   + "],\n"
@@ -1293,7 +1400,7 @@ void handleApiStatus() {
 		"  \"messages\":{\n" + 
 		"    \"total\":"   + (state.messages.serial+state.messages.wifi.fed+state.messages.wifi.debug) + ",\n" 
 		"    \"serial\":"  + state.messages.serial + ",\n"
-		#ifdef WITH_DEBUG
+		#ifdef WITH_DEBUG_SERIAL
 		"    \"wifi\":{\"fed\":" + state.messages.wifi.fed + ",\"debug\":" + state.messages.wifi.debug + "},\n"
 		#endif
 		"    \"invalid\":{\"len\":"  + state.messages.invalid.length + ",\"format\":" + state.messages.invalid.format + ",\"src\":" + state.messages.invalid.source + "},\n" 
@@ -1361,7 +1468,7 @@ void handleApiLevel() {
 	server.send(200, CT_APPL_JSON, json); 						
 }
 
-#ifdef WITH_DEBUG
+#ifdef WITH_DEBUG_SERIAL
 void handleDbgSet() {
 	String level = server.arg("level");
 	int old = DEBUG_LEVEL; 
@@ -1391,78 +1498,133 @@ void handleDbgMsg() {
 	server.send(200, CT_TEXT_PLAIN, rc);
 }
 
-// Use this like: "curl http://192.168.4.1/tailf".
+// Use this like: "curl http://192.168.4.1/dbg/tailf".
 // It will however not receive a valid HTTP response but dump things to stdout.
-void handleDbgTailF() {
-	
-	String cmd = server.arg("cmd");
-	
-	WiFiClient client = server.client();
-	// Send at least a very basic HTTP header. 
-	client.write("HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n");
-	
-	if (cmd=="") {
-		client.print("No cmd sent\n");
-	}
-	else {		
-		Serial.print(cmd); Serial.print("\r\n");
-		Serial.print(cmd); Serial.print("\n");
-		client.print(String("Cmd sent: '") + cmd + "'");
-	}
+#endif // WITH_DEBUG_SERIAL
 
-	inputString = "";
-	uint32_t maxWait = 60*1000; // 20s
-	do {
-		//client.print("waiting for serial data\n");
-		// Wait for data on serial line to become available
-		while (client.connected() && !Serial.available() && maxWait--){
-			delay(1);
-		}
-
-		if (Serial.available()) {
-			//client.print("Serial.available\n");
-			char inChar = (char)Serial.read();
-			
-			//client.print("Serial.available: 0x");
-			//client.print(String((int)inChar, 16)); client.print(" ");
-			//client.print(String((int)inChar, 10)); client.print("\n");
-			
-			switch (inChar) {
-				case '\r':
-					// ignore CR, assume next is newline
-					break;
-				case '\n':
-					stringComplete = true;
-					break;
-				default:
-					inputString += inChar;	    				
-			}
-		}	
-
-		if (stringComplete) {
-			//client.print("stringComplete: '");
-			//client.print(inputString);
-			//client.print("'\n");
-
-			state.lastMsg.serial = millis();
-			state.messages.serial++;
-			client.print(inputString); client.print("\n");
-			String rc = onOTGWMessage(inputString, true);			
-			client.print(rc);
-			
-			stringComplete = false;
-			inputString = "";
-			
-			ledToggle();
-		}
-		
-	} while (client.connected());
-	//dbgln("client disconnected");
-
-	client.stop();
-	delay(10);
+#ifdef WITH_DEBUG_UDP
+void handleUdpOn() {
+  stopUdpLoggingAfter = 0;
+  doLogUDP = true;
+  logUDP("**** UDP LOGGING ENABLED ****");  
+  avoidCaching();
+  server.send(200, CT_TEXT_PLAIN, "UDP logging enabled");               
 }
-#endif // WITH_DEBUG
+
+void handleUdpOff() {
+  doLogUDP = true;
+  logUDP("**** UDP LOGGING DISABLED ****");  
+  doLogUDP = false;  
+  avoidCaching();
+  server.send(200, CT_TEXT_PLAIN, "UDP logging disabled");               
+}
+#endif
+
+#ifdef WITH_WEB_CALLS
+void handleWebGet() {
+  String response = handleWebUpdate(true);  
+  avoidCaching();
+  server.send(200, CT_TEXT_PLAIN, response);             
+}
+#endif
+
+void handleReboot() {
+  dbgln("ZZ=handleReboot");
+  avoidCaching();
+  server.send(200, CT_TEXT_PLAIN, "OK");            
+  delay(100);
+  ESP.reset();
+}
+
+void handleResetOTGW() {
+  dbgln("ZZ=handleResetOTGW");
+  resetOTGW();
+  avoidCaching();
+  server.send(200, CT_TEXT_PLAIN, "OK");            
+}
+
+void handleResetReboots() {
+  dbgln("handleResetReboots");
+  EEPROM.begin(sizeof(*EE));
+  reboots=0;
+  eEE_WRITE(reboots, EE->reboots);  
+  EEPROM.commit();
+  EEPROM.end();
+  avoidCaching();
+  server.send(200, CT_TEXT_PLAIN, "OK");            
+}
+
+#ifdef WITH_TAILF
+void handleDbgTailF() {
+  
+  String cmd = server.arg("cmd");
+  
+  WiFiClient client = server.client();
+  // Send at least a very basic HTTP header. 
+  client.write("HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n");
+  
+  if (cmd=="") {
+    client.print("No cmd sent\n");
+  }
+  else {    
+    Serial.print(cmd); Serial.print("\r\n");
+    Serial.print(cmd); Serial.print("\n");
+    client.print(String("Cmd sent: '") + cmd + "'");
+  }
+
+  inputString = "";
+  uint32_t maxWait = 60*1000; // 20s
+  do {
+    //client.print("waiting for serial data\n");
+    // Wait for data on serial line to become available
+    while (client.connected() && !Serial.available() && maxWait--){
+      delay(1);
+    }
+
+    if (Serial.available()) {
+      //client.print("Serial.available\n");
+      char inChar = (char)Serial.read();
+      
+      //client.print("Serial.available: 0x");
+      //client.print(String((int)inChar, 16)); client.print(" ");
+      //client.print(String((int)inChar, 10)); client.print("\n");
+      
+      switch (inChar) {
+        case '\r':
+          // ignore CR, assume next is newline
+          break;
+        case '\n':
+          stringComplete = true;
+          break;
+        default:
+          inputString += inChar;              
+      }
+    } 
+
+    if (stringComplete) {
+      //client.print("stringComplete: '");
+      //client.print(inputString);
+      //client.print("'\n");
+
+      state.lastMsg.serial = millis();
+      state.messages.serial++;
+      client.print(inputString); client.print("\n");
+      String rc = onOTGWMessage(inputString, true);     
+      client.print(rc);
+      
+      stringComplete = false;
+      inputString = "";
+      
+      ledToggle();
+    }
+    
+  } while (client.connected());
+  //dbgln("client disconnected");
+
+  client.stop();
+  delay(10);
+}
+#endif
 
 
 #ifdef WITH_PIN_TEST
@@ -1572,11 +1734,11 @@ void handleHelp() {
 		"/api/set?level=[0-3]\n"
 		"/api/level\n"
 			
-		#ifdef WITH_DEBUG
+		#ifdef WITH_DEBUG_SERIAL
 		"/dbg/tailf?cmd=<str>\n"
 		"/dbg/set?level=[0-1]\n"
 		"/dbg/msg?msg=X00000000&feed=[0-1]\n"
-		#endif // WITH_DEBUG
+		#endif // WITH_DEBUG_SERIAL
 			
 		#ifdef WITH_PIN_TEST
 		"/pintest?pin=X\n"
@@ -1587,16 +1749,45 @@ void handleHelp() {
 }
 #endif
 
-
 void setup() {
 	
   Serial.begin(9600); // as used by OTGW
+  pinMode(LED_HEART, OUTPUT);
+  //pinMode(LED_BUILTIN, OUTPUT);
+  
+  timer1_attachInterrupt(timerRoutine);
+  timer1_enable(TIM_DIV16, TIM_EDGE, TIM_SINGLE);
+  timer1_write(timer_value);   
+  
+  overrideVentSetPoint(LEVEL_NOOVER);  
+  
+  dbgln(String("ZZ=ChipID: ") + String(ESP.getFlashChipId(), 16));
+
+  WiFi.begin(NETWORK, PASSWORD);
+  dbgln("ZZ=Connecting to " NETWORK);
+
+  int i = 0;
+  while (WiFi.status() != WL_CONNECTED) { // Wait for the Wi-Fi to connect
+    digitalWrite(LED_HEART, HIGH); delay(250);
+    digitalWrite(LED_HEART, LOW);  delay(250);
+    digitalWrite(LED_HEART, HIGH); delay(250);
+    digitalWrite(LED_HEART, LOW);  delay(250);
+    dbg(String(" " + i)); 
+    ++i;
+  }
+
+  #ifdef WITH_DEBUG_UDP
+  UDP.begin(UDP_PORT);
+  doLogUDP = true;  
+  #endif
+
+  dbgln(String("\nZZ=Connected, IP ") + WiFi.localIP().toString());
   overrideVentSetPoint(LEVEL_NOOVER);  
   
   inputString.reserve(200);
   
   if (!readConfiguration()) {
-	  // when EEPROM was not staring with magic,need to set up first:
+	  // when EEPROM was not starting with magic,need to set up first:
 	  firstTimeSetup();
 	  // read again, this time it should succeed:
 	  readConfiguration(); 
@@ -1611,11 +1802,12 @@ void setup() {
   state.ventSetpoint = -1;
   // set by overrideVentSetPoint above
   //state.ventOverride = -1; 
+  state.ventWeb = -1;
   state.ventAcknowledged = -1;
   state.ventReported = -1;
   state.ventRelative = -1;
-  state.tempSupply   = -30000; // -300C 
-  state.tempExhaust  = -30000;
+  state.tempSupply   = -12700; // -127C (as dallas when no value read)
+  state.tempExhaust  = -12700;
   state.status.hi           = state.status.lo           = -1; 		 
   state.faultFlagsCode.hi   = state.faultFlagsCode.lo   = -1;	
   state.configMemberId.hi   = state.configMemberId.lo   = -1; 
@@ -1624,6 +1816,9 @@ void setup() {
   for (int i=0; i<sizeof(state.tsps)/sizeof(state.tsps[0]); i++) {
 	  state.tsps[i] = -1;
   }
+  for (int i=0; i<sizeof(state.extraTemps)/sizeof(state.extraTemps[0]); i++) {
+    state.extraTemps[i] = -12700; // hecto-celsius
+  }   
   
   #ifdef WITH_DALLAS_TEMP_SENSORS
   setupSensors();    
@@ -1646,8 +1841,23 @@ void setup() {
   #endif
   server.on("/ajax",          handleAjax);
 
-  #ifdef WITH_DEBUG
+  #ifdef WITH_TAILF  
   server.on("/dbg/tailf",     handleDbgTailF);
+  #endif
+
+  #ifdef WITH_DEBUG_UDP
+  server.on("/dbg/udp/0",      handleUdpOff);
+  server.on("/dbg/udp/1",      handleUdpOn);
+  #endif
+  
+  #ifdef WITH_WEB_CALLS
+  server.on("/dbg/webget",      handleWebGet);
+  #endif
+  server.on("/dbg/reboot",      handleReboot);
+  server.on("/dbg/reset/otgw",  handleResetOTGW);
+  server.on("/dbg/reset/reboots", handleResetReboots);
+
+  #ifdef WITH_DEBUG_SERIAL
   server.on("/dbg/set",       handleDbgSet);
   server.on("/dbg/msg",       handleDbgMsg);
   #endif
@@ -1656,11 +1866,21 @@ void setup() {
   server.on("/dbg/pin",       handlePinTest);
   #endif
 
+  #ifdef WITH_USAGE_HELP
   server.on("/help",          handleHelp);
+  #endif 
+  
   server.onNotFound(          handleNotFound);  
   server.begin();
-}
 
+  String otaName = "VitoWifi-" + String(ESP.getFlashChipId(), 16);
+  ArduinoOTA.setHostname(otaName.c_str());
+  ArduinoOTA.begin();  
+
+  //stopUdpLoggingAfter = millis() + 10*60*1000; // stop spamming 10 minutes after start
+  stopUdpLoggingAfter = -1; // never stop
+  dbg(String("UDP logging will stop ") + stopUdpLoggingAfter);
+}
 
 void handleHeartbeat() {
 	
@@ -1695,9 +1915,215 @@ void handleHeartbeat() {
 
 long loopIterations = 0;
 
+#ifdef WITH_WEB_CALLS
+unsigned long lastWebCheck = 0;
+unsigned long lastWebCheckError = 0;
+
+#define WEB_CHECK_INTERVAL (10*60*1000) // 10 minutes
+
+void sendWhatsApp(String msg) {
+  getWebPage2(String(ALERT_URL) + urlEncode(msg), "", true);         
+}
+
+void sendViaProxy(String msg) {
+  getWebPage2(UPDATE_URL, "alert=" + urlEncode(msg), true /* ignore body */);          
+}
+
+void sendAlert(String text) {
+  led_blink = true;
+  String msg = text
+      + " [VitoWifi-" + String(ESP.getFlashChipId(), 16) + "]"
+      + " http:// " + WiFi.localIP().toString();        
+  sendWhatsApp(msg + " (direct)");
+  sendViaProxy(msg + " (proxy)");
+  led_blink = false;
+}
+
+String handleWebUpdate(boolean force) {
+  unsigned long now = millis();
+  if (0==lastWebCheck || now<lastWebCheck || now-lastWebCheck>WEB_CHECK_INTERVAL || force) {
+    
+    String params = 
+      String("uptime=") + millis()/1000 + 
+      "&reboots=" + reboots + 
+      "&free=" + ESP.getFreeHeap() + 
+      "&chid=" + String(ESP.getFlashChipId(), 16) +
+      "&build=" + urlEncode(buildNo) +
+      "&ip=" + WiFi.localIP().toString()
+    ;
+
+    if (state.tempSupply>=-127) {
+      params += "&ts=";
+      params += state.tempSupply;      
+    }
+    if (state.tempExhaust>=-127) {
+      params += "&te=";
+      params += state.tempExhaust;      
+    }
+    if (state.status.hi>=0) {
+      params += "&hi=";
+      params += state.status.hi;      
+    }
+    if (state.status.lo>=0) {
+      params += "&lo=";
+      params += state.status.lo;
+    }
+    if (state.ventOverride>=0) {
+      params += "&level=";
+      params += state.ventOverride;
+    }
+    if (state.ventAcknowledged>=0) {      
+      params += "&ackn=";
+      params += state.ventAcknowledged;
+    }
+    if (state.ventRelative>=0) {      
+      params += "&fan=";
+      params += state.ventRelative;
+    }
+    
+    for (int i=0; i<sizeof(state.extraTemps)/sizeof(state.extraTemps[0]); i++) {
+      if (state.extraTemps[i]>-127) {
+        params += "&t";
+        params += (i+1);
+        params += "=";
+        params += state.extraTemps[i];
+      }
+    }   
+    
+    dbgln(String("ZZ=getWebPage=") + params);
+    led_blink = true;
+    String response = getWebPage(params);
+    led_blink = false;
+    
+    String needle = "ventLevel=";
+    int pos = response.indexOf(needle);
+    if (pos>=0) {
+      String value = response.substring(pos+needle.length());
+      int level = value.toInt();
+      dbg(String("ZZ=level=") + level);
+      if (level<LEVEL_OFF || level>LEVEL_HIGH) {
+        level = LEVEL_NORM;
+      }
+      state.ventWeb = level;
+      overrideVentSetPoint(level);
+      lastWebCheckError = 0;
+    } 
+    else {
+      if (0==lastWebCheckError) {
+        lastWebCheckError = millis();
+      }
+      unsigned long delta = millis()-lastWebCheckError;
+      if (delta > 60*60*1000) {
+        String text = String("[VitoWifi-") + String(ESP.getFlashChipId(), 16) 
+          + "] Failed to fetch ventilation level from web page for more than 1 hour.";
+        sendWhatsApp(text);
+      }
+    }
+    
+    lastWebCheck = millis();
+    return response;
+  }  
+  return "0";
+}
+#endif
+
+long inital_free_memory = -1;
+unsigned long reboot_time = 4294967296 - 3600*1000;
+unsigned last_diff_logged = 0;
+boolean start_announced = false;
+boolean reboot_announced = false;
+
 void loop() {
+
+  // memory leak prevention: restart if free memory drops below 25% of initialy available
+  if (inital_free_memory<0) {
+    inital_free_memory = ESP.getFreeHeap();
+  } else {
+    long free_now = ESP.getFreeHeap();
+    if ( (100*free_now)/inital_free_memory < 25) {
+      #ifdef WITH_WEB_CALLS
+      if (!reboot_announced) {
+        sendAlert(String("μController rebooting because of memory shortage: ") + free_now + " of " + inital_free_memory + "bytes left");        
+      }
+      reboot_announced = true;
+      #endif      
+      ESP.restart();
+    }
+  }
+
+  #ifdef WITH_DEBUG_UDP
+  if (stopUdpLoggingAfter>0 && millis()>stopUdpLoggingAfter) {
+    dbg("*** UDP LOGGING STOPS ***");
+    doLogUDP = false;
+    stopUdpLoggingAfter = 0; 
+  }
+  #endif
+
+  #ifdef WITH_WEB_CALLS
+  if (!start_announced) {
+    start_announced = true;
+    String msg = String("μController started: ") + inital_free_memory + " bytes free";
+    sendAlert(msg);
+  }
+  #endif
+
+  if (millis()>reboot_time) {
+    #ifdef WITH_WEB_CALLS
+    if (!reboot_announced) {
+      sendAlert(String("μController rebooting as scheduled (uptime ") + upTime() + ")");
+    }
+    #endif
+    reboot_announced = true;
+    ESP.reset(); // might fall through here?
+  }
+
+  if (state.ventOverride != state.ventAcknowledged) {
+    unsigned long now = millis();
+    if (state.ventDiffStarted==0) {
+      state.ventDiffStarted = now;
+      dbgln("ZZ=ventDiffStarted=" + now);
+    }
+    
+    // allow the slave up to 30 seconds to accept/acknowledge a change of override value
+    unsigned long delta = now-state.ventDiffStarted;
+    if (delta > 45 * 1000) {
+
+      #ifdef WITH_WEB_CALLS
+      delta = now-state.lastDiffReported;
+      // report unresponsivness at most once per hour
+      if (0==state.lastDiffReported || delta > 3600 * 1000) { 
+        if (state.ventAcknowledged<0) {
+          sendAlert("Ventilation is not responding.");
+        } else {
+          sendAlert("Ventilation stopped responding.");
+        }
+        state.lastDiffReported = now; 
+      }
+      #endif
+
+      // try to reset the OTGW, however at most once per 5 minutes
+      delta = now-state.lastGWReset;
+      if (delta > 5 * 60 * 1000) {
+        resetOTGW();
+        state.lastGWReset = now;
+        
+        #ifdef WITH_WEB_CALLS
+        // report at most once per hour
+        delta = now-state.lastGWResetReported;
+        if (0==state.lastGWResetReported || delta > 3600 * 1000) { 
+          sendAlert("Tried to restart the OpenTherm Gateway");
+          state.lastGWResetReported = now; 
+        }
+        #endif
+      }            
+    }
+  } else {
+    state.ventDiffStarted = 0;
+  }  
+
 	serialEvent();	
 	server.handleClient();
+  ArduinoOTA.handle();
 	
 	#ifdef WITH_DALLAS_TEMP_SENSORS
 	if (!temperaturesRequested || 0==loopIterations%(1000*1000))  {
@@ -1714,6 +2140,10 @@ void loop() {
 	}
 	
 	handleHeartbeat();
+  
+  #ifdef WITH_WEB_CALLS
+  handleWebUpdate(false);
+  #endif      
 
   #ifdef ESP8266
 	if (rebootScheduledAfter>-1 && rebootScheduledAfter>millis()) {
@@ -1760,6 +2190,7 @@ void printTemperature(DeviceAddress deviceAddress)
 
 
 void handleSensors() {
+	
 	//dbgln("ZZ=handleSensors");
 	if (!temperaturesRequested) {
 		sensors.requestTemperatures();
@@ -1774,8 +2205,9 @@ void handleSensors() {
     	//dbg("ZZ=t="); dbgln((int)(100*t));
     	state.extraTemps[i] = 100*t;
 	}
-    sensors.requestTemperatures();
-    temperaturesRequested=true;
+ 
+  sensors.requestTemperatures();
+  temperaturesRequested=true;
 	//dbgln("ZZ=handleSensors done");
 }
 

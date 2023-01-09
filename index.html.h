@@ -16,58 +16,23 @@ background:-webkit-radial-gradient(center,circle,rgba(255,255,255,.35),rgba(255,
 background-size:10px 10px,10px 10px,100% 100%;
 background-position:1px 1px,0px 0px,centercenter;}
 .wid{background-color:rgba(100,100,120,0.5);margin:1ex;padding:1ex;
-	box-shadow:
-		inset #000 0px 0px 10px, 
-		#555 4px 4px 10px;
-	border-radius:1ex;}
+//	box-shadow:
+//		inset #000 0px 0px 10px, 
+//		#555 4px 4px 10px;
+	//border-radius:1ex;
+	}
 .r{text-align:right;}
 .c{text-align:center;}
-.t{text-shadow: 
-	 0px -1px rgba(0,0,0,0.5),
-	 0px 1px 0px rgba(255,255,255,.5); 
-	color:#666}
+.rd{color: red;}
+//.t{text-shadow: 
+//	 0px -1px rgba(0,0,0,0.5),
+//	 0px 1px 0px rgba(255,255,255,.5); 
+//	color:#666}
 </style>
 
 <script>
-JSON_STR=
-'{ ' + 
-'		  "ok":1,' + 
-'		  "build":"Mar 10 2016 12:51:08",' + 
-'		  "reboots":"38",' + 
-'		  "now":357430,' + 
-'		  "uptime":"0d,0h,5m,57s",' + 
-'		  "lastMsg":{"serial":0,"wifi":{"fed":0,"debug":0}},' + 
-'		  "dbg":{"level":1},' + 
-'		  "vent":{"set":1,"override":2,"ackn":-1,"reported":-1,"relative":55},' + 
-'		  "temp":{"supply":-30000,"exhaust":-30000},' +
-' "sensors":[20,23,24,25.8],'+
-' "debug":2,'+
-'		  "status":[-9,-4],' + 
-'		  "faultFlagsCode":[-2,-1],' + 
-'		  "configMemberId":[-3,-4],' + 
-'		  "masterConfig":[-6,-5],' + 
-'		  "remoteParamFlags":[-9,-2],' + 
-'		  "filterCheck":-1,' + 
-'		  "messages":{' + 
-'		    "total":0,' + 
-'		    "serial":0,' + 
-'		    "wifi":{"fed":0,"debug":0},' + 
-'		    "invalid":{"len":0,"format":0,"src":0},' + 
-'		    "expected":{"T":0,"B":0,"R":0,"A":0},' + 
-'		    "unexpected":{"T":0,"B":0,"R":0,"zero":0,"A":0}' + 
-'		  },' + 
-'		  "tsps":[' + 
-'		    -1,-1,-1,-1,-1,-1,-1,-1,' + 
-'		    -1,-1,-1,-1,-1,-1,-1,-1,' + 
-'		    -1,-1,-1,-1,-1,-1,-1,-1,' + 
-'		    -1,-1,-1,-1,-1,-1,-1,-1,' + 
-'		    -1,-1,-1,-1,-1,-1,-1,-1,' + 
-'		    -1,-1,-1,-1,-1,-1,-1,-1,' + 
-'		    -1,-1,-1,-1,-1,-1,-1,-1,' + 
-'		    -1,-1,-1,-1,-1,-1,-1,-1]' + 
-'}';
-
-
+// relative fan level to power consumption
+function fl2pwatts(l) { return l<0 ? '?' : (9.1510341510342E-06*l*l*l + 0.001189874939875*l*l + 0.200440115440116*l + 5.99999999999999).toFixed(1); }
 function createRequest(){return window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP");}
 function g(i){return document.getElementById(i);}
 function tc(i,v){try{document.getElementById(i).textContent=v;}catch(e){}}
@@ -77,7 +42,7 @@ function ajax(url,succFunc,failFunc,data) {
 	r.onreadystatechange=function(){
 		if(r.readyState==XMLHttpRequest.DONE){        	
 			var j;
-			l('resp: '+r.status+' '+r.responseText);
+			//l('resp: '+r.status+' '+r.responseText);
 			if(200==r.status){
 				if (!r.responseText)return failFunc(data,r.status,'Empty response from '+url,'');
 				try{
@@ -93,7 +58,7 @@ function ajax(url,succFunc,failFunc,data) {
 			return failFunc(data,r.status,r.responseText,j);
 		}
 	}
-	l('ajax: '+url);
+	//l('ajax: '+url);
 	try{r.open("GET",url,true);r.send();}catch(e){
 		//var j=JSON.parse(JSON_STR);
 		//succFunc(data,j);
@@ -107,7 +72,7 @@ function assign(k,v){
 		if (k=='vent.relative') {
 			g(k).style.width=v+'%';
 			tc(k,v+'%');
-		}else if(k=='vent.set'||k=='vent.override'){
+		}else if(k=='vent.set'||k=='vent.override'||k=='vent.web'){
 			for (var i=0;i<4;i++) {
 				tc(k+i,i==v?"▉":"");	
 			}						
@@ -132,38 +97,68 @@ function assign(k,v){
 	}
 }
 
-function parseJson(jsonstr) {
-	l(JSON_STR);
-	var j = JSON.parse(jsonstr);
-}
-
 function onLevelSetFailed(d,rc,rsp,j){console.log("Failed to set level: "+rc+" "+rsp+" "+j);}
 function onLevelSet(d,j){assign('vent.override',d['level'])}
 function setLevel(level){ajax('/api/set?level='+level,onLevelSet,onLevelSetFailed,{'level':level});}
-
 function onStatusFailed(d,rc,rsp,j){console.log("Failed to read status: "+rc+" "+rsp+" "+j);}
+function toC(hC){var c=0.01*hC; return c.toFixed(2);} // hecto-C -> C
 function onStatus(d,j){
+    try {
+      var ss = j['sensors'];
+      var sg = ss[2]-ss[1];
+      var el = ss[3]-ss[4];
+      tc('supply.gain',toC(sg));
+      tc('exhaust.gain',toC(el));
+    }
+    catch (e) {
+        console.log(e);
+    }
+    try {
+      var ss = j['sensors'];
+      for (i in ss) ss[i]=toC(ss[i]);
+      j['sensors'] = ss;
+      j['temp']['supply']=toC(j['temp']['supply']);
+      j['temp']['exhaust']=toC(j['temp']['exhaust']);
+    }
+    catch (e) {
+        console.log(e);
+    }
+    
     for (k in j) assign(k,j[k]);
     try {
         // for TSPs below I figured out their values:
         var ts = j['tsps'];
+        tc('relFanOff',0);
         tc('relFanLow',ts[0]);
         tc('relFanNorm',ts[2]);
         tc('relFanHigh',ts[4]);
+
+        tc('pwrOff', fl2pwatts(0));
+        tc('pwrLow', fl2pwatts(ts[0]));
+        tc('pwrNorm',fl2pwatts(ts[2]));
+        tc('pwrHigh',fl2pwatts(ts[4]));
+        
     }
     catch (e) {
         console.log(e);
     }
 }
 
+function webGet() {
+  ajax('/dbg/webget');
+}
+
 function readStatus(){
-	l("<readStatus>");
 	ajax('/api/status?n='+(new Date()).getTime(),onStatus,onStatusFailed,{});
-	l("</readStatus>");
+}
+
+function setUdp(v){
+  ajax('/dbg/udp/' + v + '?n='+(new Date()).getTime(),onStatus,onStatusFailed,{});
 }
 
 function onLoad(){
 	setInterval(function(){readStatus()},5000);
+  readStatus();
 }
 
 function config(){
@@ -177,7 +172,14 @@ function config(){
 <div>
 	<div style="position:relative;text-align:center">
 		<span id="title" class="t">VitoWifi</span>
-		<div style="position: absolute; right:1em; top:0;"><input type="button" onclick="readStatus()" value="Update"/></div>
+    <div style="position: absolute; left:1em; top:0;">
+      <input type="button" onclick="setUdp(1)" value="UDP on"/>
+      <input type="button" onclick="setUdp(0)" value="UDP off"/>
+    </div>
+		<div style="position: absolute; right:1em; top:0;">
+  		<input type="button" onclick="readStatus()" value="Refresh"/>
+      <input type="button" onclick="webGet()" value="WebGet"/>
+		</div>
 	</div>
 	
 	<div class="wid">		
@@ -190,52 +192,82 @@ function config(){
 		  	<td class="c" onclick="setLevel(3)" >HIGH</td>
 		  </tr>
 		  <tr>
-		  	<td>Override</td>
-		  	<td class="c" onclick="setLevel(0)" id="vent.override0">▉</td>
-		  	<td class="c" onclick="setLevel(1)" id="vent.override1"></td>
-		  	<td class="c" onclick="setLevel(2)" id="vent.override2"></td>
-		  	<td class="c" onclick="setLevel(3)" id="vent.override3"></td>
+		  	<td>Manual</td>
+		  	<td class="c rd" onclick="setLevel(0)" id="vent.override0"></td>
+		  	<td class="c rd" onclick="setLevel(1)" id="vent.override1"></td>
+		  	<td class="c rd" onclick="setLevel(2)" id="vent.override2"></td>
+		  	<td class="c rd" onclick="setLevel(3)" id="vent.override3"></td>
 		  </tr>
+      <tr>
+        <td>Automatic</td>
+        <td class="c" id="vent.web0"></td>
+        <td class="c" id="vent.web1"></td>
+        <td class="c" id="vent.web2"></td>
+        <td class="c" id="vent.web3"></td>
+      </tr>
+      <tr style="foreground:red">
+        <td>Setpoint</td>
+        <td class="c" id="vent.set0"></td>
+        <td class="c" id="vent.set1"></td>
+        <td class="c" id="vent.set2"></td>
+        <td class="c" id="vent.set3"></td>
+      </tr>
 		  <tr>
-		  	<td>Setpoint</td>
-		  	<td class="c" id="vent.set0"></td>
-		  	<td class="c" id="vent.set1">▉</td>
-		  	<td class="c" id="vent.set2"></td>
-		  	<td class="c" id="vent.set3"></td>
-		  </tr>
-		  <tr>
-		  	<td>Relative</td><td colspan="4">
+		  	<td>Fan speed</td><td colspan="4">
 			  	<div style="border: 0px solid black; box-shadow: inset #222 1px 1px 2px, inset #222 -1px -1px 2px; padding:2px;">
 				  	<div id="vent.relative" style="width:55%; background-color:#ccc; text-align: center;" >
 				  		55%
 				  	</div>
-				</div>
-			</td>
+				  </div>
+			  </td>
 		  </tr>
 		</table>
 	</div>
 	
 	<div class="wid">		
 		<table style="width:100%">
-		  <tr><td class="t">Temperature</td><td colspan="2">Supply</td><td colspan="2">Exhaust</td></tr>
-		  <tr><td>Inlet      </td><td id="temp.supply" ></td><td>&deg;C</td><td id="temp.exhaust" ></td><td>&deg;C</td></tr>
-		  <tr><td>Outlet     </td><td id="sensors0"></td><td>&deg;C</td><td id="sensors1"></td><td>&deg;C</td></tr>
-		  
-		  <tr><td style="height:.5em"></td></tr>
-		  
-		  <tr><td></td><td  colspan="2">Basement</td><td colspan="2">Room</td></tr>
-		  <tr><td></td><td id="sensors2"></td><td>&deg;C</td><td id="sensors3"></td><td>&deg;C</td></tr>
+		  <tr><td class="t">Temperature</td><td class="r">Supply</td><td/><td class="r">Exhaust</td><td/></tr>
+		  <tr><td>Built-in   </td><td class="r" id="temp.supply" ></td><td>&deg;C</td><td class="r" id="temp.exhaust" ></td><td>&deg;C</td></tr>
+      <tr><td></td></tr>
+      <tr><td>Inlet </td><td class="r" id="sensors1"   ></td><td>&deg;C</td><td class="r" id="sensors3"    ></td><td>&deg;C</td></tr>
+		  <tr><td>Outlet</td><td class="r" id="sensors2"   ></td><td>&deg;C</td><td class="r" id="sensors4"    ></td><td>&deg;C</td></tr>
+      <tr><td>Gain  </td><td class="r" id="supply.gain"></td><td>&deg;C</td><td class="r" id="exhaust.gain"></td><td>&deg;C</td></tr>
+      <tr><td></td></tr>
+      <tr><td>Room  </td><td class="r" id="sensors0"></td><td>&deg;C</td><td/><td/></tr>
 		</table>
 	</div>
 
+  <div class="wid">   
+    <table style="width:100%" border="0">
+      <tr>
+      </tr>
+      <tr>
+        <td>Fan level:</td><td class="r">Relative speed</td><td colspan="2" class="r">Power consumption</td>
+      </tr>
+      <tr>
+        <td>&nbsp;&nbsp;off:</td><td id="relFanOff" class="r"></td><td id="pwrOff" class="r"></td><td>Watt</td>
+      </tr>
+      <tr>
+        <td>&nbsp;&nbsp;reduced:</td><td id="relFanLow" class="r"></td><td id="pwrLow" class="r"></td><td>Watt</td>
+      </tr>
+      <tr>
+        <td>&nbsp;&nbsp;normal:</td><td id="relFanNorm" class="r"></td><td id="pwrNorm" class="r"></td><td>Watt</td>
+      </tr>
+      <tr>
+        <td>&nbsp;&nbsp;high:</td><td id="relFanHigh" class="r"></td><td id="pwrHigh" class="r"></td><td>Watt</td>
+      </tr>
+    </table>
+  </div>
+
 	<div class="wid">		
 		<table style="width:100%">
-			<tr><td class="t">Status:            </td></tr>
-			<tr><td>Overall:           </td><td><span id="status0"          ></span></td><td><span id="status1"          ></span></td></tr>
-			<tr><td>Fault flags:       </td><td><span id="faultFlagsCode0"  ></span></td><td><span id="faultFlagsCode1"  ></span></td></tr>
-			<tr><td>Config member ID:  </td><td><span id="configMemberId0"  ></span></td><td><span id="configMemberId1"  ></span></td></tr>
-			<tr><td>Master config:     </td><td><span id="masterConfig0"    ></span></td><td><span id="masterConfig1"    ></span></td></tr>
-			<tr><td>Remote param flags:</td><td><span id="remoteParamFlags0"></span></td><td><span id="remoteParamFlags1"></span></td></tr>
+			<tr><td class="t">Status:</td></tr>
+      <tr><td>Filter check:      </td><td class="r"><span id="filterCheck"      ></span></td><td/></tr>
+			<tr><td>Overall:           </td><td class="r"><span id="status0"          ></span></td><td class="r"><span id="status1"          ></span></td></tr>
+			<tr><td>Fault flags:       </td><td class="r"><span id="faultFlagsCode0"  ></span></td><td class="r"><span id="faultFlagsCode1"  ></span></td></tr>
+			<tr><td>Config member ID:  </td><td class="r"><span id="configMemberId0"  ></span></td><td class="r"><span id="configMemberId1"  ></span></td></tr>
+			<tr><td>Master config:     </td><td class="r"><span id="masterConfig0"    ></span></td><td class="r"><span id="masterConfig1"    ></span></td></tr>
+			<tr><td>Remote param flags:</td><td class="r"><span id="remoteParamFlags0"></span></td><td class="r"><span id="remoteParamFlags1"></span></td></tr>
 		</table>
 	</div>
 
@@ -269,30 +301,13 @@ function config(){
 				<td class="r" id="messages.invalid.format"></td>
 				<td class="r" id="messages.invalid.src"></td>
 			</tru>
-			<tr><td>Last:      </td><td class="r" colspan="5"><span id="lastMsg.serial"></span><span>s ago</span></td></tr>
+			<tr><td>Last:      </td><td class="r" colspan="5"><span id="lastMsg.serial"></span><span> ms ago</span></td></tr>
 		</table>
 	</div>
 
-	<div class="wid">		
-		<table style="width:100%" border="1">
+  <div class="wid">   
+    <table style="width:100%" border="0">
 			<tr><td class="t" colspan="9">Transparent Slave Parameters</td></tr>
-			<tr>
-				<td colspan="9">Relative fan speed:</td>
-			</tr>
-			<tr>
-				<td colspan="4">&nbsp;&nbsp;reduced:</td><td colspan="5" id="relFanLow"></td>
-			</tr>
-			<tr>
-				<td colspan="4">&nbsp;&nbsp;normal:</td><td colspan="5" id="relFanNorm"></td>
-			</tr>
-			<tr>
-				<td colspan="4">&nbsp;&nbsp;high:</td><td colspan="5" id="relFanHigh"></td>
-			</tr>
-			<tr>
-				<td class="t">0-7</td>
-				<td id="tsps0">.</td><td id="tsps1">.</td><td id="tsps2">.</td><td id="tsps3">.</td>
-				<td id="tsps4">.</td><td id="tsps5">.</td><td id="tsps6">.</td><td id="tsps7">.</td>
-			</tr>
 			<tr>
 				<td class="t">0-7</td>
 				<td id="tsps0">.</td><td id="tsps1">.</td><td id="tsps2">.</td><td id="tsps3">.</td>
@@ -342,12 +357,6 @@ function config(){
 			<tr><td>Build:     </td><td class="r" id="build"></td></tr>
 			<tr><td>Uptime:    </td><td class="r" id="uptime"></td></tr>
 			<tr><td>Reboots:   </td><td class="r" id="reboots"></td></tr>
-<!--			
-			<tr><td>NW:        </td><td class="r">Kamplumbaga</td></tr>
-			<tr><td>           </td><td class="r">192.168.179.35</td></tr>
-			<tr><td>AP:        </td><td class="r">thing-VitoWifi</td></tr>
-			<tr><td>           </td><td class="r">192.168.4.1</td></tr>
--->		
 			<tr><td>Debug level:</td><td class="r" id="debug"></td></tr>
 			<tr><td>Sensors:</td><td class="r" id="sensors.len"></td></tr>
 			<tr><td>Heap space:</td><td class="r" id="freeheap"></td></tr>
