@@ -1,4 +1,4 @@
-Update 2023-01-11: Added support to pull desired ventilation level from external web site. Fixed also some bugs.
+Update 2023-01-11: Added support to pull desired ventilation level from external web site. Added support for sending notification via web API.  Fixed also some bugs.
 
 
 Arduino sketch for a ESP-8266 WiFi micro controller to control a Vitovent 300 
