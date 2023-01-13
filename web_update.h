@@ -3,6 +3,8 @@
 
 WiFiClientSecure client;
 
+unsigned long lastConnectionSuccess = 0;
+
 boolean responseBodyComplete(const String& body) {
   dbgln(String("responseBodyComplete: '") + body + "'");
   if (body.length()>1000) {
@@ -76,6 +78,7 @@ String getWebPage2(String url, String params, boolean ignoreBody) {
     return "";
   }
   dbgln("Connected!");
+  lastConnectionSuccess = millis();
   client.setTimeout(30 * 1000);
 
   //String getLine  = String("GET /macros/s/") + google_key + "/exec" + (params.length()>0 ? "?" : "") + params + " HTTP/1.0\r\n";
