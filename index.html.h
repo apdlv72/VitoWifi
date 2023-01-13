@@ -15,7 +15,8 @@ body{font-family:Arial;
 background:-webkit-radial-gradient(center,circle,rgba(255,255,255,.35),rgba(255,255,255,0) 20%,rgba(255,255,255,0) 21%),-webkit-radial-gradient(center,circle,rgba(0,0,0,.2),rgba(0,0,0,0) 20%,rgba(0,0,0,0) 21%),-webkit-radial-gradient(center,circle farthest-corner,#f0f0f0,#c0c0c0);
 background-size:10px 10px,10px 10px,100% 100%;
 background-position:1px 1px,0px 0px,centercenter;}
-.wid{background-color:rgba(100,100,120,0.5);margin:1ex;padding:1ex;
+.wid{
+background-color:rgba(160,160,180,1);margin:1ex;padding:1ex;
 //	box-shadow:
 //		inset #000 0px 0px 10px, 
 //		#555 4px 4px 10px;
@@ -364,9 +365,19 @@ function config(){
 	</div>
 
 	
+<div style="padding: 1ex">      
+<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/98583/charts/3?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Upstairs&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
+<div style="height:1ex;"></div>
+<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/98583/charts/4?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Base&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
+<div style="height:1ex;"></div>
+<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/98583/charts/2?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Basement&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
+</div>
+
+<!--
 	<div>
 		<div style="position: relative; left:1em; top:0;"><input type="button" onclick="config()" value="Setup"/></div>
 	</div>
+-->
 
 </body>
 </html>

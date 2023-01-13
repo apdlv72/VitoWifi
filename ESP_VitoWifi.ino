@@ -411,7 +411,7 @@ typedef struct {
 
 
 // I'm from cologne ;)
-#define MAGIC 4711+2
+#define MAGIC (4711-2)
 
 // Everything that goes to EEPROM
 struct {	
@@ -424,8 +424,52 @@ struct {
 	Credentials homeNetwork;
 	// Count incremented on every reboot to enable monitoring of device crashes.
 	uint32_t reboots;
+  char     rebootReason[128];
 } * EE = 0;
 
+String getRebootReason() {
+
+  char buf[128];
+
+  #ifdef ESP8266
+	ESP.wdtDisable() ;
+  #endif
+
+	EEPROM.begin(sizeof(*EE));
+  eEE_READ(EE->rebootReason, buf);
+	EEPROM.end();
+
+  #ifdef ESP8266
+	ESP.wdtEnable(5000);
+  #endif
+
+  buf[127]=0;
+  String rtv =  String(buf);
+
+  //Serial.println(String("****************** getRebootReason: returning '") + rtv + "'");
+  return rtv;
+}
+
+void setRebootReason(const char * msg) {
+
+  //Serial.println(String("****************** setRebootReason: ") + msg);
+
+  #ifdef ESP8266
+	ESP.wdtDisable() ;
+  #endif
+	EEPROM.begin(sizeof(*EE));
+
+  //#define eEE_ADDR(EETOKEN) ((ADDR_T)(void*)&(EETOKEN))
+  //#define eEE_WRITE(SRC, EETOKEN) { eEEPROM.writeData(eEE_ADDR(EETOKEN), &(SRC),  sizeof(EETOKEN)); }
+  eEE_WRITE(msg[0], EE->rebootReason);
+
+	EEPROM.commit();
+	EEPROM.end();
+
+  #ifdef ESP8266
+	ESP.wdtEnable(5000);
+  #endif
+}
 
 // User committed first time setup (e.g. AP, network) and it was saved permanently.
 boolean configured = false;
@@ -445,7 +489,7 @@ Credentials homeNetwork;
 // After setup, a reboot is necessary. However, cannot do this while handling client request,
 // because this will abort the connection. Instead of this, finish sending the reponse to the
 // client and schedule a reboot after millis() will exceed this value.
-long rebootScheduledAfter = -1;
+long rebootScheduledAfterSetup = -1;
 
 // A string to hold incoming serial data from OTGW.
 String inputString = "";         
@@ -988,10 +1032,14 @@ void firstTimeSetup() {
   dbgln("ZZ=writing config flag");
 	eEE_WRITE(configured, EE->configured);
   dbgln("ZZ=config flag written");
-	
+
+  char msg[] = "first time setup";
+  eEE_WRITE(msg, EE->rebootReason);
+
 	// write magic to state that eeprom content is valid now
 	uint16_t magic = MAGIC;
 	eEE_WRITE(magic, EE->magic);
+
 
 	EEPROM.commit();
 	EEPROM.end();
@@ -1276,7 +1324,7 @@ void handleAjax() {
 		server.client().stop();
 		delay(200);		
 		dbgln("ZZ=reboot scheduled");
-		rebootScheduledAfter = millis()+1*1000;
+		rebootScheduledAfterSetup = millis()+1*1000;
 		return;
 	}
 	server.send(404, CT_APPL_JSON, String("{\"ok\":0,\"msg\":\"unknown resource\"}"));
@@ -1522,7 +1570,7 @@ void handleUdpOff() {
 
 #ifdef WITH_WEB_CALLS
 void handleWebGet() {
-  String response = handleWebUpdate(true);  
+  String response = handleWebUpdate(true, NULL);  
   avoidCaching();
   server.send(200, CT_TEXT_PLAIN, response);             
 }
@@ -1533,6 +1581,9 @@ void handleReboot() {
   avoidCaching();
   server.send(200, CT_TEXT_PLAIN, "OK");            
   delay(100);
+  String reason = String("due to API request");
+  sendAlert(String("μController rebooting: ") + reason);
+  setRebootReason(reason.c_str());      
   ESP.reset();
 }
 
@@ -1939,7 +1990,7 @@ void sendAlert(String text) {
   led_blink = false;
 }
 
-String handleWebUpdate(boolean force) {
+String handleWebUpdate(boolean force, const char * reason) {
   unsigned long now = millis();
   if (0==lastWebCheck || now<lastWebCheck || now-lastWebCheck>WEB_CHECK_INTERVAL || force) {
     
@@ -1949,8 +2000,12 @@ String handleWebUpdate(boolean force) {
       "&free=" + ESP.getFreeHeap() + 
       "&chid=" + String(ESP.getFlashChipId(), 16) +
       "&build=" + urlEncode(buildNo) +
-      "&ip=" + WiFi.localIP().toString()
+      "&ip=" + WiFi.localIP().toString();
     ;
+    if (NULL!=reason) {
+      params += "&reason=";
+      params += urlEncode(reason);
+    }
 
     if (state.tempSupply>=-127) {
       params += "&ts=";
@@ -2043,7 +2098,9 @@ void loop() {
     if ( (100*free_now)/inital_free_memory < 25) {
       #ifdef WITH_WEB_CALLS
       if (!reboot_announced) {
-        sendAlert(String("μController rebooting because of memory shortage: ") + free_now + " of " + inital_free_memory + "bytes left");        
+        String reason = String("low memory ") + free_now + " of " + inital_free_memory + "bytes";
+        sendAlert(String("μController rebooting: ") + reason);        
+        setRebootReason(reason.c_str());        
       }
       reboot_announced = true;
       #endif      
@@ -2059,22 +2116,45 @@ void loop() {
   }
   #endif
 
-  #ifdef WITH_WEB_CALLS
-  if (!start_announced) {
-    start_announced = true;
-    String msg = String("μController started: ") + inital_free_memory + " bytes free";
-    sendAlert(msg);
-  }
-  #endif
+  unsigned long now = millis();
 
-  if (millis()>reboot_time) {
-    #ifdef WITH_WEB_CALLS
+  if (now>reboot_time) {
     if (!reboot_announced) {
-      sendAlert(String("μController rebooting as scheduled (uptime ") + upTime() + ")");
+      String reason = String("as scheduled (uptime ") + upTime() + ")";
+      #ifdef WITH_WEB_CALLS
+      sendAlert(String("μController rebooting: ") + reason);
+      #endif
+      setRebootReason(reason.c_str());      
     }
-    #endif
     reboot_announced = true;
     ESP.reset(); // might fall through here?
+  }
+
+  if (now-lastConnectionSuccess > 60*60*1000) {
+    if (!reboot_announced) {
+      String reason = "no web connectivity > 1h";
+      sendAlert(String("μController rebooting: ") + reason);
+      #ifdef WITH_WEB_CALLS
+      setRebootReason(reason.c_str());  
+      #endif
+    }
+    reboot_announced = true;
+    ESP.reset(); // might fall through here?    
+  }
+
+  if (!start_announced) {
+    start_announced = true;
+    String reason = getRebootReason();
+    String msg = String("μController started: reason: '") + reason + "', " + inital_free_memory + " bytes free";
+    dbg(msg);
+
+    reason = "unexpected reboot";    
+    setRebootReason(reason.c_str());    
+    dbg(String("new reason: ") + reason);
+
+    #ifdef WITH_WEB_CALLS
+    sendAlert(msg);
+    #endif
   }
 
   if (state.ventOverride != state.ventAcknowledged) {
@@ -2142,12 +2222,12 @@ void loop() {
 	handleHeartbeat();
   
   #ifdef WITH_WEB_CALLS
-  handleWebUpdate(false);
+  handleWebUpdate(false, NULL);
   #endif      
 
   #ifdef ESP8266
-	if (rebootScheduledAfter>-1 && rebootScheduledAfter>millis()) {
-		rebootScheduledAfter = -1;
+	if (rebootScheduledAfterSetup>-1 && rebootScheduledAfterSetup>millis()) {
+		rebootScheduledAfterSetup = -1;
 		dbgln("*********** REBOOT **********");
 		delay(100);
 		ESP.reset();
@@ -2181,13 +2261,11 @@ void printResolution(DeviceAddress deviceAddress)
 */
 
 // function to print the temperature for a device
-void printTemperature(DeviceAddress deviceAddress)
-{
+void printTemperature(DeviceAddress deviceAddress) {
   float tempC = sensors.getTempC(deviceAddress);
   dbg("Temp C: ");
   dbg(tempC);
 }
-
 
 void handleSensors() {
 	
