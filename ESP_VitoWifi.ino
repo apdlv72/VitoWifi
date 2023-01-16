@@ -17,6 +17,7 @@
 // in your basement and/or living room, monitoring the temperature inside the OTGW device and so forth.
 // Every sensor requires just 2 bytes in RAM, so a large value is not too critical.
 #define WITH_DALLAS_TEMP_SENSORS
+
 #define MAX_NUM_SENSORS 6
 
 // Uncomment to support a pin test on http://192.168.4.1/pintest?p=0.
@@ -89,14 +90,14 @@ const char DEFAULT_START_SSID[] = "VitoWifi";
 
 const String buildNo   = __DATE__ " " __TIME__;
 
-#define LED_HEART 	0 // heartbeat 
-#define LED_ONBOARD 2 // blue onboard LED / temp. sensors
+#define LED_HEART 	  0 // heartbeat 
+#define LED_ONBOARD   2 // blue onboard LED / temp. sensors
 
 #define LEVEL_NOOVER -1 // do not overrride (monitor mode)
-#define LEVEL_OFF   0 // standby, ventilation off
-#define LEVEL_LOW   1 // "reduced" mode (27% for mine ... may vary)
-#define LEVEL_NORM  2 // "normal"  mode (55% for mine) 
-#define LEVEL_HIGH  3 // "party"   mode (100%)
+#define LEVEL_OFF     0 // standby, ventilation off
+#define LEVEL_LOW     1 // "reduced" mode (27% for mine ... may vary)
+#define LEVEL_NORM    2 // "normal"  mode (55% for mine) 
+#define LEVEL_HIGH    3 // "party"   mode (100%)
 
 // result codes of onOTMessage
 #define RC_OK         0	// message handled
@@ -143,179 +144,7 @@ const char FAN_PNG[] PROGMEM =
 // Conveniently zero-terminates a C-string.
 #define TZERO(STR) { (STR)[sizeof((STR))-1] = 0; }
 
-class OTMessage {
-
-  public:
-	
-	// OpenTherm message types
-	const static uint8_t MT_READ_DATA    = 0;
-	const static uint8_t MT_WRITE_DATA   = 1;
-	const static uint8_t MT_INVALID_DATA = 2;
-	const static uint8_t MT_RESERVED     = 3;
-	const static uint8_t MT_READ_ACK     = 4;
-	const static uint8_t MT_WRITE_ACK    = 5;
-	const static uint8_t MT_DATA_INVALID = 6;
-	const static uint8_t MT_UNKN_DATAID  = 7;
-	
-	// OpenTherm data IDs (common and vendor specific)
-	// see https://forum.fhem.de/index.php?topic=29762.115;wap2
-  const static uint8_t DI_STATUS_FLAGS        =   0;
-  const static uint8_t DI_CONTROL_SETPOINT    =   1;
-	const static uint8_t DI_MASTER_CONFIG		    =   2;
-	const static uint8_t DI_REMOTE_PARAM_FLAGS 	=   6;
-	const static uint8_t DI_STATUS 				      =  70;
-	const static uint8_t DI_CONTROL_SETPOINT_VH =  71;
-	// According to http://otgw.tclcode.com/matrix.cgi#thermostats only:
-	const static uint8_t DI_FAULT_FLAGS_CODE	  =  72;
-	const static uint8_t DI_CONFIG_MEMBERID 	  =  74;
-	const static uint8_t DI_REL_VENTILATION 	  =  77;
-	const static uint8_t DI_SUPPLY_INLET_TEMP 	=  80;
-	const static uint8_t DI_EXHAUST_INLET_TEMP 	=  82;
-	const static uint8_t DI_TSP_SETTING 		    =  89; 
-	const static uint8_t DI_MASTER_PROD_VERS 	  = 126;
-	const static uint8_t DI_SLAVE_PROD_VERS 	  = 127;
-      
-    
-    static String msgTypeToStr(uint8_t t) {
-      switch(t) {
-        case MT_READ_DATA:    return "READ_DATA";
-        case MT_WRITE_DATA:   return "WRITE_DATA";
-        case MT_INVALID_DATA: return "INVALID_DATA";
-        case MT_RESERVED:     return "RESERVED";
-        case MT_READ_ACK:     return "READ_ACK";
-        case MT_WRITE_ACK:    return "WRITE_ACK";
-        case MT_DATA_INVALID: return "DATA_INVALID";
-        case MT_UNKN_DATAID:  return "UNKN_DATAID";
-      }
-    }
-
-    static String dataIdToStr(uint8_t id) {
-      switch(id) {
-    case DI_STATUS_FLAGS:        return "Master/slave Status flags";
-    case DI_CONTROL_SETPOINT_VH: return "Control setpoint V/H";
-		case DI_MASTER_CONFIG:		   return "Master configuration";
-		case DI_REMOTE_PARAM_FLAGS:	 return "Remote parameter flags";
-		case DI_STATUS:				       return "Status V/H";
-		case DI_FAULT_FLAGS_CODE:	   return "Fault flags/code V/H";
-		case DI_CONTROL_SETPOINT:	   return "Control setpoint";
-		case DI_CONFIG_MEMBERID:	   return "Configuration/memberid V/H";
-		case DI_REL_VENTILATION:	   return "Relative ventilation";
-		case DI_SUPPLY_INLET_TEMP:	 return "Supply inlet temperature";
-		case DI_EXHAUST_INLET_TEMP:	 return "Exhaust inlet temperature";
-
-		// TODO: Find out meaning of various "transparent slave parameters"
-		// These are requested by the master in a round robin fashion from slave in the range 0-63,
-		// however some indexes are skipped.
-        // TSPs in at index 0, 2 and 4 seem to hold values for relative fan speeds for
-        // reduced, normal, high (party) level.
-		case DI_TSP_SETTING:		return "TSP setting V/H";
-		case DI_MASTER_PROD_VERS:	return "Master product version";
-		case DI_SLAVE_PROD_VERS:	return "Slave product version";
-		
-		#ifdef WITH_ALL_DATAIDS
-		case  3: return "SLAVE CONFIG/MEMBERID",READ,FLAG,00000000,U8,0,255,0,Yes
-		case  4: return "COMMAND";
-		case  5: return "FAULT FLAGS/CODE";
-		case  7: return "COOLING CONTROL";
-		case  8: return "TsetCH2";
-		case  9: return "REMOTE ROOM SETPOINT";
-		case 10: return "TSP NUMBER";
-		case 11: return "TSP ENTRY";
-		case 11: return "TSP ENTRY";
-		case 12: return "FAULT BUFFER SIZE";
-		case 13: return "FAULT BUFFER ENTRY";
-		case 14: return "CAPACITY SETTING";
-		case 15: return "MAX CAPACITY / MIN-MOD-LEVEL";
-		case 16: return "ROOM SETPOINT";
-		case 17: return "RELATIVE MODULATION LEVEL";
-		case 18: return "CH WATER PRESSURE";
-		case 19: return "DHW FLOW RATE";
-		case 20: return "DAY - TIME";
-		case 20: return "DAY - TIME";
-		case 21: return "DATE";
-		case 21: return "DATE";
-		case 22: return "YEAR";
-		case 22: return "YEAR";
-		case 23: return "SECOND ROOM SETPOINT";
-		case 24: return "ROOM TEMPERATURE";
-		case 25: return "BOILER WATER TEMP.";
-		case 26: return "DHW TEMPERATURE";
-		case 27: return "OUTSIDE TEMPERATURE";
-		case 28: return "RETURN WATER TEMPERATURE";
-		case 29: return "SOLAR STORAGE TEMPERATURE";
-		case 30: return "SOLAR COLLECTOR TEMPERATURE";
-		case 31: return "SECOND BOILER WATER TEMP.";
-		case 32: return "SECOND DHW TEMPERATURE";
-		case 32: return "EXHAUST TEMPERATURE";
-		case 48: return "DHW SETPOINT BOUNDS";
-		case 49: return "MAX CH SETPOINT BOUNDS";
-		case 50: return "OTC HC-RATIO BOUNDS";
-		case 56: return "DHW SETPOINT";
-		case 57: return "MAX CH WATER SETPOINT";
-		case 58: return "OTC HEATCURVE RATIO";
-
-    case 73: return "DIAGNOSTIC CODE V/H";
-		case 75: return "OPENTHERM VERSION V/H";
-		case 76: return "VERSION & TYPE V/H";
-		case 78: return "RELATIVE HUMIDITY V/H";
-		case 79: return "CO2 LEVEL V/H";
-    case 80: return "SUPPLY INLET TEMPERATURE V/H";
-		case 81: return "SUPPLY OUTLET TEMPERATURE V/H";
-		case 83: return "EXHAUST OUTLET TEMPERATURE V/H";
-		case 84: return "ACTUAL EXHAUST FAN SPEED V/H";
-		case 85: return "ACTUAL INLET FAN SPEED V/H";
-		case 86: return "REMOTE PARAMETER SETTINGS V/H";
-		case 87: return "NOMINAL VENTIALTION VALUE V/H";
-		case 88: return "TSP NUMBER V/H";
-		case 89: return "TSP ENTRY V/H";
-		case 90: return "FAULT BUFFER SIZE V/H";
-		case 91: return "FAULT BUFFER ENTRY V/H";
-
-    case 100: return "REMOTE OVERRIDE FUNCTION";
-
-		case 115: return "OEM DIAGNOSTIC CODE";
-		case 116: return "BURNER STARTS";
-		case 117: return "CH PUMP STATRS";
-		case 118: return "DHW PUMP/VALVE STARTS";
-		case 119: return "DHW BURNER STARTS";
-		case 120: return "BURNER OPERATION HOURS";
-		case 121: return "CH PUMP OPERATION HOURS";
-		case 122: return "DHW PUMP/VALVE OPERATION HOURS";
-		case 123: return "DHW BURNER HOURS";
-		case 124: return "OPENTHERM VERSION MASTER";
-		case 125: return "OPENTHERM VERSION SLAVE";
-		#endif      
-     }
-
-     return String("?");
-   }
-   
-    uint32_t 
-		parity : 1, 
-		type   : 3, 
-		spare  : 8, 
-		dataid : 8, 
-		hi     : 8, 
-		lo     : 8;
-    
-    // Construcor: takes raw 32 bit message and splits the double word into its components.
-   OTMessage(int32_t dword) {
-     parity = (0x80000000 & dword)>>31;
-     type   = (0x70000000 & dword)>>28;
-     spare  = (0x0f000000 & dword)>>24;
-     dataid = (0x00ff0000 & dword)>>16;
-     hi     = (0x0000ff00 & dword)>>8;
-     lo     = (0x000000ff & dword);
-    }
-
-    String toString() {
-      return String("OTMessage[")    
-    		  + msgTypeToStr(type)  
-			  + ",id:" + dataid + ",hi:" + hi + ",lo:" + lo  
-			  + "," + dataIdToStr(dataid)
-			  + "]";
-    }  
-};
+#include "OTMessage.h"
 
 typedef struct {
    // Use signed 16 bits to allow -1 to indicate that
@@ -340,19 +169,13 @@ struct {
   int16_t  ventOverride; 	   // as overridden by OTGW (sent to slave instead of ventSetpoint)
   int16_t  ventWeb;          // received from external web resource/page (see web_update.h)
   int16_t  ventAcknowledged; // by the slave, sent to OTGW   
+  unsigned long lastAcknChange;
+  
   int16_t  ventReported;     // from OTGW to controller, pretending level is as requested (ventSetpoint)
   int16_t  ventRelative; 	   // as reported by ventilation
   int16_t  tempSupply;  	   // milli Celsius (inlet)
   int16_t  tempExhaust;  	   // milli Celsius (inlet)
   int16_t  tsps[64];  	 	   // transparent slave parameters
-
-  // time when requested and acknowleged override started to differ
-  unsigned long ventDiffStarted;
-  // time when last report sent that there is a difference
-  unsigned long lastDiffReported;
-  // time of last OTGW reset attempt
-  unsigned long lastGWReset;
-  unsigned long lastGWResetReported;
   
   struct { 
 	  Value master; 
@@ -401,6 +224,38 @@ struct {
   
 } state;
 
+// Health monitoring and alert/report book keeping
+struct {
+  // time when requested and acknowleged override started to differ
+  unsigned long ventDiffStarted = 0;
+  // time when last report sent that there is a difference
+  unsigned long lastDiffReported = 0;
+  // time we sent a recovery message (device responsive again)
+  unsigned long lastRecoveryReported = 0;
+  // time of last OTGW reset attempt
+  unsigned long lastGWReset =0 ;
+  // time of when GW reset was reported 
+  unsigned long lastGWResetReported = 0;
+  
+  boolean isResponsive  = true;
+  boolean wasResponsive = true;
+
+  // initial memory
+  long initalFree = -1;
+
+  // 1 hour before millis() will roll over
+  unsigned long rebootTime = 4294967296 - 3600*1000;
+  
+  boolean startAnnounced = false;
+  boolean rebootAnnounced = false;
+} health;
+
+
+#define WEB_CHECK_INTERVAL (10*60*1000) // 10 minutes
+
+unsigned long lastWebCheck = 0;
+unsigned long lastWebCheckError = 0;
+
 
 // Credentials used to 1. set up ESP8266 as an access point and 2. define WiFI network to conenct to.
 typedef struct {
@@ -409,9 +264,8 @@ typedef struct {
 	char    psk[32+1];	
 } Credentials;
 
-
 // I'm from cologne ;)
-#define MAGIC (4711-2)
+#define MAGIC 4711
 
 // Everything that goes to EEPROM
 struct {	
@@ -445,14 +299,10 @@ String getRebootReason() {
 
   buf[127]=0;
   String rtv =  String(buf);
-
-  //Serial.println(String("****************** getRebootReason: returning '") + rtv + "'");
   return rtv;
 }
 
 void setRebootReason(const char * msg) {
-
-  //Serial.println(String("****************** setRebootReason: ") + msg);
 
   #ifdef ESP8266
 	ESP.wdtDisable() ;
@@ -517,7 +367,7 @@ int timer_value = 250000;
 
 void ICACHE_RAM_ATTR timerRoutine() {
   if (led_blink) {
-    led_lit = (millis()/100) % 2;
+    led_lit = (millis()/50) % 2;
     digitalWrite(LED_HEART, led_lit ? LOW : HIGH);
   } 
   timer1_write(timer_value);   
@@ -730,9 +580,15 @@ int onSlaveMessage(OTMessage& m) {
 		switch (m.dataid) {
 	
     case OTMessage::DI_CONTROL_SETPOINT_VH:   
+      if (state.ventAcknowledged != m.lo) {
+        state.lastAcknChange = millis();
+      }
       state.ventAcknowledged = m.lo;
       return RC_OK;
 		case OTMessage::DI_CONTROL_SETPOINT:   
+      if (state.ventAcknowledged != m.lo) {
+        state.lastAcknChange = millis();
+      }
 			state.ventAcknowledged = m.lo;
 			return RC_OK;
 		case OTMessage::DI_REL_VENTILATION:    
@@ -1401,97 +1257,132 @@ String toHumanReadableTime(int secs) {
 	long mins = secs / 60; secs %= 60;
 	long hrs  = mins / 60; mins %= 60;
 	long days = hrs  / 24; hrs  %= 24; 	
-	String t = String(days) + "d, " + hrs + "h, " + mins + "m, " + secs + "s";
+	String t;
+  if (days>0) {
+    t += String(days) + "d";
+  }
+  if (t.length()>0 || hrs>0) {
+    if (t.length()>0) t+= ", ";
+	  t += String(hrs ) + "h";
+  }
+	if (t.length()>0 || mins>0) {
+    if (t.length()>0) t+= ", ";
+	  t += String(mins) + "m";
+	}
+  if (t.length()>0) t+= ", ";
+  t += String(secs) + "s";
 	return t;
 }
 
-void handleApiStatus() {
-    
-    //dbg("handleApiStatus");
+String createStatusJson() {  
     unsigned long now = millis();
-    unsigned long delta = state.ventDiffStarted>0 ? now-state.ventDiffStarted : 0;
-	  String refresh = server.arg("refresh");
-	  //String filterCheck = String(state.tsps[23], 16);
-	  String filterCheck =  state.status.lo<0 ? "-1" : (state.status.lo & 32) ? "1" : "0";   
-	  String json = String() +
-		"{\n"
-		"  \"ok\":1,\n"
-		"  \"build\":\"" + buildNo + "\",\n"
-		"  \"reboots\":\"" + reboots + "\",\n"
-	    "  \"now\":" + now + ",\n"
-		"  \"uptime\":\"" + upTime()+ "\",\n"
-	    "  \"lastMsg\":{" + 
-				"\"serial\":" + (now-state.lastMsg.serial) + ""
-				#ifdef WITH_DEBUG_SERIAL
-				",\"wifi\":{\"fed\":" + (now-state.lastMsg.wifi.fed)  + ",\"debug\":" + (now-state.lastMsg.wifi.debug) + "}" 
-				#endif
-		   "},\n"	
-	    "  \"dbg\":{\"level\":" + DEBUG_LEVEL + "},\n"
-		"  \"vent\":{\"set\":" + state.ventSetpoint + 
-		   ",\"override\":" + state.ventOverride + 
+    unsigned long left1 = health.rebootTime-now;
+    unsigned long span2 = (now-lastWebCheck);
+    unsigned long left2 = WEB_CHECK_INTERVAL-span2;    
+
+    String nextReboot = toHumanReadableTime(left1/1000);    
+    String lastCheck  = toHumanReadableTime(span2/1000);
+    String nextCheck;
+    if (left2<0) {
+      nextCheck = "overdue"; 
+    }
+    else {
+      nextCheck = toHumanReadableTime(left2
+      
+      /1000);
+    }
+    
+    unsigned long delta = health.ventDiffStarted>0 ? now-health.ventDiffStarted : 0;
+    String refresh = server.arg("refresh");
+    //String filterCheck = String(state.tsps[23], 16);
+    String filterCheck =  state.status.lo<0 ? "-1" : (state.status.lo & 32) ? "1" : "0";   
+    String json = String() +
+    "{\n"
+    "  \"ok\":1,\n"
+    "  \"build\":\"" + buildNo + "\",\n"
+    "  \"reboots\":\"" + reboots + "\",\n"
+      "  \"now\":" + now + ",\n"
+    "  \"uptime\":\"" + upTime()+ "\",\n"
+      "  \"lastMsg\":{" + 
+        "\"serial\":" + (now-state.lastMsg.serial) + ""
+        #ifdef WITH_DEBUG_SERIAL
+        ",\"wifi\":{\"fed\":" + (now-state.lastMsg.wifi.fed)  + ",\"debug\":" + (now-state.lastMsg.wifi.debug) + "}" 
+        #endif
+       "},\n" 
+      "  \"dbg\":{\"level\":" + DEBUG_LEVEL + "},\n"
+    "  \"vent\":{\"set\":" + state.ventSetpoint + 
+       ",\"override\":" + state.ventOverride + 
        ",\"web\":" + state.ventWeb + 
-		   ",\"ackn\":" + state.ventAcknowledged + 
-		   ",\"reported\":" + state.ventReported + 
-		   ",\"relative\":" + state.ventRelative + "},\n"
+       ",\"ackn\":" + state.ventAcknowledged + 
+       ",\"reported\":" + state.ventReported + 
+       ",\"relative\":" + state.ventRelative + "},\n"
+    "  \"lastAcknCh\":" + (now-state.lastAcknChange) + ",\n"
     "  \"unresponsiveness\":{"
-        "\"start\":" + state.ventDiffStarted + 
+        "\"start\":" + health.ventDiffStarted + 
         ",\"delta\":" + delta + 
-        ",\"reported\":" + state.lastDiffReported + 
+        ",\"reported\":" + health.lastDiffReported + 
       "},\n"    
-		"  \"temp\":{\"supply\":"   + state.tempSupply   + ",\"exhaust\":" + state.tempExhaust + "},\n"
-		"  \"status\":["            + state.status.hi           + "," + state.status.lo           + "],\n"
-		"  \"faultFlagsCode\":["    + state.faultFlagsCode.hi   + "," + state.faultFlagsCode.lo   + "],\n"
-		"  \"configMemberId\":["    + state.configMemberId.hi   + "," + state.configMemberId.lo   + "],\n"
-		"  \"masterConfig\":["      + state.masterConfig.hi     + "," + state.masterConfig.lo     + "],\n"
-		"  \"remoteParamFlags\":["  + state.remoteParamFlags.hi + "," + state.remoteParamFlags.lo + "],\n"
-		"  \"filterCheck\":" + filterCheck + ",\n"
-		"  \"messages\":{\n" + 
-		"    \"total\":"   + (state.messages.serial+state.messages.wifi.fed+state.messages.wifi.debug) + ",\n" 
-		"    \"serial\":"  + state.messages.serial + ",\n"
-		#ifdef WITH_DEBUG_SERIAL
-		"    \"wifi\":{\"fed\":" + state.messages.wifi.fed + ",\"debug\":" + state.messages.wifi.debug + "},\n"
-		#endif
-		"    \"invalid\":{\"len\":"  + state.messages.invalid.length + ",\"format\":" + state.messages.invalid.format + ",\"src\":" + state.messages.invalid.source + "},\n" 
-		"    \"expected\":{"  + 
-				"\"T\":"  + state.messages.expected.T + "," 
-				"\"B\":"  + state.messages.expected.B + "," 
-				"\"R\":"  + state.messages.expected.R + "," 
-				"\"A\":"  + state.messages.expected.A + "},\n"
-		"    \"unexpected\":{"  + 
-				"\"T\":" + state.messages.unexpected.T + ","
-				"\"B\":" + state.messages.unexpected.B + ","
-				"\"R\":" + state.messages.unexpected.R + ","
-				"\"A\":" + state.messages.unexpected.A + ","
-				"\"zero\":" + state.messages.unexpected.zero + "}\n"
-		"  },\n"
-        "  \"freeheap\":"  + ESP.getFreeHeap() + ",\n"				
+    "  \"lastWebCheck\":\"" + lastCheck + "\",\n"
+    "  \"nextWebCheck\":\"" + nextCheck + "\",\n"
+    "  \"nextReboot\":\"" + nextReboot + "\",\n"
+    "  \"temp\":{\"supply\":"   + state.tempSupply   + ",\"exhaust\":" + state.tempExhaust + "},\n"
+    "  \"status\":["            + state.status.hi           + "," + state.status.lo           + "],\n"
+    "  \"faultFlagsCode\":["    + state.faultFlagsCode.hi   + "," + state.faultFlagsCode.lo   + "],\n"
+    "  \"configMemberId\":["    + state.configMemberId.hi   + "," + state.configMemberId.lo   + "],\n"
+    "  \"masterConfig\":["      + state.masterConfig.hi     + "," + state.masterConfig.lo     + "],\n"
+    "  \"remoteParamFlags\":["  + state.remoteParamFlags.hi + "," + state.remoteParamFlags.lo + "],\n"
+    "  \"filterCheck\":" + filterCheck + ",\n"
+    "  \"messages\":{\n" + 
+    "    \"total\":"   + (state.messages.serial+state.messages.wifi.fed+state.messages.wifi.debug) + ",\n" 
+    "    \"serial\":"  + state.messages.serial + ",\n"
+    #ifdef WITH_DEBUG_SERIAL
+    "    \"wifi\":{\"fed\":" + state.messages.wifi.fed + ",\"debug\":" + state.messages.wifi.debug + "},\n"
+    #endif
+    "    \"invalid\":{\"len\":"  + state.messages.invalid.length + ",\"format\":" + state.messages.invalid.format + ",\"src\":" + state.messages.invalid.source + "},\n" 
+    "    \"expected\":{"  + 
+        "\"T\":"  + state.messages.expected.T + "," 
+        "\"B\":"  + state.messages.expected.B + "," 
+        "\"R\":"  + state.messages.expected.R + "," 
+        "\"A\":"  + state.messages.expected.A + "},\n"
+    "    \"unexpected\":{"  + 
+        "\"T\":" + state.messages.unexpected.T + ","
+        "\"B\":" + state.messages.unexpected.B + ","
+        "\"R\":" + state.messages.unexpected.R + ","
+        "\"A\":" + state.messages.unexpected.A + ","
+        "\"zero\":" + state.messages.unexpected.zero + "}\n"
+    "  },\n"
+        "  \"freeheap\":"  + ESP.getFreeHeap() + ",\n"        
         "  \"debug\":"    + DEBUG_LEVEL + ",\n";
 
-	  #ifdef WITH_DALLAS_TEMP_SENSORS
-	  json +=					
-		String(
-		"  \"sensorsFound\":")+state.sensorsFound+",\n"
-		"  \"lastMeasure\":"+(millis()-state.lastMeasure)+",\n"
-	    "  \"sensors\":[";
-	  for (int i=0; i<sizeof(state.extraTemps)/sizeof(state.extraTemps[0]); i++) {
-		  if (i>0) json += ",";
-		  json += state.extraTemps[i];
-	  }	  
-	  json += "],\n";
-	  #endif
-				  
-	  json +=
-	    "  \"tsps\":[";	  
-	  // print "transparent slave parameters" as json array
-	  for (int i=0; i<sizeof(state.tsps)/sizeof(state.tsps[0]); i++) {
-	    if (i>0    ) json += ",";
-		if (0==i%8) json+="\n    ";
-	    json += state.tsps[i];
-	  }
-	  json += "]\n";
-	  
-	  json += "}\n";
-	  
+    #ifdef WITH_DALLAS_TEMP_SENSORS
+    json +=         
+    String(
+    "  \"sensorsFound\":")+state.sensorsFound+",\n"
+    "  \"lastMeasure\":"+(now-state.lastMeasure)+",\n"
+      "  \"sensors\":[";
+    for (int i=0; i<sizeof(state.extraTemps)/sizeof(state.extraTemps[0]); i++) {
+      if (i>0) json += ",";
+      json += state.extraTemps[i];
+    }   
+    json += "],\n";
+    #endif
+          
+    json +=
+      "  \"tsps\":[";   
+    // print "transparent slave parameters" as json array
+    for (int i=0; i<sizeof(state.tsps)/sizeof(state.tsps[0]); i++) {
+      if (i>0    ) json += ",";
+    if (0==i%8) json+="\n    ";
+      json += state.tsps[i];
+    }
+    json += "]\n";    
+    json += "}\n";
+    return json;
+}
+
+void handleApiStatus() {    
+	  String refresh = server.arg("refresh");
+	  String json = createStatusJson();	  
 	  avoidCaching();
 	  if (refresh!="") server.sendHeader("Refresh",  refresh);
 	  server.send(200, CT_APPL_JSON, json); 				
@@ -1855,6 +1746,7 @@ void setup() {
   //state.ventOverride = -1; 
   state.ventWeb = -1;
   state.ventAcknowledged = -1;
+  state.lastAcknChange = 0;
   state.ventReported = -1;
   state.ventRelative = -1;
   state.tempSupply   = -12700; // -127C (as dallas when no value read)
@@ -1874,7 +1766,10 @@ void setup() {
   #ifdef WITH_DALLAS_TEMP_SENSORS
   setupSensors();    
   #endif
-    
+
+  health.isResponsive = true;
+  health.wasResponsive = true;
+
   setupNetwork();
 
   server.on("/",              handleRoot);
@@ -1967,13 +1862,13 @@ void handleHeartbeat() {
 long loopIterations = 0;
 
 #ifdef WITH_WEB_CALLS
-unsigned long lastWebCheck = 0;
-unsigned long lastWebCheckError = 0;
 
-#define WEB_CHECK_INTERVAL (10*60*1000) // 10 minutes
-
-void sendWhatsApp(String msg) {
+void sendDirect(String msg) {
   getWebPage2(String(ALERT_URL) + urlEncode(msg), "", true);         
+}
+
+void sendMaintenance(String msg) {
+  getWebPage2(String(MAINTENANCE_URL) + urlEncode(msg), "", true);         
 }
 
 void sendViaProxy(String msg) {
@@ -1985,7 +1880,7 @@ void sendAlert(String text) {
   String msg = text
       + " [VitoWifi-" + String(ESP.getFlashChipId(), 16) + "]"
       + " http:// " + WiFi.localIP().toString();        
-  sendWhatsApp(msg + " (direct)");
+  sendDirect(msg + " (direct)");
   sendViaProxy(msg + " (proxy)");
   led_blink = false;
 }
@@ -2028,8 +1923,15 @@ String handleWebUpdate(boolean force, const char * reason) {
       params += state.ventOverride;
     }
     if (state.ventAcknowledged>=0) {      
+      // send number of seconds since current ventilation was updated
+      // to allow detecting if supply/exhaust gain makes sense
+      // (does not if ventilation was off for some time in which case 
+      // supply temperature will strive towards room temperature)
+      unsigned long duration = (now-state.lastAcknChange)/1000;
       params += "&ackn=";
       params += state.ventAcknowledged;
+      params += "&dura=";
+      params += duration;
     }
     if (state.ventRelative>=0) {      
       params += "&fan=";
@@ -2071,7 +1973,7 @@ String handleWebUpdate(boolean force, const char * reason) {
       if (delta > 60*60*1000) {
         String text = String("[VitoWifi-") + String(ESP.getFlashChipId(), 16) 
           + "] Failed to fetch ventilation level from web page for more than 1 hour.";
-        sendWhatsApp(text);
+        sendDirect(text);
       }
     }
     
@@ -2082,27 +1984,21 @@ String handleWebUpdate(boolean force, const char * reason) {
 }
 #endif
 
-long inital_free_memory = -1;
-unsigned long reboot_time = 4294967296 - 3600*1000;
-unsigned last_diff_logged = 0;
-boolean start_announced = false;
-boolean reboot_announced = false;
-
 void loop() {
 
   // memory leak prevention: restart if free memory drops below 25% of initialy available
-  if (inital_free_memory<0) {
-    inital_free_memory = ESP.getFreeHeap();
+  if (health.initalFree<0) {
+    health.initalFree = ESP.getFreeHeap();
   } else {
-    long free_now = ESP.getFreeHeap();
-    if ( (100*free_now)/inital_free_memory < 25) {
+    long freeNow = ESP.getFreeHeap();
+    if ( (100*freeNow)/health.initalFree < 25) {
       #ifdef WITH_WEB_CALLS
-      if (!reboot_announced) {
-        String reason = String("low memory ") + free_now + " of " + inital_free_memory + "bytes";
+      if (!health.rebootAnnounced) {
+        String reason = String("low memory ") + freeNow + " of " + health.initalFree + "bytes";
         sendAlert(String("μController rebooting: ") + reason);        
         setRebootReason(reason.c_str());        
       }
-      reboot_announced = true;
+      health.rebootAnnounced = true;
       #endif      
       ESP.restart();
     }
@@ -2118,34 +2014,34 @@ void loop() {
 
   unsigned long now = millis();
 
-  if (now>reboot_time) {
-    if (!reboot_announced) {
+  if (now>health.rebootTime) {
+    if (!health.rebootAnnounced) {
       String reason = String("as scheduled (uptime ") + upTime() + ")";
       #ifdef WITH_WEB_CALLS
       sendAlert(String("μController rebooting: ") + reason);
       #endif
       setRebootReason(reason.c_str());      
     }
-    reboot_announced = true;
+    health.rebootAnnounced = true;
     ESP.reset(); // might fall through here?
   }
 
   if (now-lastConnectionSuccess > 60*60*1000) {
-    if (!reboot_announced) {
+    if (!health.rebootAnnounced) {
       String reason = "no web connectivity > 1h";
       sendAlert(String("μController rebooting: ") + reason);
       #ifdef WITH_WEB_CALLS
       setRebootReason(reason.c_str());  
       #endif
     }
-    reboot_announced = true;
+    health.rebootAnnounced = true;
     ESP.reset(); // might fall through here?    
   }
 
-  if (!start_announced) {
-    start_announced = true;
+  if (!health.startAnnounced) {
+    health.startAnnounced = true;
     String reason = getRebootReason();
-    String msg = String("μController started: reason: '") + reason + "', " + inital_free_memory + " bytes free";
+    String msg = String("μController started: reason: '") + reason + "', " + health.initalFree + " bytes free (" + buildNo + ")";
     dbg(msg);
 
     reason = "unexpected reboot";    
@@ -2159,47 +2055,63 @@ void loop() {
 
   if (state.ventOverride != state.ventAcknowledged) {
     unsigned long now = millis();
-    if (state.ventDiffStarted==0) {
-      state.ventDiffStarted = now;
-      dbgln("ZZ=ventDiffStarted=" + now);
+    if (health.ventDiffStarted==0) {
+      health.ventDiffStarted = now;
     }
     
     // allow the slave up to 30 seconds to accept/acknowledge a change of override value
-    unsigned long delta = now-state.ventDiffStarted;
+    unsigned long delta = now-health.ventDiffStarted;
     if (delta > 45 * 1000) {
 
+      health.isResponsive = false;
+
       #ifdef WITH_WEB_CALLS
-      delta = now-state.lastDiffReported;
+      delta = now-health.lastDiffReported;
       // report unresponsivness at most once per hour
-      if (0==state.lastDiffReported || delta > 3600 * 1000) { 
+      if (0==health.lastDiffReported || delta > 3600 * 1000) { 
+        String msg;
         if (state.ventAcknowledged<0) {
-          sendAlert("Ventilation is not responding.");
+          msg = "Ventilation is not responding.";
         } else {
-          sendAlert("Ventilation stopped responding.");
+          msg = "Ventilation stopped responding.";
         }
-        state.lastDiffReported = now; 
+        msg += " Please reset/replug the gateway!";
+        sendAlert("Ventilation is not responding.");
+        sendMaintenance(msg);
+        health.lastDiffReported = now; 
       }
       #endif
 
       // try to reset the OTGW, however at most once per 5 minutes
-      delta = now-state.lastGWReset;
+      delta = now-health.lastGWReset;
       if (delta > 5 * 60 * 1000) {
         resetOTGW();
-        state.lastGWReset = now;
+        health.lastGWReset = now;
         
         #ifdef WITH_WEB_CALLS
         // report at most once per hour
-        delta = now-state.lastGWResetReported;
-        if (0==state.lastGWResetReported || delta > 3600 * 1000) { 
+        delta = now-health.lastGWResetReported;
+        if (0==health.lastGWResetReported || delta > 3600 * 1000) { 
           sendAlert("Tried to restart the OpenTherm Gateway");
-          state.lastGWResetReported = now; 
+          health.lastGWResetReported = now; 
         }
         #endif
       }            
     }
   } else {
-    state.ventDiffStarted = 0;
+    health.ventDiffStarted = 0;
+    health.isResponsive = true;
   }  
+
+  if (health.isResponsive && !health.wasResponsive) {
+    unsigned long delta = millis()-health.lastRecoveryReported;
+    if (delta>5*60*1000) {
+      String msg = "Ventilation recovered and seems to be responsive again.";
+      sendAlert(msg);
+      sendMaintenance(msg);
+      health.lastRecoveryReported = millis();
+    }
+  }
 
 	serialEvent();	
 	server.handleClient();

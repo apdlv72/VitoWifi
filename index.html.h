@@ -143,6 +143,14 @@ function onStatus(d,j){
     catch (e) {
         console.log(e);
     }
+
+    try {
+      var ffs = j['faultFlagsCode'];
+      g('faultFlags').style.display = (ffs[0]<0 && ffs[1]<0) ? 'none' : '';
+    }
+    catch (e) {
+        console.log(e);
+    }
 }
 
 function webGet() {
@@ -227,14 +235,14 @@ function config(){
 	
 	<div class="wid">		
 		<table style="width:100%">
-		  <tr><td class="t">Temperature</td><td class="r">Supply</td><td/><td class="r">Exhaust</td><td/></tr>
-		  <tr><td>Built-in   </td><td class="r" id="temp.supply" ></td><td>&deg;C</td><td class="r" id="temp.exhaust" ></td><td>&deg;C</td></tr>
+		  <tr><td class="t">Temperature</td><td class="r">Supply</td><td>&deg;C</td><td class="r">Exhaust</td><td>&deg;C</td></tr>
+		  <tr><td>Built-in   </td><td class="r" id="temp.supply" ></td><td></td><td class="r" id="temp.exhaust" ></td><td></td></tr>
       <tr><td></td></tr>
-      <tr><td>Inlet </td><td class="r" id="sensors1"   ></td><td>&deg;C</td><td class="r" id="sensors3"    ></td><td>&deg;C</td></tr>
-		  <tr><td>Outlet</td><td class="r" id="sensors2"   ></td><td>&deg;C</td><td class="r" id="sensors4"    ></td><td>&deg;C</td></tr>
-      <tr><td>Gain  </td><td class="r" id="supply.gain"></td><td>&deg;C</td><td class="r" id="exhaust.gain"></td><td>&deg;C</td></tr>
+      <tr><td>Inlet </td><td class="r" id="sensors1"   ></td><td></td><td class="r" id="sensors3"    ></td><td></td></tr>
+		  <tr><td>Outlet</td><td class="r" id="sensors2"   ></td><td></td><td class="r" id="sensors4"    ></td><td></td></tr>
+      <tr><td>Gain  </td><td class="r" id="supply.gain"></td><td></td><td class="r" id="exhaust.gain"></td><td></td></tr>
       <tr><td></td></tr>
-      <tr><td>Room  </td><td class="r" id="sensors0"></td><td>&deg;C</td><td/><td/></tr>
+      <tr><td>Room  </td><td class="r" id="sensors0"></td><td></td><td/><td/></tr>
 		</table>
 	</div>
 
@@ -243,48 +251,47 @@ function config(){
       <tr>
       </tr>
       <tr>
-        <td>Fan level:</td><td class="r">Relative speed</td><td colspan="2" class="r">Power consumption</td>
+        <td>Fan level</td><td class="r">Relative speed</td><td colspan="2" class="r">Power consumption</td>
       </tr>
       <tr>
-        <td>&nbsp;&nbsp;off:</td><td id="relFanOff" class="r"></td><td id="pwrOff" class="r"></td><td>Watt</td>
+        <td>&nbsp;&nbsp;OFF</td><td id="relFanOff" class="r"></td><td id="pwrOff" class="r"></td><td>Watt</td>
       </tr>
       <tr>
-        <td>&nbsp;&nbsp;reduced:</td><td id="relFanLow" class="r"></td><td id="pwrLow" class="r"></td><td>Watt</td>
+        <td>&nbsp;&nbsp;LOW</td><td id="relFanLow" class="r"></td><td id="pwrLow" class="r"></td><td>Watt</td>
       </tr>
       <tr>
-        <td>&nbsp;&nbsp;normal:</td><td id="relFanNorm" class="r"></td><td id="pwrNorm" class="r"></td><td>Watt</td>
+        <td>&nbsp;&nbsp;NORM</td><td id="relFanNorm" class="r"></td><td id="pwrNorm" class="r"></td><td>Watt</td>
       </tr>
       <tr>
-        <td>&nbsp;&nbsp;high:</td><td id="relFanHigh" class="r"></td><td id="pwrHigh" class="r"></td><td>Watt</td>
+        <td>&nbsp;&nbsp;HIGH</td><td id="relFanHigh" class="r"></td><td id="pwrHigh" class="r"></td><td>Watt</td>
       </tr>
     </table>
   </div>
 
 	<div class="wid">		
 		<table style="width:100%">
-			<tr><td class="t">Status:</td></tr>
-      <tr><td>Filter check:      </td><td class="r"><span id="filterCheck"      ></span></td><td/></tr>
-			<tr><td>Overall:           </td><td class="r"><span id="status0"          ></span></td><td class="r"><span id="status1"          ></span></td></tr>
-			<tr><td>Fault flags:       </td><td class="r"><span id="faultFlagsCode0"  ></span></td><td class="r"><span id="faultFlagsCode1"  ></span></td></tr>
-			<tr><td>Config member ID:  </td><td class="r"><span id="configMemberId0"  ></span></td><td class="r"><span id="configMemberId1"  ></span></td></tr>
-			<tr><td>Master config:     </td><td class="r"><span id="masterConfig0"    ></span></td><td class="r"><span id="masterConfig1"    ></span></td></tr>
-			<tr><td>Remote param flags:</td><td class="r"><span id="remoteParamFlags0"></span></td><td class="r"><span id="remoteParamFlags1"></span></td></tr>
+      <tr><td>Filter check      </td><td class="r"><span id="filterCheck"      ></span></td><td/></tr>
+			<tr><td>Overall status   </td><td class="r"><span id="status0"          ></span></td><td class="r"><span id="status1"          ></span></td></tr>
+			<tr id='faultFlags'><td>Fault flags       </td><td class="r"><span id="faultFlagsCode0"  ></span></td><td class="r"><span id="faultFlagsCode1"  ></span></td></tr>
+			<tr><td>Config member ID  </td><td class="r"><span id="configMemberId0"  ></span></td><td class="r"><span id="configMemberId1"  ></span></td></tr>
+			<tr><td>Master config     </td><td class="r"><span id="masterConfig0"    ></span></td><td class="r"><span id="masterConfig1"    ></span></td></tr>
+			<tr><td>Remote param flags</td><td class="r"><span id="remoteParamFlags0"></span></td><td class="r"><span id="remoteParamFlags1"></span></td></tr>
 		</table>
 	</div>
 
 	<div class="wid">		
 		<table style="width:100%">
-			<tr><td class="t">Messages:  </td><td class="r t">M</td><td class="r t">S</td><td class="r t">R</td><td class="r t">A</td></tr>		
-			<tr><td>Total:     </td><td class="r" id="messages.serial"></td></tr>
+			<tr><td class="t">Messages  </td><td class="r t">M</td><td class="r t">S</td><td class="r t">R</td><td class="r t">A</td></tr>		
+			<tr><td>Total     </td><td class="r" id="messages.serial"></td></tr>
 			<tr>
-				<td>Expected:  </td>
+				<td>Expected  </td>
 				<td class="r" id="messages.expected.T"></td>
 				<td class="r" id="messages.expected.B"></td>
 				<td class="r" id="messages.expected.R"></td>
 				<td class="r" id="messages.expected.A"></td>
 			</tr>
 			<tr>
-				<td>Unexpected:  </td>
+				<td>Unexpected  </td>
 				<td class="r" id="messages.unexpected.T"></td>
 				<td class="r" id="messages.unexpected.B"></td>
 				<td class="r" id="messages.unexpected.R"></td>
@@ -297,12 +304,12 @@ function config(){
 				<td class="r t">Src</td>
 			</tr>
 			<tr>
-				<td>Invalid:  </td>
+				<td>Invalid  </td>
 				<td class="r" id="messages.invalid.len"></td>
 				<td class="r" id="messages.invalid.format"></td>
 				<td class="r" id="messages.invalid.src"></td>
 			</tru>
-			<tr><td>Last:      </td><td class="r" colspan="5"><span id="lastMsg.serial"></span><span> ms ago</span></td></tr>
+			<tr><td>Last      </td><td class="r" colspan="5"><span id="lastMsg.serial"></span><span> ms ago</span></td></tr>
 		</table>
 	</div>
 
@@ -354,24 +361,26 @@ function config(){
 	
 	<div class="wid">		
 		<table style="width:100%">
-			<tr><td class="t">Info:  </td></tr>		
-			<tr><td>Build:     </td><td class="r" id="build"></td></tr>
-			<tr><td>Uptime:    </td><td class="r" id="uptime"></td></tr>
-			<tr><td>Reboots:   </td><td class="r" id="reboots"></td></tr>
-			<tr><td>Debug level:</td><td class="r" id="debug"></td></tr>
-			<tr><td>Sensors:</td><td class="r" id="sensors.len"></td></tr>
-			<tr><td>Heap space:</td><td class="r" id="freeheap"></td></tr>
+			<tr><td>Build      </td><td class="r" id="build"></td></tr>
+			<tr><td>Uptime     </td><td class="r" id="uptime"></td></tr>
+      <tr><td>Reboots       </td><td class="r" id="reboots"></td></tr>
+      <tr><td>Next reboot   </td><td class="r" id="nextReboot"></td></tr>
+      <tr><td>Last web check</td><td class="r" id="lastWebCheck"></td></tr>
+      <tr><td>Next web check</td><td class="r" id="nextWebCheck"></td></tr>
+			<tr><td>Debug level</td><td class="r" id="debug"></td></tr>
+			<tr><td>Sensors    </td><td class="r" id="sensorsFound"></td></tr>
+			<tr><td>Heap space </td><td class="r" id="freeheap"></td></tr>
 		</table>
 	</div>
-
-	
+<!--
 <div style="padding: 1ex">      
-<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/98583/charts/3?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Upstairs&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
+<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/your_channel_id/charts/1?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Upstairs&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
 <div style="height:1ex;"></div>
-<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/98583/charts/4?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Base&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
+<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/your_channel_id/charts/2?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Base&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
 <div style="height:1ex;"></div>
-<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/98583/charts/2?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Basement&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
+<iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/your_channel_id/charts/3?bgcolor=%23a0a0b4&color=%23000080&dynamic=true&results=6000&title=CO2+Basement&type=line&yaxis=ppm&yaxismax=1800&yaxismin=300"></iframe>
 </div>
+-->
 
 <!--
 	<div>

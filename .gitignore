@@ -4,3 +4,4 @@ netatmo/__init__.py netatmo/lnetatmo.py netatmo/lnetatmo.pyc netatmo/test.py
 .DS_Store
 resources/fan.png
 secrets.h
+my_secrets.h
