@@ -1294,6 +1294,11 @@ String createStatusJson() {
     
     unsigned long delta = health.ventDiffStarted>0 ? now-health.ventDiffStarted : 0;
     String refresh = server.arg("refresh");
+
+    // https://github.com/apdlv72/VitoWifi/issues/1
+    // (wobei ich jetzt hier gelesen hab daß das TSP (Id 89) Nummer 0x17 sein soll, 
+    // 1 ist offenbar "filter ok", mal sehen was meiner grad sagt, bei dem ist grad die Filteranzeige an.
+    
     //String filterCheck = String(state.tsps[23], 16);
     String filterCheck =  state.status.lo<0 ? "-1" : (state.status.lo & 32) ? "1" : "0";   
     String json = String() +
