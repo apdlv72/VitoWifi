@@ -45,6 +45,7 @@ class OTMessage {
         case MT_DATA_INVALID: return "DATA_INVALID";
         case MT_UNKN_DATAID:  return "UNKN_DATAID";
       }
+      return "UNKNOWN";
     }
 
     static String dataIdToStr(uint8_t id) {
