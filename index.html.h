@@ -45,17 +45,26 @@ function ajax(url,succFunc,failFunc,data) {
       var j;
       //l('resp: '+r.status+' '+r.responseText);
       if(200==r.status){
-        if (!r.responseText)return failFunc(data,r.status,'Empty response from '+url,'');
-        try{
+        if (!r.responseText) {
+          hide();
+          return failFunc(data,r.status,'Empty response from '+url,'');
+        }
+        try {
           j=JSON.parse(r.responseText);
-        }catch(e){
+        } catch(e){
           l('INVALID:'+r.responseText);
+          hide();
           return failFunc(data,r.status,'Invalid json data from '+url, '');
         }
-        if (j&&"1"==j['ok'])return succFunc(data,j);
+        if (j&&"1"==j['ok']) {
+          hide();
+          return succFunc(data,j);
+        }
       }else if (0==r.status){
+        hide();
         return failFunc(data,r.status,'Failed to receive ajax response from '+url, '');
       }
+      hide();
       return failFunc(data,r.status,r.responseText,j);
     }
   }
@@ -198,8 +207,14 @@ function s2c(val) {
   return 'red';
 }
 
-function webGet() {
-  ajax('/dbg/webget');
+function post() {
+  show();
+  ajax('/dbg/post');
+}
+
+function refresh() {
+  show(); 
+  readStatus(); 
 }
 
 function readStatus(){
@@ -207,6 +222,7 @@ function readStatus(){
 }
 
 function setUdp(v){
+  show();
   ajax('/dbg/udp/' + v + '?n='+(new Date()).getTime(),onStatus,onStatusFailed,{});
 }
 
@@ -225,11 +241,18 @@ function localdate(d) {
   var parts = d.toISOString().split('T');
   return parts[0] + ' ' + parts[1].replace(/\..*/, '');
 }
+
+function show() { g('progress').style.visibility='visible'; }
+function hide() { g('progress').style.visibility='hidden'; }
 </script>
 
 </head>
+<body style="margin:0" onload="onLoad()">
 
-<body onload="onLoad()">
+<div id="progress" style="visibility:'hidden'; background:rgba(50,50,50,.5); position:fixed; width:100%; height:100%; line-height:100px;" onclick="hide()">
+  <h1 style="text-align:center; font-size:96px"><br>⌛<br><br></h1>
+</div>
+
 <div>
   <div style="position:relative;text-align:center">
     <span id="title" class="t">VitoWifi</span>
@@ -238,8 +261,8 @@ function localdate(d) {
       <input type="button" onclick="setUdp(0)" value="UDP off"/>
     </div>
     <div style="position: absolute; right:1em; top:0;">
-      <input type="button" onclick="readStatus()" value="Refresh"/>
-      <input type="button" onclick="webGet()" value="WebGet"/>
+      <input type="button" onclick="refresh()" value="Refresh"/>
+      <input type="button" onclick="post()" value="Post"/>
     </div>
   </div>
   
@@ -295,37 +318,26 @@ function localdate(d) {
   </div>
 
   <div class="wid">   
-    <table style="width:100%">
-      <tr><td class="t">Temperature</td><td class="r">Supply</td><td>&deg;C</td><td class="r">Exhaust</td><td>&deg;C</td></tr>
-      <tr><td>Built-in   </td><td class="r" id="temp.supply" ></td><td></td><td class="r" id="temp.exhaust" ></td><td></td></tr>
+    <table style="width:100%" border="0">
+      <tr><td class="t">Temperature (&deg;C)</td><td class="r">Supply</td><td class="r">Exhaust</td></tr>
+      <tr><td>Built-in   </td><td class="r" id="temp.supply" ></td><td class="r" id="temp.exhaust" ></td></tr>
       <tr><td></td></tr>
-      <tr><td>Inlet </td><td class="r" id="sensors1"   ></td><td></td><td class="r" id="sensors3"    ></td><td></td></tr>
-      <tr><td>Outlet</td><td class="r" id="sensors2"   ></td><td></td><td class="r" id="sensors4"    ></td><td></td></tr>
-      <tr><td>Gain  </td><td class="r" id="supply.gain"></td><td></td><td class="r" id="exhaust.gain"></td><td></td></tr>
+      <tr><td>Inlet </td><td class="r" id="sensors1"   ></td><td class="r" id="sensors3"    ></td></tr>
+      <tr><td>Outlet</td><td class="r" id="sensors2"   ></td><td class="r" id="sensors4"    ></td></tr>
+      <tr><td>Gain  </td><td class="r" id="supply.gain"></td><td class="r" id="exhaust.gain"></td></tr>
       <tr><td></td></tr>
-      <tr><td>Room  </td><td class="r" id="sensors0"></td><td></td><td/><td/></tr>
+      <tr><td>Room  </td><td class="r" id="sensors0"></td></tr>
     </table>
   </div>
 
   <div class="wid">   
     <table style="width:100%" border="0">
-      <tr>
-      </tr>
-      <tr>
-        <td>Level</td><td class="r">Throughput</td><td colspan="2" class="r">Power</td>
-      </tr>
-      <tr>
-        <td>&nbsp;&nbsp;OFF</td><td id="relFanOff" class="r"></td><td>m³/h</td><td id="pwrOff" class="r"></td><td>Watt</td>
-      </tr>
-      <tr>
-        <td>&nbsp;&nbsp;LOW</td><td id="relFanLow" class="r"></td><td>m³/h</td><td id="pwrLow" class="r"></td><td>Watt</td>
-      </tr>
-      <tr>
-        <td>&nbsp;&nbsp;NORM</td><td id="relFanNorm" class="r"></td><td>m³/h</td><td id="pwrNorm" class="r"></td><td>Watt</td>
-      </tr>
-      <tr>
-        <td>&nbsp;&nbsp;HIGH</td><td id="relFanHigh" class="r"></td><td>m³/h</td><td id="pwrHigh" class="r"></td><td>Watt</td>
-      </tr>
+      <tr></tr>
+      <tr><td>Level</td><td class="r">Throughput (m³/h)</td><td colspan="2" class="r">Power (Watt)</td></tr>
+      <tr><td>&nbsp;&nbsp;OFF</td><td id="relFanOff" class="r"></td><td id="pwrOff" class="r"></td></tr>
+      <tr><td>&nbsp;&nbsp;LOW</td><td id="relFanLow" class="r"></td><td id="pwrLow" class="r"></td></tr>
+      <tr><td>&nbsp;&nbsp;NORM</td><td id="relFanNorm" class="r"><td id="pwrNorm" class="r"></td></tr>
+      <tr><td>&nbsp;&nbsp;HIGH</td><td id="relFanHigh" class="r"><td id="pwrHigh" class="r"></td></tr>
     </table>
   </div>
 
@@ -342,10 +354,12 @@ function localdate(d) {
 
   <div class="wid">   
     <table style="width:100%">
-      <tr><td class="t">Messages  </td><td class="r t">M</td><td class="r t">S</td><td class="r t">R</td><td class="r t">A</td></tr>    
-      <tr><td>Total     </td><td class="r" id="messages.serial"></td></tr>
+      <tr>
+        <td class="t">Messages  </td><td class="r">Total</td><td class="r t">M</td><td class="r t">S</td><td class="r t">R</td><td class="r t">A</td>
+      </tr>    
       <tr>
         <td>Expected  </td>
+        <td class="r" id="messages.serial">
         <td class="r" id="messages.expected.T"></td>
         <td class="r" id="messages.expected.B"></td>
         <td class="r" id="messages.expected.R"></td>
@@ -353,19 +367,22 @@ function localdate(d) {
       </tr>
       <tr>
         <td>Unexpected  </td>
+        <td></td>
         <td class="r" id="messages.unexpected.T"></td>
         <td class="r" id="messages.unexpected.B"></td>
         <td class="r" id="messages.unexpected.R"></td>
         <td class="r" id="messages.unexpected.A"></td>
       </tru>
       <tr>
+        <td>Invalid due to</td>
         <td></td>
         <td class="r t">Len</td>
         <td class="r t">Fmt</td>
         <td class="r t">Src</td>
       </tr>
       <tr>
-        <td>Invalid  </td>
+        <td></td>
+        <td></td>
         <td class="r" id="messages.invalid.len"></td>
         <td class="r" id="messages.invalid.format"></td>
         <td class="r" id="messages.invalid.src"></td>
@@ -486,6 +503,7 @@ function localdate(d) {
     </table>
   </div>
 
+<!--
 <div style="padding: 1ex">      
 <iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/your_id/charts/your_channel1?"></iframe>
 <div style="height:1ex;"></div>
@@ -493,6 +511,7 @@ function localdate(d) {
 <div style="height:1ex;"></div>
 <iframe width="100%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/your_id/charts/your_channel3?"></iframe>
 </div>
+-->
 
 <!--
   <div>

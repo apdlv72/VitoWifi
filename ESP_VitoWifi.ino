@@ -1,6 +1,8 @@
+
+
 // Copy secrets.h to secrets_priv.h, same for index.html.h and comment in to 
 // activate your own versions of this file. Add both files to .gitignore!!!
-//#define WITH_OWN_SECRETS
+#define WITH_OWN_SECRETS
 
 #ifdef WITH_OWN_SECRETS
 #include "secrets_priv.h"
@@ -59,6 +61,9 @@
 // Enable upating ventilation level from an external web page on a regular basis.
 // Also requied to send alerts using a web API.
 #define WITH_WEB_CALLS
+
+// Enable adding invalid lines (commands) being handles as errors
+#define WITH_INVALID_LINES_AS_ERRORS false
 
 const char DEFAULT_START_SSID[] = "AP_VitoWifi";
 
@@ -363,7 +368,8 @@ boolean led_lit = false;
 volatile boolean led_blink = false;
 int timer_value = 250000;
 
-void ICACHE_RAM_ATTR timerRoutine() {
+//void ICACHE_RAM_ATTR timerRoutine() {
+void IRAM_ATTR timerRoutine() {
   if (led_blink) {
     led_lit = (millis() / 50) % 2;
     digitalWrite(LED_HEART, led_lit ? LOW : HIGH);
@@ -619,7 +625,7 @@ int onSlaveMessage(OTMessage& m) {
         // 0000 0000 0101 1001 00010111 00000000
         // PTTT SSSS DDDD DDDD HHHHHHHH LLLLLLLL # data ID: 0x59 = 89 = DI_TSP_SETTING
         // parameter no. 0x17 = 23
-        if (0 <= m.hi && m.hi < 64) {
+        if (/* always true: 0 <= m.hi && */ m.hi < 64) {
           state.tsps[m.hi] = m.lo;
         }
         return RC_OK;
@@ -687,21 +693,28 @@ int onAnswerMessage(OTMessage& m) {
 }
 
 int onInvalidMessageSource(char sender, OTMessage& m) {
-  onUnexpectedMessage('?', m);
+  onUnexpectedMessage(sender, m);
   return RC_INV_SOURCE;
 }
 
 int onInvalidLine(const char * line) {
   state.messages.invalid.format++;
-  //addError(line);
+  if (WITH_INVALID_LINES_AS_ERRORS) {
+    handleError(line);
+  }
   return RC_INV_FORMAT;
 }
 
 int onInvalidLength(const char * line) {
+  dbg(String("onInvalidLength: '") + line + "'");
   // TODO Investigate why we are receivign wrong lengths, seems like we are missing \n when busy
   state.messages.invalid.length++;
-  //addError(line);
+  handleError(line);
   return RC_INV_LENGTH;
+}
+
+void handleError(const char * line) {
+  line = line; // please the compiler (unused param)
 }
 
 String onOTGWMessage(String line, boolean feed) {
@@ -738,10 +751,11 @@ String onOTGWMessage(String line, boolean feed) {
     rc = String("INVLEN[") + len + "]:'" + cstr + "':";
 
     if (feed) {
-      // add real resut code if we should handle this message
+      // add real result code if we should handle this message
       rc += onInvalidLength(cstr);
     }
     else {
+      dbg(String("INVALID LENGTH: '" + line + "'"));
       // otherwise bail out after parsing, no rc applicable
       rc += "none";
     }
@@ -1038,7 +1052,7 @@ String getLocalAddr() {
 }
 
 void createConfigToken() {
-  int i;
+  unsigned int i;
   for (i = 0; i < sizeof(configToken) - 1; i++) {
     configToken[i] = random('A', 'Z' + 1);
   }
@@ -1246,10 +1260,10 @@ String createStatusJson() {
   unsigned long left1 = health.rebootTime - now;
 
   unsigned long span2 = (now - health.lastWebCheck);
-  unsigned long left2 = WEB_CHECK_INTERVAL - span2;
+  long long left2 = WEB_CHECK_INTERVAL - span2;
 
   unsigned long span3 = (now - health.lastWebCheckError);
-  unsigned long left3 = WEB_CHECK_INTERVAL - span3;
+  //unsigned long left3 = WEB_CHECK_INTERVAL - span3;
 
   String nextReboot = toHumanReadableTime(left1 / 1000);
   String lastCheck  = toHumanReadableTime(span2 / 1000);
@@ -1343,7 +1357,7 @@ String createStatusJson() {
       "  \"sensorsFound\":") + state.sensorsFound + ",\n"
     "  \"lastMeasure\":" + (now - state.lastMeasure) + ",\n"
     "  \"sensors\":[";
-  for (int i = 0; i < sizeof(state.extraTemps) / sizeof(state.extraTemps[0]); i++) {
+  for (unsigned int i = 0; i < sizeof(state.extraTemps) / sizeof(state.extraTemps[0]); i++) {
     if (i > 0) json += ",";
     json += state.extraTemps[i];
   }
@@ -1353,7 +1367,7 @@ String createStatusJson() {
   json +=
     "  \"tsps\":[";
   // print "transparent slave parameters" as json array
-  for (int i = 0; i < sizeof(state.tsps) / sizeof(state.tsps[0]); i++) {
+  for (unsigned int i = 0; i < sizeof(state.tsps) / sizeof(state.tsps[0]); i++) {
     if (i > 0    ) json += ",";
     if (0 == i % 8) json += "\n    ";
     json += state.tsps[i];
@@ -1485,8 +1499,8 @@ void handleUdpOff() {
 #endif
 
 #ifdef WITH_WEB_CALLS
-void handleWebGet() {
-  String response = handleWebUpdate(true, NULL);
+void handlePost() {
+  String response = handleWebUpdate(true);
   avoidCaching();
   server.send(200, CT_TEXT_PLAIN, response);
 }
@@ -1671,19 +1685,20 @@ void handleApiSet() {
 void serialEvent() {
   if (!Serial.available()) return;
 
-  while (Serial.available()) {
-
+  while (Serial.available() && !stringComplete) {
     // get the new byte:
     char c = (char)Serial.read();
-    //dbg("read: "); dbgln(String(inChar));
-
     // if the incoming character is a newline, set a flag
     // so the main loop can do something about it:
     switch (c) {
       // ignore CR, assume next is a newline
-      case '\r': break;
-      case '\n': stringComplete = true; break;
-      default:   inputString += c;
+      case '\r': 
+        break;
+      case '\n': 
+        stringComplete = true; // -> break ouf the while loop
+        break;
+      default:   
+        inputString += c;
     }
   }
 }
@@ -1795,10 +1810,10 @@ void setup() {
   state.configMemberId.hi   = state.configMemberId.lo   = -1;
   state.masterConfig.hi     = state.masterConfig.lo     = -1;
   state.remoteParamFlags.hi = state.remoteParamFlags.lo = -1;
-  for (int i = 0; i < sizeof(state.tsps) / sizeof(state.tsps[0]); i++) {
+  for (unsigned int i = 0; i < sizeof(state.tsps) / sizeof(state.tsps[0]); i++) {
     state.tsps[i] = -1;
   }
-  for (int i = 0; i < sizeof(state.extraTemps) / sizeof(state.extraTemps[0]); i++) {
+  for (unsigned int i = 0; i < sizeof(state.extraTemps) / sizeof(state.extraTemps[0]); i++) {
     state.extraTemps[i] = -12700; // hecto-celsius
   }
 
@@ -1838,7 +1853,7 @@ void setup() {
 #endif
 
 #ifdef WITH_WEB_CALLS
-  server.on("/dbg/webget",      handleWebGet);
+  server.on("/dbg/post",      handlePost);
 #endif
   server.on("/dbg/reboot",      handleReboot);
   server.on("/dbg/reset/otgw",  handleResetOTGW);
@@ -1930,8 +1945,22 @@ void sendAlert(String text, bool isDebug, bool onlyDirectly) {
   setRebootReason("Normal operation after sending alert");  
 }
 
-String handleWebUpdate(boolean force, const char * reason) {
+String handleWebUpdate(boolean force) {
+  
   unsigned long now = millis();
+
+  if (now<20*1000) {
+    //dbg(String("handleWebUpdate: lo=") + state.status.lo + ", hi=" + state.status.hi);
+    if (state.status.lo<0 || state.status.hi<0) {
+      // its better to wait until status info is available so 
+      // the remote side can determine the filter change status.
+      //dbg("Defer push until status available");
+      delay(250);
+      return "deferred";
+    }
+    //dbg("No status within 20 seconds ... push anyway");
+  }    
+  
   if (0 == health.lastWebCheck || now < health.lastWebCheck || now - health.lastWebCheck > WEB_CHECK_INTERVAL || force) {
 
     // controller might crash here, save last action:
@@ -2061,6 +2090,7 @@ void loop() {
   #endif
 
   if (!health.startAnnounced) {
+
     health.startAnnounced = true;
     String reason = health.lastRebootDetails;
     String msg = String("μController started: reason: '") + reason + "', " + health.initalFree + " bytes free (" + buildNo + ")";
@@ -2134,7 +2164,7 @@ void loop() {
     }
   }
 
-  serialEvent();
+  //serialEvent();
   server.handleClient();
   #ifdef WITH_OTA
   ArduinoOTA.handle();
@@ -2142,14 +2172,19 @@ void loop() {
 
 #ifdef WITH_DALLAS_TEMP_SENSORS
   if (!temperaturesRequested || 0 == health.loopIterations % (500 * 1000))  {
+    dbg("CALLING handleSensors()");
     handleSensors();
   }
 #endif
 
   if (stringComplete) {
+    //dbg(String("loop: stringComplete, inputString='") + inputString + "'"); 
+    inputString.trim();
     state.lastMsg.serial = millis();
     state.messages.serial++;
+    //String rc = 
     onOTGWMessage(inputString, true);
+    //dbg(String("loop: onOTGWMessage: rc: ") + rc);    
     inputString = "";
     stringComplete = false;
   }
@@ -2157,11 +2192,11 @@ void loop() {
   handleHeartbeat();
 
 #ifdef WITH_WEB_CALLS
-  handleWebUpdate(false, NULL);
+  handleWebUpdate(false);
 #endif
 
 #ifdef ESP8266
-  if (rebootScheduledAfterSetup > -1 && rebootScheduledAfterSetup > millis()) {
+  if (rebootScheduledAfterSetup > -1 && (unsigned long)rebootScheduledAfterSetup > millis()) {
     rebootScheduledAfterSetup = -1;
     dbgln("*********** REBOOT **********");
     delay(100);
@@ -2177,7 +2212,7 @@ void loop() {
 #ifdef WITH_DALLAS_TEMP_SENSORS
 String toString(DeviceAddress& a) {
   String rtv;
-  for (int i = 0; i < sizeof(a) / sizeof(a[0]); i++) {
+  for (unsigned int i = 0; i < sizeof(a) / sizeof(a[0]); i++) {
     if (i) rtv += ":";
     if (a[i] < 0x10) rtv += "0";
     rtv += String(a[i], HEX);

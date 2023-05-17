@@ -74,7 +74,7 @@ String extractPath(String url) {
 */
 String webGet(String url, String params, boolean ignoreBody) {
 
-  long startTime = millis();
+  //long startTime = millis();
   dbgln(String("getWebPage: params=") + params);
 
   client.setInsecure();
